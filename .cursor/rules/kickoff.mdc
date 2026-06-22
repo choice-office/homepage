@@ -1,0 +1,80 @@
+---
+description: 랜딩페이지 외주 프로젝트 킥오프, 새 프로젝트 시작, 섹션 조합, 업종별 추천, 홈페이지 만들어줘, 랜딩페이지 셋업
+globs:
+alwaysApply: false
+---
+
+# 외주 프로젝트 킥오프 가이드
+
+> 섹션 목록·컴포넌트 스펙 → **SPEC.md**
+> 체크리스트·환경변수·Supabase MCP → **SETUP.md**
+> 자동 모드 라우팅 → `.omc/skills/landing-start/SKILL.md`
+> 구현 8단계 워크플로우 → `.omc/skills/landing-kickoff/SKILL.md`
+
+## 킥오프 프롬프트 템플릿
+
+```
+[클라이언트명] 홈페이지 만들어줘.
+
+레퍼런스: http://example.com
+업종: 렌탈샵
+사이트명: OOO
+설명 (SEO): OOO
+메인 컬러: 파란색 계열 / #1a73e8
+
+콘텐츠:
+- 서비스: OOO, OOO, OOO
+- 연락처: 02-1234-5678
+- 주소: 서울시 OO구 OO로 123
+- 영업시간: 평일 09-18시
+- 팀원: 김OO (대표), 이OO (실장)
+
+필요한 기능:
+- 문의 폼 Supabase 저장
+- 카카오 오픈채팅 플로팅 버튼
+```
+
+## 작업 순서
+
+1. **`config/site.ts`** — siteConfig(name, description, url, locale), navLinks, footerLinks, businessInfo(선택)
+2. **`app/page.tsx`** — SPEC.md 업종별 치트시트 기반 섹션 import/조합
+3. **각 섹션 파일** — 상단 `★ 설정` 데이터 배열을 클라이언트 콘텐츠로 교체
+4. **`globals.css`** — 메인 컬러 교체 (`:root` + `.dark` 동시 수정)
+5. **`.env.local`** — NEXT_PUBLIC_SITE_URL, NEXT_PUBLIC_GA_ID(선택)
+6. **`actions/contact.ts`** — 문의 폼 연동 (아래 참고)
+
+## 문의 폼 연동
+
+`actions/contact.ts` 기본 흐름 — 환경변수 유무에 따라 자동 분기:
+
+| 환경변수 | 동작 |
+|---|---|
+| `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` | contacts 테이블에 저장 |
+| `RESEND_API_KEY` + `CONTACT_EMAIL` | 알림 이메일 발송 |
+| 둘 다 없음 | placeholder 성공 응답 (개발용) |
+
+```bash
+pnpm add @supabase/supabase-js   # Supabase 사용 시
+pnpm add resend                  # Resend 사용 시
+```
+
+## 링크 버튼 패턴
+
+Button의 `asChild` 미지원. 링크 버튼은 `buttonVariants` 사용:
+
+```tsx
+import { buttonVariants } from "@/lib/button-variants";
+<a href="#contact" className={buttonVariants({ size: "lg" })}>문의하기</a>
+```
+
+> `@/components/ui/button`은 `"use client"` — 서버 컴포넌트에서 직접 import 금지.
+
+## 최종 체크리스트
+
+- `pnpm check-types` 타입 에러 없음
+- `pnpm build` 성공
+- `pnpm lint` 에러 없음
+- 모바일(375px) 레이아웃 정상
+- 다크모드 전환 정상
+- navLinks href와 섹션 id 일치
+- favicon 교체 (`app/favicon.ico`)

@@ -1,0 +1,90 @@
+---
+description: Supabase 테이블 생성, RLS 정책, Server Action 연동, 환경변수 설정
+globs:
+  - src/app/actions/**
+alwaysApply: false
+---
+
+# Supabase 컨벤션
+
+## 테이블 네이밍
+- snake_case, 복수형 (contacts, bookings, newsletter_subscribers)
+- 단수형 금지 (contact ✕ → contacts ○)
+
+## 필수 컬럼
+모든 테이블:
+- `id` — uuid, default `gen_random_uuid()`, PK
+- `created_at` — timestamptz, default `now()`
+
+## contacts 테이블 표준 스키마
+
+```sql
+create table contacts (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  email text not null,
+  message text not null,
+  created_at timestamptz default now()
+);
+
+alter table contacts enable row level security;
+
+create policy "anon can insert" on contacts
+  for insert to anon with check (true);
+```
+
+## RLS 정책
+- 모든 테이블에 RLS **활성화** 필수
+- 공개 폼(문의/예약): `anon` 역할에 INSERT만 허용
+- SELECT/UPDATE/DELETE는 차단 (관리자는 `service_role`로 접근)
+
+## Server Action에서 Supabase 사용
+
+```ts
+"use server";
+
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+);
+```
+
+- 서버 전용 키 사용: `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_` 접두사 붙이지 않음 — 클라이언트에 키 노출 방지
+- 모든 DB 작업은 Server Action 경유 (클라이언트 직접 접근 금지)
+
+## 환경변수
+
+```env
+# .env.local
+SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJxxxxxxxxxxxx
+```
+
+`.env.example`에도 주석으로 추가할 것.
+
+## 추가 테이블 예시
+
+예약 폼:
+```sql
+create table bookings (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  phone text not null,
+  date date not null,
+  time text not null,
+  note text,
+  created_at timestamptz default now()
+);
+```
+
+뉴스레터:
+```sql
+create table newsletter_subscribers (
+  id uuid primary key default gen_random_uuid(),
+  email text unique not null,
+  created_at timestamptz default now()
+);
+```

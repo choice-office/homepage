@@ -1,0 +1,88 @@
+---
+description: 랜딩 섹션 컴포넌트 편집 규칙 — 데이터 배열 교체, FadeIn, 아이콘
+globs:
+  - src/components/sections/**
+alwaysApply: false
+---
+
+# 섹션 컴포넌트 편집 규칙
+
+## 데이터 교체 패턴
+
+각 섹션 파일 상단의 **`★ 설정`** 주석 아래 데이터 배열/상수만 교체하면 동작한다.
+컴포넌트 구조(JSX, 레이아웃, 스타일)는 건드리지 않는다.
+
+## 컴포넌트 작성 규칙
+
+- 서버 컴포넌트 기본. 클라이언트 상태/이벤트 필요 시에만 `"use client"`
+- 화살표 함수 + named export: `export const Section = () => { ... }`
+- 스타일: Tailwind 유틸리티 + `cn()` (`@/lib/utils`)
+- 모바일 퍼스트: 반응형 클래스 (sm, md, lg) 필수 적용
+- 아이콘: `lucide-react`에서 import ([lucide.dev](https://lucide.dev)에서 검색)
+
+## FadeIn 애니메이션
+
+모든 섹션은 `<FadeIn>`으로 감싸기 (`@/components/common/fade-in`):
+
+```tsx
+<FadeIn>단일 블록</FadeIn>
+<FadeIn delay={i * 0.1}>리스트 아이템 스태거</FadeIn>
+```
+
+## 새 섹션 추가 시
+
+1. `src/components/sections/`에 kebab-case 파일 생성
+2. 아래 템플릿 기반으로 작성
+3. `page.tsx`에서 import + JSX에 배치
+4. `config/site.ts`의 `navLinks`에 해당 섹션 추가
+
+### 템플릿
+
+```tsx
+import { FadeIn } from "@/components/common/fade-in";
+
+// ★ 설정
+const ITEMS = [
+	{ title: "항목 1", description: "설명" },
+	{ title: "항목 2", description: "설명" },
+];
+
+export const SectionName = () => {
+	return (
+		<section id="section-name" className="px-4 py-24 sm:px-6 lg:px-8">
+			<div className="mx-auto max-w-6xl">
+				<FadeIn className="mx-auto max-w-2xl text-center">
+					<h2 className="font-bold text-3xl tracking-tight sm:text-4xl">제목</h2>
+					<p className="mt-4 text-lg text-muted-foreground">설명</p>
+				</FadeIn>
+				<div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+					{ITEMS.map((item, i) => (
+						<FadeIn key={item.title} delay={i * 0.1}>
+							{/* 카드 내용 */}
+						</FadeIn>
+					))}
+				</div>
+			</div>
+		</section>
+	);
+};
+```
+
+### 필수 패턴
+- `section` 태그에 `id` 필수 → navLinks href와 일치
+- 패딩: `px-4 py-24 sm:px-6 lg:px-8`
+- 컨테이너: `mx-auto max-w-6xl`
+- 제목 FadeIn 감싸기
+- 리스트 스태거: `delay={i * 0.1}`
+
+## 섹션 삭제 시
+
+1. `page.tsx`에서 import + JSX 모두 제거
+2. `config/site.ts`의 `navLinks`에서 해당 항목 제거
+3. 파일 자체는 삭제하지 않음 (다른 프로젝트에서 재사용)
+
+## 주의사항
+
+- `navLinks`의 `href: "#features"`와 섹션의 `id="features"`는 반드시 일치해야 함
+- Hero 변형은 택 1. 사용하지 않는 Hero import는 반드시 제거
+- `ui/` 폴더의 shadcn 컴포넌트는 직접 수정 금지 → `pnpx shadcn@latest add [name]`으로만 추가

@@ -1,0 +1,42 @@
+---
+description: site.ts 설정 — 사이트 정보, 네비게이션, 푸터 링크
+globs:
+  - src/config/site.ts
+alwaysApply: false
+---
+
+# site.ts 편집 규칙
+
+## 이 파일이 영향을 미치는 곳
+
+`site.ts`를 수정하면 아래 전부에 자동 반영된다:
+
+- `layout.tsx` — HTML `lang`, `<title>`, Open Graph 메타데이터
+- `header.tsx` — 사이트 로고 텍스트, 네비게이션 메뉴
+- `footer.tsx` — 카피라이트, 푸터 링크
+- `sitemap.ts` — sitemap URL
+
+## navLinks 동기화 규칙
+
+`navLinks`의 `href`와 각 섹션의 `id` 속성은 반드시 일치해야 한다:
+
+```ts
+// navLinks의 href가 "#features"이면
+{ href: "#features", label: "서비스" }
+
+// 해당 섹션에 id="features"가 있어야 함
+<section id="features">
+```
+
+`page.tsx`에서 섹션을 추가/제거할 때 반드시 `navLinks`도 함께 수정할 것.
+
+## 수정 시 체크리스트
+
+- [ ] `siteConfig.name` — 사이트명 (Header 로고, 푸터 카피라이트, OG title에 반영)
+- [ ] `siteConfig.description` — SEO 설명 (160자 이내)
+- [ ] `siteConfig.url` — 실제 도메인 (sitemap, OG url에 반영)
+- [ ] `siteConfig.ogImage` — OG 이미지 URL (1200x630 권장)
+- [ ] `siteConfig.locale` — "ko" 또는 "en" (HTML lang 속성에 반영)
+- [ ] `navLinks` — page.tsx의 섹션 구성과 동기화
+- [ ] `footerLinks` — 필요한 링크만 유지
+- [ ] `businessInfo` — 사업자번호/대표자 표기 의무 클라이언트만 주석 해제 후 값 입력 (선택)

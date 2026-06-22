@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>행정사 사무소 홈페이지 — 색감 후보 미리보기</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+/>
+<style>
+  :root {
+    --page-bg: #0f1115;
+    --page-fg: #e7e3da;
+    --frame-radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+      "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    background: var(--page-bg);
+    color: var(--page-fg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== 페이지 헤더 ===== */
+  .doc-head {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 24px 8px;
+  }
+  .doc-head .kicker {
+    font-size: 13px; letter-spacing: .18em; text-transform: uppercase;
+    color: #9b958a; font-weight: 600;
+  }
+  .doc-head h1 { font-size: 30px; margin: 10px 0 8px; letter-spacing: -.02em; }
+  .doc-head p { color: #a7a195; line-height: 1.7; margin: 4px 0; font-size: 15px; }
+  .doc-head .ref { color:#cfc8ba; }
+  .doc-head .ref b { color:#fff; }
+
+  /* 후보 빠른 비교 칩 네비 */
+  .quicknav {
+    max-width:1180px; margin:18px auto 0; padding:0 24px;
+    display:flex; flex-wrap:wrap; gap:8px;
+  }
+  .quicknav a {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:7px 13px; border-radius:999px; text-decoration:none;
+    background:#1b1e24; color:#d8d2c6; font-size:13px; font-weight:600;
+    border:1px solid #2a2d35;
+  }
+  .quicknav a:hover { background:#23262e; }
+  .quicknav .swatchdot { width:12px; height:12px; border-radius:50%; box-shadow:0 0 0 2px rgba(255,255,255,.08); }
+
+  /* ===== 후보 블록 ===== */
+  .candidate { max-width: 1180px; margin: 0 auto; padding: 40px 24px 8px; scroll-margin-top: 20px; }
+  .cand-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:16px; }
+  .cand-title { display:flex; align-items:center; gap:14px; }
+  .cand-title .idx {
+    width:38px; height:38px; border-radius:10px; display:grid; place-items:center;
+    font-weight:800; font-size:16px; color:#fff;
+  }
+  .cand-title h2 { font-size:22px; margin:0; letter-spacing:-.01em; }
+  .cand-title .tag { font-size:13px; color:#9b958a; margin-top:3px; }
+  .cand-badge { font-size:12px; font-weight:700; padding:5px 11px; border-radius:999px; }
+  .cand-badge.match { background:#3a2a14; color:#f2c879; border:1px solid #6a4f24; }
+  .cand-badge.warm  { background:#36211c; color:#f0a58e; border:1px solid #683a2e; }
+  .cand-badge.cool  { background:#16263a; color:#8fc0ee; border:1px solid #294b6e; }
+
+  /* 스와치 스트립 */
+  .swatches { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+  .swatch { width:118px; border-radius:10px; overflow:hidden; border:1px solid #2a2d35; background:#1b1e24; }
+  .swatch .chip { height:46px; }
+  .swatch .meta { padding:7px 9px; }
+  .swatch .meta .nm { font-size:11px; color:#b8b2a6; font-weight:600; }
+  .swatch .meta .hex { font-size:12px; color:#fff; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing:.02em; }
+
+  /* ===== 브라우저 목업 ===== */
+  .browser {
+    border-radius: var(--frame-radius);
+    overflow: hidden;
+    box-shadow: 0 30px 70px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.04);
+    background: var(--bg);
+  }
+  .browser-bar {
+    display:flex; align-items:center; gap:10px;
+    padding:11px 16px; background:#202329; border-bottom:1px solid #000;
+  }
+  .browser-bar .dots { display:flex; gap:6px; }
+  .browser-bar .dots i { width:11px; height:11px; border-radius:50%; display:block; }
+  .browser-bar .url {
+    margin-left:8px; font-size:12px; color:#9aa0a8; background:#15171c;
+    padding:5px 12px; border-radius:7px; font-family: ui-monospace, monospace;
+  }
+
+  /* ----- 목업 사이트 (팔레트 변수로 색 결정) ----- */
+  .site { background: var(--bg); color: var(--ink); }
+  .site .wrap { max-width: 1000px; margin: 0 auto; padding: 0 34px; }
+
+  .site-head {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 34px; border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .site-head .logo { font-size:19px; font-weight:800; letter-spacing:-.02em; color:var(--ink); }
+  .site-head .logo b { color: var(--accent); font-weight:800; }
+  .site-head nav { display:flex; gap:22px; font-size:14px; color:var(--muted); font-weight:600; }
+  .site-head nav span.active { color: var(--ink); }
+
+  .hero { padding: 60px 0 64px; }
+  .hero-inner { display:grid; grid-template-columns: 1.25fr .85fr; gap:40px; align-items:center; }
+  .eyebrow { font-size:12px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; color: var(--accent); }
+  .hero h1 { font-size:40px; line-height:1.18; letter-spacing:-.03em; margin:14px 0 16px; color:var(--ink); font-weight:800; }
+  .hero h1 .hl { color: var(--accent); }
+  .hero p.lead { font-size:16px; line-height:1.75; color:var(--muted); margin:0 0 26px; max-width:30em; }
+  .hero-cta { display:flex; gap:12px; margin-bottom:22px; }
+  .trustline { font-size:13px; color:var(--muted); display:flex; gap:14px; flex-wrap:wrap; }
+  .trustline b { color: var(--ink); }
+
+  /* 버튼 */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-size:14px; font-weight:700; padding:13px 22px; border-radius:10px;
+    text-decoration:none; border:1px solid transparent; cursor:default; }
+  .btn-accent { background: var(--accent); color: var(--on-accent); }
+  .btn-ghost  { background: transparent; color: var(--ink); border-color: var(--line2); }
+  .btn-block  { width:100%; }
+  .btn-onband { background: var(--on-band); color: var(--band); }
+
+  /* 히어로 사이드 카드 */
+  .hero-card {
+    background: var(--surface); border:1px solid var(--line); border-radius:16px;
+    padding:24px; box-shadow: 0 18px 40px -24px rgba(0,0,0,.25);
+  }
+  .hero-card .ct { font-size:15px; font-weight:800; color:var(--ink); margin-bottom:4px; }
+  .hero-card .cs { font-size:12.5px; color:var(--muted); margin-bottom:16px; }
+  .field { height:38px; border-radius:9px; background: var(--field); border:1px solid var(--line);
+    margin-bottom:10px; display:flex; align-items:center; padding:0 13px; font-size:13px; color:var(--muted); }
+  .field.tall { height:60px; align-items:flex-start; padding-top:11px; }
+
+  /* 신뢰 띠 */
+  .band-thin { background: var(--accent-soft); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .band-thin .wrap { display:flex; gap:30px; justify-content:center; padding:16px 34px; font-size:13px; font-weight:600; color:var(--accent-ink); flex-wrap:wrap; }
+
+  /* 업무분야 */
+  .practice { padding: 64px 0; }
+  .sec-head { text-align:center; margin-bottom:36px; }
+  .sec-head h2 { font-size:28px; letter-spacing:-.02em; margin:10px 0 8px; color:var(--ink); font-weight:800; }
+  .sec-head p { color:var(--muted); font-size:14.5px; margin:0; }
+  .pgrid { display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
+  .pcard { background: var(--surface); border:1px solid var(--line); border-radius:14px; padding:24px 22px; transition:.2s; }
+  .pcard .ico { width:46px; height:46px; border-radius:12px; background: var(--accent-soft); display:grid; place-items:center; margin-bottom:16px; }
+  .pcard .ico svg { width:23px; height:23px; stroke: var(--accent); fill:none; stroke-width:1.7; }
+  .pcard h3 { font-size:16px; margin:0 0 7px; color:var(--ink); font-weight:700; }
+  .pcard p { font-size:13.5px; line-height:1.65; color:var(--muted); margin:0; }
+  .pcard .more { font-size:12.5px; font-weight:700; color:var(--accent); margin-top:14px; display:inline-block; }
+
+  /* 통계 밴드 (딥톤) */
+  .stats { background: var(--band); color: var(--on-band); }
+  .stats .wrap { display:grid; grid-template-columns: repeat(4,1fr); gap:20px; padding:48px 34px; }
+  .stat { text-align:center; }
+  .stat .num { font-size:38px; font-weight:800; letter-spacing:-.02em; color: var(--band-accent); }
+  .stat .lbl { font-size:13px; color: var(--on-band); opacity:.8; margin-top:6px; }
+
+  /* CTA */
+  .cta { padding: 60px 0; text-align:center; }
+  .cta h2 { font-size:26px; letter-spacing:-.02em; margin:0 0 8px; color:var(--ink); font-weight:800; }
+  .cta p { color:var(--muted); margin:0 0 24px; font-size:14.5px; }
+
+  /* 푸터 */
+  .site-foot { background: var(--foot); color: var(--foot-fg); }
+  .site-foot .wrap { display:flex; justify-content:space-between; gap:20px; padding:30px 34px; font-size:12.5px; flex-wrap:wrap; }
+  .site-foot .logo { font-weight:800; color: var(--foot-strong); font-size:16px; }
+  .site-foot .info { opacity:.75; line-height:1.7; text-align:right; }
+
+  @media (max-width: 760px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .pgrid { grid-template-columns: 1fr; }
+    .stats .wrap { grid-template-columns: repeat(2,1fr); }
+    .site-head nav { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-head">
+  <div class="kicker">행정사 사무소 홈페이지 · 컬러 시안</div>
+  <h1>색감 후보 미리보기 (6안)</h1>
+  <p class="ref">레퍼런스: <b>로어스 법률사무소</b> (lawus.co.kr) — 화이트/블랙 미니멀 + 따뜻한 버밀리온 포인트(<b>#E5493A</b>) + 샌드베이지(#DED0B9) 톤.</p>
+  <p>각 후보는 동일한 행정사 사무소 목업에 팔레트만 바꿔 적용했습니다. 신뢰감·공신력·따뜻함을 모두 살리는 방향으로 구성했고, 레퍼런스와의 유사도를 배지로 표시했습니다. (사이트명/연락처는 예시값)</p>
+</div>
+
+<div class="quicknav" id="quicknav"></div>
+
+<div id="root"></div>
+
+<div class="doc-head" style="padding-top:48px; padding-bottom:80px;">
+  <div class="kicker">참고</div>
+  <p>· 실제 적용은 <b>src/app/globals.css</b> 의 <code style="color:#ddd">:root</code> 변수(oklch) 한 곳만 교체하면 전체 사이트에 반영됩니다.</p>
+  <p>· 폰트는 본 미리보기에서 Pretendard를 사용했습니다. 최종본은 Noto Sans KR(기본) 또는 Pretendard 중 택1 가능합니다.</p>
+  <p>· 후보를 정하면 해당 안으로 실제 페이지(히어로/업무분야/구성원/성공사례/오시는길/상담)를 구현합니다.</p>
+</div>
+
+<script>
+/* ===== 팔레트 정의 — 여기 배열만 고치면 미리보기가 바뀝니다 ===== */
+const PALETTES = [
+  {
+    id: "vermilion",
+    name: "A. 베르밀리온",
+    tag: "로어스와 가장 유사 · 따뜻하고 강단 있는",
+    badge: { cls:"match", txt:"레퍼런스 매치" },
+    vars: {
+      accent:"#E5493A", "accent-soft":"#FBE9E5", "accent-ink":"#A6362B", "on-accent":"#FFFFFF",
+      ink:"#1E2227", muted:"#6B7178", bg:"#FFFFFF", surface:"#FFFFFF", field:"#F7F4EF",
+      line:"#ECE6DD", line2:"#D9D2C6",
+      band:"#1E2227", "on-band":"#EDE8DF", "band-accent":"#E5493A",
+      foot:"#15181C", "foot-fg":"#C7C2B8", "foot-strong":"#FFFFFF",
+    },
+    swatches:[["포인트","#E5493A"],["잉크","#1E2227"],["샌드","#ECE6DD"],["배경","#FFFFFF"],["딥밴드","#1E2227"]]
+  },
+  {
+    id: "navy-gold",
+    name: "B. 딥네이비 × 골드",
+    tag: "관공서·행정 공신력 최강 · 권위 + 격조",
+    badge: { cls:"cool", txt:"신뢰·권위형" },
+    vars: {
+      accent:"#1B3A66", "accent-soft":"#EAF0F7", "accent-ink":"#143055", "on-accent":"#FFFFFF",
+      ink:"#15233B", muted:"#5C6A7E", bg:"#FFFFFF", surface:"#FFFFFF", field:"#F4F6FA",
+      line:"#E3E8F0", line2:"#CCD5E2",
+      band:"#122742", "on-band":"#E9EEF5", "band-accent":"#C2A35B",
+      foot:"#0E2138", "foot-fg":"#Aeb9c8", "foot-strong":"#FFFFFF",
+    },
+    swatches:[["네이비","#1B3A66"],["골드","#C2A35B"],["잉크","#15233B"],["배경","#FFFFFF"],["딥밴드","#122742"]]
+  },
+  {
+    id: "terracotta",
+    name: "C. 테라코타 × 토프",
+    tag: "따뜻하고 인간적 · 부드러운 전문성",
+    badge: { cls:"warm", txt:"웜·휴머니즘형" },
+    vars: {
+      accent:"#B65A3C", "accent-soft":"#F6EAE2", "accent-ink":"#8E4329", "on-accent":"#FFFFFF",
+      ink:"#2A2521", muted:"#756B5F", bg:"#FCFAF6", surface:"#FFFFFF", field:"#F4EEE5",
+      line:"#ECE3D6", line2:"#D8CCB9",
+      band:"#2E2722", "on-band":"#F0E7DA", "band-accent":"#D79A6B",
+      foot:"#241E1A", "foot-fg":"#C4B8A8", "foot-strong":"#FFFFFF",
+    },
+    swatches:[["테라코타","#B65A3C"],["토프","#7A6A57"],["잉크","#2A2521"],["크림","#FCFAF6"],["딥밴드","#2E2722"]]
+  },
+  {
+    id: "forest-gold",
+    name: "D. 딥그린 × 골드",
+    tag: "안정·신뢰 · 차분한 균형감",
+    badge: { cls:"cool", txt:"안정·신뢰형" },
+    vars: {
+      accent:"#1F4A38", "accent-soft":"#E6EEE8", "accent-ink":"#17402F", "on-accent":"#FFFFFF",
+      ink:"#1B2A23", muted:"#5F6B63", bg:"#FAFBF8", surface:"#FFFFFF", field:"#EFF3EE",
+      line:"#E1E8E1", line2:"#C8D3C8",
+      band:"#173A2A", "on-band":"#E9F0EA", "band-accent":"#C2A35B",
+      foot:"#122A1F", "foot-fg":"#AFC0B4", "foot-strong":"#FFFFFF",
+    },
+    swatches:[["포레스트","#1F4A38"],["골드","#C2A35B"],["잉크","#1B2A23"],["배경","#FAFBF8"],["딥밴드","#173A2A"]]
+  },
+  {
+    id: "burgundy",
+    name: "E. 버건디 × 웜그레이",
+    tag: "격식·고급 · 묵직한 신뢰",
+    badge: { cls:"warm", txt:"프리미엄·격식형" },
+    vars: {
+      accent:"#7C2D38", "accent-soft":"#F3E7E8", "accent-ink":"#5F222B", "on-accent":"#FFFFFF",
+      ink:"#29211F", muted:"#756A66", bg:"#FAF7F5", surface:"#FFFFFF", field:"#F2EBE7",
+      line:"#EBE2DD", line2:"#D6C9C2",
+      band:"#2A1D1F", "on-band":"#EFE4E2", "band-accent":"#C08A6E",
+      foot:"#211719", "foot-fg":"#C0B2AE", "foot-strong":"#FFFFFF",
+    },
+    swatches:[["버건디","#7C2D38"],["웜그레이","#8A817A"],["잉크","#29211F"],["아이보리","#FAF7F5"],["딥밴드","#2A1D1F"]]
+  },
+  {
+    id: "slate-copper",
+    name: "F. 슬레이트블루 × 코퍼",
+    tag: "모던 신뢰 · 깔끔한 전문성",
+    badge: { cls:"cool", txt:"모던·클린형" },
+    vars: {
+      accent:"#2C4A6E", "accent-soft":"#E9EEF4", "accent-ink":"#213A57", "on-accent":"#FFFFFF",
+      ink:"#1F2933", muted:"#5B6776", bg:"#F8FAFC", surface:"#FFFFFF", field:"#EEF2F7",
+      line:"#E2E8F0", line2:"#CBD5E1",
+      band:"#1E2D3F", "on-band":"#E8EEF4", "band-accent":"#BE7B4F",
+      foot:"#172230", "foot-fg":"#AEBAC8", "foot-strong":"#FFFFFF",
+    },
+    swatches:[["슬레이트","#2C4A6E"],["코퍼","#BE7B4F"],["잉크","#1F2933"],["미스트","#F8FAFC"],["딥밴드","#1E2D3F"]]
+  },
+];
+
+/* 업무분야 카드 (행정사 실제 업무) */
+const ICONS = {
+  visa:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>',
+  permit:'<svg viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M5 3h9l5 5v11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="m9 14 2 2 4-4"/></svg>',
+  appeal:'<svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="m12 3 8 6H4z"/><path d="M6 9v8M10 9v8M14 9v8M18 9v8"/></svg>',
+  land:'<svg viewBox="0 0 24 24"><path d="M3 9 12 4l9 5"/><path d="M5 10v9h14v-9"/><path d="M9 19v-5h6v5"/></svg>',
+  corp:'<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/></svg>',
+  comp:'<svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="5"/></svg>',
+};
+const PRACTICE = [
+  { ico:"visa",  t:"출입국·체류 / 비자", d:"체류자격 변경·연장, 비자 발급, 귀화·영주, 초청·사증 업무" },
+  { ico:"permit",t:"각종 인·허가 / 신고", d:"영업·건축·식품 등 인허가, 등록·신고 대행 및 보완 대응" },
+  { ico:"appeal",t:"행정심판 / 이의신청", d:"처분 취소·이의신청, 행정심판 청구서 작성 및 대리" },
+  { ico:"land",  t:"토지·건축 / 부동산", d:"개발행위·농지전용, 토지이용·건축 인허가 컨설팅" },
+  { ico:"corp",  t:"법인 설립 / 등록", d:"법인·사업자 설립, 협동조합·비영리단체 설립 지원" },
+  { ico:"comp",  t:"손실보상 / 민원", d:"보상금 협의·이의, 진정·민원 작성 및 행정기관 대응" },
+];
+
+function mockup(p) {
+  const v = Object.entries(p.vars).map(([k,val]) => `--${k}:${val}`).join(";");
+  const cards = PRACTICE.map(c => `
+    <div class="pcard">
+      <div class="ico">${ICONS[c.ico]}</div>
+      <h3>${c.t}</h3>
+      <p>${c.d}</p>
+      <span class="more">자세히 보기 →</span>
+    </div>`).join("");
+  return `
+  <div class="browser" style="${v}">
+    <div class="browser-bar">
+      <div class="dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+      <div class="url">www.한결행정사.kr</div>
+    </div>
+    <div class="site">
+      <div class="site-head">
+        <div class="logo">한결<b>행정사</b></div>
+        <nav><span class="active">사무소 소개</span><span>업무분야</span><span>성공사례</span><span>상담후기</span><span>오시는 길</span></nav>
+        <a class="btn btn-accent" style="padding:10px 18px">온라인 상담</a>
+      </div>
+
+      <section class="hero"><div class="wrap"><div class="hero-inner">
+        <div class="hero-text">
+          <span class="eyebrow">Certified Administrative Agent</span>
+          <h1>복잡한 행정,<br><span class="hl">한결</span>이 명쾌하게 풀어드립니다</h1>
+          <p class="lead">출입국·체류, 인허가, 행정심판까지 — 행정 절차의 시작부터 끝까지 의뢰인 곁에서 책임지고 처리합니다.</p>
+          <div class="hero-cta">
+            <a class="btn btn-accent">무료 상담 신청</a>
+            <a class="btn btn-ghost">업무분야 보기</a>
+          </div>
+          <div class="trustline"><span>누적 상담 <b>5,000+</b></span><span>처리 만족도 <b>98%</b></span><span>경력 <b>15년</b></span></div>
+        </div>
+        <div class="hero-card">
+          <div class="ct">30초 빠른 상담 신청</div>
+          <div class="cs">남겨주시면 담당 행정사가 직접 연락드립니다.</div>
+          <div class="field">성함</div>
+          <div class="field">연락처</div>
+          <div class="field tall">상담 내용 (간단히)</div>
+          <a class="btn btn-accent btn-block" style="margin-top:6px">상담 신청하기</a>
+        </div>
+      </div></div></section>
+
+      <div class="band-thin"><div class="wrap"><span>✓ 무료 1:1 상담</span><span>✓ 전 과정 비밀 보장</span><span>✓ 명확한 비용 안내</span><span>✓ 신속한 처리</span></div></div>
+
+      <section class="practice"><div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">업무분야</span>
+          <h2>행정사가 도와드리는 일</h2>
+          <p>관공서 행정 업무, 혼자 고민하지 마세요. 분야별 전문 행정사가 함께합니다.</p>
+        </div>
+        <div class="pgrid">${cards}</div>
+      </div></section>
+
+      <section class="stats"><div class="wrap">
+        <div class="stat"><div class="num">5,000+</div><div class="lbl">누적 상담 건수</div></div>
+        <div class="stat"><div class="num">98%</div><div class="lbl">처리 만족도</div></div>
+        <div class="stat"><div class="num">15년</div><div class="lbl">행정 실무 경력</div></div>
+        <div class="stat"><div class="num">20+</div><div class="lbl">처리 가능 분야</div></div>
+      </div></section>
+
+      <section class="cta"><div class="wrap">
+        <h2>지금, 막막한 행정 문제를 상담하세요</h2>
+        <p>전화 한 통이면 됩니다. 첫 상담은 무료입니다.</p>
+        <a class="btn btn-accent" style="padding:15px 30px;font-size:15px">전화 상담 · 1551-0000</a>
+      </div></section>
+
+      <footer class="site-foot"><div class="wrap">
+        <div><div class="logo">한결행정사사무소</div></div>
+        <div class="info">서울특별시 OO구 OO로 123, 4층 · 대표 행정사 OOO<br>TEL 1551-0000 · 사업자등록번호 000-00-00000 · hangyeol@example.kr</div>
+      </div></footer>
+    </div>
+  </div>`;
+}
+
+function candidateBlock(p, i) {
+  const sw = p.swatches.map(([nm,hex]) => `
+    <div class="swatch">
+      <div class="chip" style="background:${hex}"></div>
+      <div class="meta"><div class="nm">${nm}</div><div class="hex">${hex}</div></div>
+    </div>`).join("");
+  return `
+  <section class="candidate" id="cand-${p.id}">
+    <div class="cand-head">
+      <div class="cand-title">
+        <div class="idx" style="background:${p.vars.accent}">${String.fromCharCode(65+i)}</div>
+        <div>
+          <h2>${p.name.replace(/^[A-F]\. /,"")}</h2>
+          <div class="tag">${p.tag}</div>
+        </div>
+      </div>
+      <span class="cand-badge ${p.badge.cls}">${p.badge.txt}</span>
+    </div>
+    <div class="swatches">${sw}</div>
+    ${mockup(p)}
+  </section>`;
+}
+
+document.getElementById("root").innerHTML = PALETTES.map(candidateBlock).join("");
+document.getElementById("quicknav").innerHTML = PALETTES.map((p,_i) =>
+  `<a href="#cand-${p.id}"><span class="swatchdot" style="background:${p.vars.accent}"></span>${p.name}</a>`
+).join("");
+</script>
+</body>
+</html>
