@@ -1,0 +1,230 @@
+html,
+body {
+	margin: 0;
+}
+* {
+	box-sizing: border-box;
+}
+
+@keyframes marquee {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-33.333%);
+	}
+}
+@keyframes fadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(24px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.reveal {
+	opacity: 1;
+}
+
+/* layout helpers */
+.container {
+	max-width: 1152px;
+	margin: 0 auto;
+	padding: 0 24px;
+}
+.section {
+	padding: 96px 0;
+}
+
+/* responsive grids driven by class so CSS handles breakpoints cleanly */
+.grid-4 {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 20px;
+}
+.grid-3 {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 24px;
+}
+.grid-2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 24px;
+}
+.contact-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 64px;
+	align-items: start;
+}
+.team-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 28px;
+}
+.member-single {
+	display: grid;
+	grid-template-columns: 1fr 1.2fr;
+}
+
+.nav-links {
+	display: flex;
+	gap: 6px;
+	align-items: stretch;
+}
+.mega-row {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 6px 16px;
+}
+.mega-link {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	padding: 12px 14px;
+	border-radius: var(--radius);
+	font-size: 15px;
+	font-weight: 500;
+	color: var(--text-body);
+	white-space: nowrap;
+	transition:
+		background 0.15s ease,
+		color 0.15s ease;
+}
+.mega-link:hover {
+	background: var(--surface-subtle);
+	color: var(--color-primary);
+}
+.mega-code {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--text-muted);
+}
+.menu-toggle {
+	display: none;
+}
+.consult-bar-inner {
+	display: flex;
+	align-items: center;
+	gap: 28px;
+}
+.consult-form {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex: 1;
+}
+.consult-desktop {
+	display: block;
+}
+.consult-mobile {
+	display: none;
+}
+
+@media (max-width: 960px) {
+	.section {
+		padding: 64px 0;
+	}
+	.grid-4 {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.grid-3 {
+		grid-template-columns: 1fr;
+	}
+	.grid-2 {
+		grid-template-columns: 1fr;
+		gap: 32px;
+	}
+	.contact-grid {
+		grid-template-columns: 1fr;
+		gap: 40px;
+	}
+	.team-grid {
+		grid-template-columns: 1fr;
+		gap: 20px;
+	}
+	.member-single {
+		grid-template-columns: 1fr;
+	}
+	.nav-links {
+		display: none;
+	}
+	.menu-toggle {
+		display: inline-flex;
+	}
+	.consult-bar-inner {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 14px;
+	}
+	.consult-form {
+		flex-wrap: wrap;
+	}
+	.consult-desktop {
+		display: none;
+	}
+	.consult-mobile {
+		display: flex;
+	}
+	.hide-mobile {
+		display: none;
+	}
+}
+
+@media (max-width: 560px) {
+	.grid-4 {
+		grid-template-columns: 1fr;
+	}
+	.consult-form {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+/* mobile drawer */
+.drawer {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	pointer-events: none;
+}
+.drawer .scrim {
+	position: absolute;
+	inset: 0;
+	background: rgba(20, 16, 13, 0.5);
+	opacity: 0;
+	transition: opacity 0.25s ease;
+}
+.drawer .panel {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: 280px;
+	max-width: 84vw;
+	background: #fff;
+	transform: translateX(100%);
+	transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+	box-shadow: -8px 0 30px rgba(34, 34, 34, 0.15);
+	padding: 24px;
+}
+.drawer.open {
+	pointer-events: auto;
+}
+.drawer.open .scrim {
+	opacity: 1;
+}
+.drawer.open .panel {
+	transform: translateX(0);
+}
+
+a {
+	text-decoration: none;
+}
+.lk {
+	cursor: pointer;
+}

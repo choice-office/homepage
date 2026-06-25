@@ -132,61 +132,68 @@
 	--radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* ─── 초이스 행정사 — 로어스 시그니처 톤(따뜻한 토프) 팔레트 ──────────────────
- * 주조색: 토프 #7A6955 / 강조: #8A6C49 / 옅은강조: #E6DDCF
- * 텍스트: 제목 #222222, 본문 #3F3A34, 보조 #888888
- * 배경: #FFFFFF, 섹션 #F5F3EF, 구분선 #E2DDD3 — 미니멀·클래식·따뜻함
+/* ─── 초이스 행정사 — LawUs Tone Down 팔레트 (design/color-palette.md 참조) ────
+ * 주조색 primary #6C5D4C / primaryDark #524636(푸터·hover) / primaryLight #8C7D6A
+ * 포인트 accent #7C6346 / accentSoft #E1D7C6(배지 배경)
+ * 면   background #FFFFFF / surface #F5F3EF / surfaceAlt #ECE7DF / border #E2DDD3
+ * 텍스트 ink #222222(제목) / body #3F3A34(본문) / muted #888888(보조)
+ * 규칙: primary·accent 위 텍스트는 흰색. 밝은 면 위 텍스트는 ink/body.
  * ─────────────────────────────────────────────────────────────────────────── */
 :root {
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.27 0.004 70);
+	--background: oklch(1 0 0); /* #FFFFFF */
+	--foreground: oklch(0.26 0.004 60); /* ink #222222 */
 	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.27 0.004 70);
+	--card-foreground: oklch(0.26 0.004 60);
 	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.27 0.004 70);
-	--primary: oklch(0.5 0.028 72);
-	--primary-foreground: oklch(0.99 0 0);
-	--secondary: oklch(0.9 0.022 80);
-	--secondary-foreground: oklch(0.34 0.01 70);
-	--muted: oklch(0.97 0.006 84);
-	--muted-foreground: oklch(0.5 0.012 72);
-	--accent: oklch(0.9 0.022 80);
-	--accent-foreground: oklch(0.34 0.01 70);
+	--popover-foreground: oklch(0.26 0.004 60);
+	--primary: oklch(0.46 0.03 72); /* #6C5D4C */
+	--primary-foreground: oklch(0.99 0 0); /* onPrimary #FFFFFF */
+	--secondary: oklch(0.88 0.022 85); /* accentSoft #E1D7C6 */
+	--secondary-foreground: oklch(0.37 0.03 72); /* primaryDark #524636 */
+	--muted: oklch(0.965 0.005 85); /* surface #F5F3EF */
+	--muted-foreground: oklch(0.63 0.004 70); /* muted #888888 */
+	--accent: oklch(0.88 0.022 85); /* accentSoft #E1D7C6 */
+	--accent-foreground: oklch(0.37 0.03 72); /* primaryDark #524636 */
 	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.89 0.008 82);
-	--input: oklch(0.89 0.008 82);
-	--ring: oklch(0.5 0.028 72);
-	--chart-1: oklch(0.5 0.028 72);
-	--chart-2: oklch(0.53 0.052 70);
-	--chart-3: oklch(0.4 0.022 70);
-	--chart-4: oklch(0.9 0.022 80);
-	--chart-5: oklch(0.27 0.004 70);
+	--border: oklch(0.89 0.008 85); /* #E2DDD3 */
+	--input: oklch(0.89 0.008 85);
+	--ring: oklch(0.46 0.03 72); /* primary */
+	--chart-1: oklch(0.46 0.03 72); /* primary */
+	--chart-2: oklch(0.49 0.05 68); /* accent #7C6346 */
+	--chart-3: oklch(0.58 0.03 78); /* primaryLight #8C7D6A */
+	--chart-4: oklch(0.88 0.022 85); /* accentSoft */
+	--chart-5: oklch(0.26 0.004 60); /* ink */
 	--radius: 0.375rem;
+	/* Pretendard (CDN, layout.tsx) + 한글 인지 폴백 — 윈도우 렌더링 우수 */
+	--font-sans:
+		"Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo",
+		"Malgun Gothic", "Noto Sans KR", sans-serif;
 }
 
+/* 다크모드는 현재 비활성화(라이트 전용). 재활성화 대비 톤만 맞춰 둠. */
 .dark {
-	--background: oklch(0.19 0.005 70);
-	--foreground: oklch(0.95 0.005 84);
-	--card: oklch(0.23 0.006 70);
-	--card-foreground: oklch(0.95 0.005 84);
-	--popover: oklch(0.23 0.006 70);
-	--popover-foreground: oklch(0.95 0.005 84);
-	--primary: oklch(0.64 0.03 75);
-	--primary-foreground: oklch(0.2 0.005 70);
-	--secondary: oklch(0.27 0.01 70);
-	--secondary-foreground: oklch(0.95 0.005 84);
-	--muted: oklch(0.26 0.01 70);
-	--muted-foreground: oklch(0.73 0.012 78);
-	--accent: oklch(0.3 0.014 72);
-	--accent-foreground: oklch(0.95 0.005 84);
+	--background: oklch(0.2 0.006 60);
+	--foreground: oklch(0.95 0.004 85);
+	--card: oklch(0.24 0.006 60);
+	--card-foreground: oklch(0.95 0.004 85);
+	--popover: oklch(0.24 0.006 60);
+	--popover-foreground: oklch(0.95 0.004 85);
+	--primary: oklch(0.62 0.035 75);
+	--primary-foreground: oklch(0.2 0.004 60);
+	--secondary: oklch(0.3 0.012 70);
+	--secondary-foreground: oklch(0.95 0.004 85);
+	--muted: oklch(0.28 0.01 70);
+	--muted-foreground: oklch(0.72 0.01 75);
+	--accent: oklch(0.32 0.014 72);
+	--accent-foreground: oklch(0.95 0.004 85);
 	--destructive: oklch(0.704 0.191 22.216);
 	--border: oklch(1 0 0 / 12%);
 	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.64 0.03 75);
-	--chart-1: oklch(0.64 0.03 75);
-	--chart-2: oklch(0.6 0.05 70);
-	--chart-3: oklch(0.5 0.025 72);
-	--chart-4: oklch(0.9 0.022 80);
+	--ring: oklch(0.62 0.035 75);
+	--chart-1: oklch(0.62 0.035 75);
+	--chart-2: oklch(0.58 0.05 68);
+	--chart-3: oklch(0.62 0.03 78);
+	--chart-4: oklch(0.88 0.022 85);
 	--chart-5: oklch(0.85 0.008 80);
 }
 
@@ -196,9 +203,361 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+		/* 한국어 줄바꿈: 어절(단어) 중간에서 끊기지 않고 띄어쓰기 단위로 줄바꿈 */
+		word-break: keep-all;
+	}
+	/* 제목은 줄 길이를 고르게 분배, 본문은 마지막 줄 외톨이 단어 방지 */
+	h1,
+	h2,
+	h3,
+	h4 {
+		text-wrap: balance;
+	}
+	p {
+		text-wrap: pretty;
 	}
 	html {
 		@apply font-sans;
 		scroll-behavior: smooth;
+		/* 고정 헤더(약 5rem) 높이만큼 앵커 스크롤 오프셋 */
+		scroll-padding-top: 5rem;
 	}
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Claude Design 포팅 — 디자인 토큰 + 레이아웃 헬퍼 (design/claude-export 기반)
+ * 시맨틱 hex 변수 + helper 클래스. 폰트는 Pretendard 유지(위 --font-sans).
+ * ════════════════════════════════════════════════════════════════════════ */
+:root {
+	--color-primary: #6c5d4c;
+	--color-primary-dark: #524636;
+	--color-primary-light: #8c7d6a;
+	--color-accent: #7c6346;
+	--color-accent-soft: #e1d7c6;
+	--color-background: #ffffff;
+	--color-surface: #f5f3ef;
+	--color-surface-alt: #ece7df;
+	--color-border: #e2ddd3;
+	--color-ink: #222222;
+	--color-body: #3f3a34;
+	--color-muted: #888888;
+	--color-on-primary: #ffffff;
+	--color-on-accent: #ffffff;
+	--text-heading: var(--color-ink);
+	--text-body: var(--color-body);
+	--text-muted: var(--color-muted);
+	--surface-page: var(--color-background);
+	--surface-card: var(--color-background);
+	--surface-subtle: var(--color-surface);
+	--surface-sunken: var(--color-surface-alt);
+	--surface-footer: var(--color-primary-dark);
+	--border-default: var(--color-border);
+	--border-strong: var(--color-primary-light);
+	--action-primary: var(--color-primary);
+	--action-primary-hover: var(--color-primary-dark);
+	--action-accent: var(--color-accent);
+	--badge-bg: var(--color-accent-soft);
+	--badge-fg: var(--color-primary-dark);
+	--focus-ring: var(--color-primary);
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 20px;
+	--space-6: 24px;
+	--space-8: 32px;
+	--space-10: 40px;
+	--space-12: 48px;
+	--space-16: 64px;
+	--space-20: 80px;
+	--space-24: 96px;
+	--section-y: 96px;
+	--header-h: 80px;
+	--radius-sm: 4px;
+	--radius: 6px;
+	--radius-md: 8px;
+	--radius-lg: 10px;
+	--radius-pill: 9999px;
+	--shadow-xs: 0 1px 2px rgba(34, 34, 34, 0.05);
+	--shadow-sm: 0 1px 3px rgba(34, 34, 34, 0.07), 0 1px 2px rgba(34, 34, 34, 0.04);
+	--shadow-md: 0 4px 12px rgba(34, 34, 34, 0.08);
+	--shadow-card-hover: 0 6px 20px rgba(82, 70, 54, 0.1);
+	--weight-regular: 400;
+	--weight-medium: 500;
+	--weight-bold: 700;
+	--text-h1: 56px;
+	--text-h1-min: 48px;
+	--text-h2: 34px;
+	--text-h3: 20px;
+	--text-body-lg: 18px;
+	--text-base: 16px;
+	--text-small: 14px;
+	--text-caption: 13px;
+	--leading-tight: 1.2;
+	--leading-snug: 1.4;
+	--leading-relaxed: 1.7;
+	--tracking-tight: -0.02em;
+	--tracking-normal: 0;
+}
+
+@layer base {
+	body {
+		color: var(--text-body);
+		background: var(--surface-page);
+		word-break: keep-all;
+	}
+	h1,
+	h2,
+	h3,
+	h4 {
+		color: var(--text-heading);
+		font-weight: var(--weight-bold);
+		line-height: var(--leading-tight);
+		letter-spacing: var(--tracking-tight);
+		text-wrap: balance;
+		margin: 0;
+	}
+	p {
+		margin: 0;
+	}
+}
+
+@keyframes marquee {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-33.333%);
+	}
+}
+@keyframes fadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(24px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.container {
+	max-width: 1152px;
+	margin: 0 auto;
+	padding: 0 24px;
+}
+.section {
+	padding: 96px 0;
+}
+.grid-4 {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 20px;
+}
+.grid-3 {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 24px;
+}
+.grid-2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 24px;
+}
+.contact-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 64px;
+	align-items: start;
+}
+.team-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 28px;
+}
+.member-single {
+	display: grid;
+	grid-template-columns: 1fr 1.2fr;
+}
+.nav-links {
+	display: flex;
+	gap: 6px;
+	align-items: stretch;
+}
+.mega-row {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 6px 16px;
+}
+.mega-link {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	padding: 12px 14px;
+	border-radius: var(--radius);
+	font-size: 15px;
+	font-weight: 500;
+	color: var(--text-body);
+	white-space: nowrap;
+	transition:
+		background 0.15s ease,
+		color 0.15s ease;
+}
+.mega-link:hover {
+	background: var(--surface-subtle);
+	color: var(--color-primary);
+}
+.mega-code {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--text-muted);
+}
+.menu-toggle {
+	display: none;
+}
+.consult-bar-inner {
+	display: flex;
+	align-items: center;
+	gap: 28px;
+}
+.consult-form {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex: 1;
+}
+.consult-desktop {
+	display: block;
+}
+.consult-mobile {
+	display: none;
+}
+
+@media (max-width: 960px) {
+	.section {
+		padding: 64px 0;
+	}
+	.grid-4 {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.grid-3 {
+		grid-template-columns: 1fr;
+	}
+	.grid-2 {
+		grid-template-columns: 1fr;
+		gap: 32px;
+	}
+	.contact-grid {
+		grid-template-columns: 1fr;
+		gap: 40px;
+	}
+	.team-grid {
+		grid-template-columns: 1fr;
+		gap: 20px;
+	}
+	.member-single {
+		grid-template-columns: 1fr;
+	}
+	.nav-links {
+		display: none;
+	}
+	.menu-toggle {
+		display: inline-flex;
+	}
+	.consult-bar-inner {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 14px;
+	}
+	.consult-form {
+		flex-wrap: wrap;
+	}
+	.consult-desktop {
+		display: none;
+	}
+	.consult-mobile {
+		display: flex;
+	}
+	.hide-mobile {
+		display: none;
+	}
+}
+
+@media (max-width: 560px) {
+	.grid-4 {
+		grid-template-columns: 1fr;
+	}
+	.consult-form {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+.drawer {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	pointer-events: none;
+}
+.drawer .scrim {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	border: none;
+	padding: 0;
+	appearance: none;
+	cursor: default;
+	background: rgba(20, 16, 13, 0.5);
+	opacity: 0;
+	transition: opacity 0.25s ease;
+}
+.drawer .panel {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: 280px;
+	max-width: 84vw;
+	background: #fff;
+	transform: translateX(100%);
+	transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+	box-shadow: -8px 0 30px rgba(34, 34, 34, 0.15);
+	padding: 24px;
+	overflow-y: auto;
+}
+.drawer.open {
+	pointer-events: auto;
+}
+.drawer.open .scrim {
+	opacity: 1;
+}
+.drawer.open .panel {
+	transform: translateX(0);
+}
+.lk {
+	cursor: pointer;
+}
+
+/* DS Card — hover lift을 JS state 대신 CSS로 처리(접근성/성능) */
+.ds-card {
+	background: var(--surface-card);
+	border: 1px solid var(--border-default);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow-xs);
+	transition:
+		box-shadow 0.2s ease,
+		transform 0.2s ease,
+		border-color 0.2s ease;
+}
+.ds-card.is-hover:hover {
+	box-shadow: var(--shadow-card-hover);
+	transform: translateY(-2px);
+}
+button.ds-card {
+	font: inherit;
+	color: inherit;
+	width: 100%;
+	text-align: left;
+	cursor: pointer;
+	appearance: none;
 }

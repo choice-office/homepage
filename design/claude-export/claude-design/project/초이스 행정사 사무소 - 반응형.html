@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>초이스 행정사 — 반응형 미리보기</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+  :root{
+    --primary:#6c5d4c; --primary-dark:#524636; --accent:#7c6346; --accent-soft:#e1d7c6;
+    --surface:#f5f3ef; --surface-alt:#ece7df; --border:#e2ddd3; --ink:#222; --muted:#888;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{font-family:"Noto Sans KR",system-ui,sans-serif;background:var(--surface-alt);color:var(--ink);word-break:keep-all;}
+  .top{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--border);padding:18px 28px;box-shadow:0 1px 3px rgba(34,34,34,.06);}
+  .top h1{font-size:18px;font-weight:700;letter-spacing:-.02em;margin:0;}
+  .top p{font-size:13px;color:var(--muted);margin:4px 0 0;}
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .tab{font-family:inherit;font-size:13.5px;font-weight:500;padding:8px 14px;border-radius:6px;border:1px solid var(--border);background:#fff;color:#3f3a34;cursor:pointer;transition:all .15s ease;}
+  .tab:hover{background:var(--surface);}
+  .tab.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .stage{display:flex;gap:40px;align-items:flex-start;justify-content:center;padding:40px 28px 80px;flex-wrap:wrap;}
+  .col{display:flex;flex-direction:column;align-items:center;gap:16px;}
+  .label{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);}
+  .label span{color:var(--muted);font-weight:500;letter-spacing:0;text-transform:none;margin-left:6px;}
+  /* desktop browser frame */
+  .browser{width:980px;max-width:92vw;border-radius:12px;overflow:hidden;box-shadow:0 12px 40px rgba(82,70,54,.18);border:1px solid var(--border);background:#fff;}
+  .bbar{height:38px;background:var(--surface);display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid var(--border);}
+  .dot{width:11px;height:11px;border-radius:50%;}
+  .bwrap{position:relative;width:100%;overflow:hidden;background:#fff;}
+  .bwrap iframe{border:0;}
+  /* phone frame */
+  .phone{width:395px;background:#241d16;border-radius:42px;padding:12px;box-shadow:0 14px 44px rgba(82,70,54,.28);}
+  .pscreen{position:relative;width:371px;height:760px;border-radius:32px;overflow:hidden;background:#fff;}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;background:#241d16;border-radius:0 0 16px 16px;z-index:5;}
+  .pscreen iframe{border:0;width:375px;height:769px;}
+  @media (max-width:1100px){ .browser{width:100%;} }
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#6c5d4c">
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="800" fill="#6c5d4c"/><rect x="300" y="250" width="380" height="300" rx="16" fill="#fff" opacity=".9"/><rect x="740" y="300" width="110" height="200" rx="20" fill="#e1d7c6"/><text x="600" y="640" font-family="sans-serif" font-size="60" font-weight="700" fill="#fff" text-anchor="middle">초이스</text></svg>
+</template>
+
+<div class="top">
+  <h1>초이스 행정사 사무소 — 반응형 미리보기</h1>
+  <p>같은 페이지를 데스크탑(980px)과 모바일(375px)로 나란히 비교합니다. 위 탭으로 페이지를 전환하세요.</p>
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<div class="stage">
+  <div class="col">
+    <div class="label">Desktop <span>1440 → 축소</span></div>
+    <div class="browser">
+      <div class="bbar"><span class="dot" style="background:#e6837b"></span><span class="dot" style="background:#e8c071"></span><span class="dot" style="background:#7fb98a"></span></div>
+      <div class="bwrap" id="bwrap">
+        <iframe id="desk" src="초이스%20행정사%20사무소.html" width="1440" height="900"></iframe>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="label">Mobile <span>375px</span></div>
+    <div class="phone">
+      <div class="pscreen">
+        <div class="notch"></div>
+        <iframe id="mob" src="초이스%20행정사%20사무소.html"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ROUTES = [
+    ["홈","/"],["인사말","/greeting"],["구성원","/profile"],["자격·인증","/credentials"],
+    ["오시는 길","/location"],["업무분야","/services"],["업무분야 상세","/service/f6"],
+    ["의뢰인 후기","/reviews"],["자주 묻는 질문","/faq"],["블로그","/blog"],["문의하기","/contact"]
+  ];
+  const desk = document.getElementById('desk');
+  const mob = document.getElementById('mob');
+  const tabs = document.getElementById('tabs');
+  let _current = "/";
+
+  function applyHash(h){
+    try { desk.contentWindow.location.hash = `#${h}`; } catch(_e){ desk.src = `초이스%20행정사%20사무소.html#${h}`; }
+    try { mob.contentWindow.location.hash = `#${h}`; } catch(_e){ mob.src = `초이스%20행정사%20사무소.html#${h}`; }
+  }
+  function setRoute(h, btn){
+    _current = h;
+    [...tabs.children].forEach(b=>b.classList.toggle('active', b===btn));
+    applyHash(h);
+    // scroll both iframes to top
+    setTimeout(()=>{ try{desk.contentWindow.scrollTo(0,0);}catch(_e){} try{mob.contentWindow.scrollTo(0,0);}catch(_e){} }, 120);
+  }
+  ROUTES.forEach(([label,h],i)=>{
+    const b=document.createElement('button');
+    b.className=`tab${i===0?' active':''}`;
+    b.textContent=label;
+    b.onclick=()=>setRoute(h,b);
+    tabs.appendChild(b);
+  });
+
+  // scale desktop iframe (1440 wide) into the browser frame
+  function scaleDesk(){
+    const wrap=document.getElementById('bwrap');
+    const w=wrap.clientWidth;
+    const scale=w/1440;
+    desk.style.transformOrigin='top left';
+    desk.style.transform=`scale(${scale})`;
+    wrap.style.height=`${900*scale}px`;
+  }
+  window.addEventListener('resize', scaleDesk);
+  // initial scale after layout settles
+  setTimeout(scaleDesk, 100);
+  window.addEventListener('load', ()=>setTimeout(scaleDesk, 200));
+</script>
+</body>
+</html>

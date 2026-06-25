@@ -57,12 +57,12 @@ const securityHeaders = [
 			"default-src 'self'",
 			// 스크립트: self + GA + Vercel Analytics + 카카오맵
 			"script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://va.vercel-scripts.com https://t1.daumcdn.net",
-			// 스타일: self + inline (Tailwind, shadcn)
-			"style-src 'self' 'unsafe-inline'",
+			// 스타일: self + inline (Tailwind, shadcn) + Pretendard 폰트 CSS(jsdelivr)
+			"style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
 			// 이미지: self + 모든 https + data URI (next/image 최적화)
 			"img-src 'self' data: blob: https:",
-			// 폰트: self (next/font가 빌드 시 자체 호스팅)
-			"font-src 'self'",
+			// 폰트: self + Pretendard woff2(jsdelivr)
+			"font-src 'self' https://cdn.jsdelivr.net",
 			// 연결: self + Supabase + GA + Vercel Analytics
 			"connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://va.vercel-scripts.com",
 			// iframe: YouTube + Google Maps 임베드(오시는 길)

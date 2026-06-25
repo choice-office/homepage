@@ -1,22 +1,15 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_KR } from "next/font/google";
-import { FloatingCta } from "@/components/common/floating-cta";
 import { GoogleAnalytics } from "@/components/common/google-analytics";
-import { Footer } from "@/components/layout/footer";
-import { Header } from "@/components/layout/header";
 import { Providers } from "@/components/providers";
+import { SiteHeader } from "@/components/site/header";
+import { ConsultBar, FloatRail, Footer } from "@/components/site/sections";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
-// 한/영 동시 지원. 영문 전용 프로젝트면 Geist로 교체
-const fontSans = Noto_Sans_KR({
-	variable: "--font-sans",
-	subsets: ["latin"],
-	weight: ["400", "500", "700"],
-	display: "swap",
-	fallback: ["system-ui", "sans-serif"],
-});
+// 폰트: Pretendard (윈도우 렌더링 우수, 한글 웹 표준). CDN 로드 + globals.css 의 --font-sans 폴백.
+const PRETENDARD_CSS =
+	"https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css";
 
 export const viewport: Viewport = {
 	width: "device-width",
@@ -74,24 +67,22 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html
-			lang={siteConfig.locale}
-			className={`${fontSans.variable} h-full antialiased`}
-			suppressHydrationWarning
-		>
+		<html lang={siteConfig.locale} className="h-full antialiased" suppressHydrationWarning>
 			<body className="flex min-h-full flex-col">
+				<link rel="stylesheet" href={PRETENDARD_CSS} precedence="default" />
 				<script
 					type="application/ld+json"
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 				/>
 				<Providers>
-					<Header />
+					<SiteHeader />
 					<main id="main-content" className="flex-1">
 						{children}
 					</main>
 					<Footer />
-					<FloatingCta />
+					<FloatRail />
+					<ConsultBar />
 				</Providers>
 				{process.env.VERCEL && <Analytics />}
 				{process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
