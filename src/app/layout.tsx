@@ -1,4 +1,5 @@
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import { GoogleAnalytics } from "@/components/common/google-analytics";
@@ -96,6 +97,7 @@ export default function RootLayout({
 					<ConsultBar />
 				</Providers>
 				{process.env.VERCEL && <Analytics />}
+				{process.env.VERCEL && <SpeedInsights />}
 				{process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
 			</body>
 		</html>
