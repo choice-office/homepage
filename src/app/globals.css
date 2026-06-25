@@ -762,11 +762,8 @@
 	border-radius: 8px;
 	transition: transform 0.18s ease;
 }
-.brand-kakao {
-	background: #fee500;
-}
-.brand-youtube {
-	background: #ff0000;
+.brand-map {
+	background: #03c75a;
 }
 .float-rail-cell:hover .brand-chip {
 	transform: scale(1.08);

@@ -88,6 +88,13 @@ export const CHANNELS = [
 		note: null as string | null,
 	},
 	{
+		icon: "phone-call",
+		label: "긴급 상담 (휴대폰)",
+		value: "010-8259-9890",
+		href: "tel:01082599890",
+		note: "외부 출장 중 급한 문의 시",
+	},
+	{
 		icon: "message-circle",
 		label: "카카오 채널",
 		value: "koreavisa8",

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { Fragment, useEffect, useState } from "react";
+import { type FormEvent, Fragment, useEffect, useState } from "react";
+import { submitContact } from "@/app/actions/contact";
 import {
 	Select,
 	SelectContent,
@@ -982,6 +983,24 @@ const CONSULT_FIELDS = [
 export const ContactForm = () => {
 	const [sent, setSent] = useState(false);
 	const [field, setField] = useState("");
+	const [pending, setPending] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		setError(null);
+		setPending(true);
+		const formData = new FormData(e.currentTarget);
+		formData.set("consultField", field);
+		const result = await submitContact(null, formData);
+		setPending(false);
+		if (result.success) {
+			setSent(true);
+		} else {
+			setError(result.error ?? "접수 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+		}
+	};
+
 	return (
 		<Card hover={false} padding="32px">
 			{sent ? (
@@ -1009,32 +1028,27 @@ export const ContactForm = () => {
 					</Button>
 				</div>
 			) : (
-				<form
-					onSubmit={(e) => {
-						e.preventDefault();
-						setSent(true);
-					}}
-				>
+				<form onSubmit={handleSubmit}>
 					<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
 						<div>
 							<Label htmlFor="cn">성함</Label>
-							<Input id="cn" placeholder="홍길동" required />
+							<Input id="cn" name="name" placeholder="홍길동" required />
 						</div>
 						<div>
 							<Label htmlFor="cp">연락처</Label>
-							<Input id="cp" placeholder="010-0000-0000" required />
+							<Input id="cp" name="phone" placeholder="010-0000-0000" required />
 						</div>
 						<div>
 							<Label htmlFor="ce">이메일</Label>
-							<Input id="ce" type="email" placeholder="you@example.com" required />
+							<Input id="ce" name="email" type="email" placeholder="you@example.com" required />
 						</div>
 						<div>
 							<Label htmlFor="cnat">국적</Label>
-							<Input id="cnat" placeholder="예: 미국 · 中国" required />
+							<Input id="cnat" name="nationality" placeholder="예: 미국 · 中国" required />
 						</div>
 						<div>
 							<Label htmlFor="cv">현재 체류자격</Label>
-							<Input id="cv" placeholder="예: F-4, E-6, 없음" />
+							<Input id="cv" name="currentVisa" placeholder="예: F-4, E-6, 없음" />
 						</div>
 						<div>
 							<Label htmlFor="cf">상담 희망 분야</Label>
@@ -1056,7 +1070,12 @@ export const ContactForm = () => {
 						</div>
 						<div style={{ gridColumn: "1 / -1" }}>
 							<Label htmlFor="cm">문의 내용</Label>
-							<Textarea id="cm" rows={4} placeholder="상담하고 싶은 내용을 간단히 적어 주세요." />
+							<Textarea
+								id="cm"
+								name="message"
+								rows={4}
+								placeholder="상담하고 싶은 내용을 간단히 적어 주세요."
+							/>
 						</div>
 					</div>
 					<label
@@ -1071,6 +1090,7 @@ export const ContactForm = () => {
 					>
 						<input
 							type="checkbox"
+							name="privacyConsent"
 							required
 							style={{ width: 16, height: 16, accentColor: "var(--color-primary)" }}
 						/>
@@ -1079,13 +1099,26 @@ export const ContactForm = () => {
 							동의합니다.
 						</span>
 					</label>
+					{error ? (
+						<p
+							style={{
+								marginTop: 14,
+								fontSize: 14,
+								color: "var(--color-danger, #d92d20)",
+								lineHeight: 1.6,
+							}}
+						>
+							{error}
+						</p>
+					) : null}
 					<Button
 						type="submit"
 						variant="primary"
 						size="lg"
+						disabled={pending}
 						style={{ width: "100%", marginTop: 20 }}
 					>
-						무료 상담 신청
+						{pending ? "접수 중…" : "무료 상담 신청"}
 					</Button>
 				</form>
 			)}
@@ -1470,15 +1503,7 @@ export const FloatRail = () => {
 				</span>
 			</a>
 			<a className="float-rail-cell" href={kakao} target="_blank" rel="noopener noreferrer">
-				<span className="brand-chip brand-kakao" aria-hidden="true">
-					<svg viewBox="0 0 24 24" width="15" height="15" role="img" aria-label="카카오톡">
-						<title>카카오톡</title>
-						<path
-							fill="#3c1e1e"
-							d="M12 4.2C7 4.2 3 7.4 3 11.3c0 2.5 1.7 4.7 4.2 5.9-.2.6-.6 2.3-.7 2.6-.1.4.1.4.3.3.3-.2 2.6-1.8 3.3-2.3.6.1 1.3.1 1.9.1 5 0 9-3.2 9-7.1S17 4.2 12 4.2z"
-						/>
-					</svg>
-				</span>
+				<Image src="/icons/kakao.svg" alt="" width={27} height={27} unoptimized />
 				<span>카톡</span>
 			</a>
 			<a
@@ -1487,16 +1512,13 @@ export const FloatRail = () => {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				<span className="brand-chip brand-youtube" aria-hidden="true">
-					<svg viewBox="0 0 24 24" width="17" height="17" role="img" aria-label="유튜브">
-						<title>유튜브</title>
-						<path fill="#fff" d="M9.8 8.4v7.2l6-3.6z" />
-					</svg>
-				</span>
+				<Image src="/icons/youtube.svg" alt="" width={28} height={28} unoptimized />
 				<span>유튜브</span>
 			</a>
 			<button type="button" className="float-rail-cell" onClick={() => go("location")}>
-				<Icon n="map-pin" style={{ width: 22, height: 22 }} />
+				<span className="brand-chip brand-map" aria-hidden="true">
+					<Icon n="map-pin" style={{ width: 16, height: 16, color: "#fff" }} />
+				</span>
 				<span>오시는 길</span>
 			</button>
 			<button
