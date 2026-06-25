@@ -1,12 +1,12 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NAV, type NavItem, SERVICES } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 import { Button } from "./ds";
 import { Icon } from "./icon";
-import { pathToRoute, useGo } from "./use-go";
+import { pathToRoute, useGo, usePrefetch } from "./use-go";
 
 const SVC_SHORT: Record<string, string> = {
 	short: "단기초청",
@@ -42,10 +42,13 @@ const hasMega = (item: NavItem) => item.route === "services" || !!item.children?
 
 export const SiteHeader = () => {
 	const go = useGo();
+	const prefetch = usePrefetch();
 	const pathname = usePathname();
 	const route = pathToRoute(pathname);
 	const [scrolled, setScrolled] = useState(false);
 	const [drawer, setDrawer] = useState(false);
+	const [openMega, setOpenMega] = useState<string | null>(null);
+	const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	useEffect(() => {
 		const on = () => setScrolled(window.scrollY > 24);
@@ -54,7 +57,49 @@ export const SiteHeader = () => {
 		return () => window.removeEventListener("scroll", on);
 	}, []);
 
+	// Esc 로 닫기
+	useEffect(() => {
+		const onKey = (e: KeyboardEvent) => {
+			if (e.key === "Escape") setOpenMega(null);
+		};
+		window.addEventListener("keydown", onKey);
+		return () => window.removeEventListener("keydown", onKey);
+	}, []);
+
+	// 언마운트 시 타이머 정리
+	useEffect(
+		() => () => {
+			if (closeTimer.current) clearTimeout(closeTimer.current);
+		},
+		[],
+	);
+
 	const atTop = route === "home" && !scrolled;
+
+	const clearCloseTimer = () => {
+		if (closeTimer.current) {
+			clearTimeout(closeTimer.current);
+			closeTimer.current = null;
+		}
+	};
+	// 즉시 열기(항목 간 이동은 지연 없음)
+	const openNow = (label: string | null) => {
+		clearCloseTimer();
+		setOpenMega(label);
+	};
+	// 영역을 벗어나면 약간의 지연 후 닫기 → 대각선 이동 중 "스쳐서 닫힘" 방지
+	const scheduleClose = () => {
+		clearCloseTimer();
+		closeTimer.current = setTimeout(() => setOpenMega(null), 150);
+	};
+
+	// 클릭 시: 이동 + 메뉴 닫기 + 포커스 박스 제거(blur)
+	const navigate = (r: string, p?: string, el?: HTMLElement | null) => {
+		clearCloseTimer();
+		go(r, p);
+		setOpenMega(null);
+		el?.blur();
+	};
 
 	return (
 		<>
@@ -64,7 +109,7 @@ export const SiteHeader = () => {
 						초이스 행정사 사무소
 					</button>
 
-					<nav className="nav-links" aria-label="메인 메뉴">
+					<nav className="nav-links" aria-label="메인 메뉴" onMouseLeave={scheduleClose}>
 						{NAV.map((n) => {
 							const mega = hasMega(n);
 							const childRoutes = mega ? megaChildren(n).map((c) => c.route) : [];
@@ -72,18 +117,33 @@ export const SiteHeader = () => {
 								route === n.route ||
 								(n.route === "services" && route === "service") ||
 								childRoutes.includes(route);
+							const panelId = `mega-${n.route}`;
 							return (
-								<div className={cn("nav-item", mega && "has-mega")} key={n.label}>
+								<div
+									className={cn(
+										"nav-item",
+										mega && "has-mega",
+										mega && openMega === n.label && "is-open",
+									)}
+									key={n.label}
+								>
 									<button
 										type="button"
 										className={cn("lk nav-link", active && "is-active")}
-										aria-haspopup={mega || undefined}
-										onClick={() => go(n.route)}
+										aria-controls={mega ? panelId : undefined}
+										aria-expanded={mega ? openMega === n.label : undefined}
+										aria-current={active ? "page" : undefined}
+										onClick={(e) => navigate(n.route, undefined, e.currentTarget)}
+										onMouseEnter={() => {
+											openNow(mega ? n.label : null);
+											prefetch(n.route);
+										}}
+										onFocus={() => openNow(mega ? n.label : null)}
 									>
 										{n.label}
 									</button>
 									{mega && (
-										<div className="mega-panel">
+										<div className="mega-panel" id={panelId}>
 											<div className="mega-inner container">
 												<div className="mega-eyebrow">{n.label}</div>
 												<div className="mega-row">
@@ -92,7 +152,11 @@ export const SiteHeader = () => {
 															key={c.label}
 															type="button"
 															className="lk mega-link"
-															onClick={() => go(c.route, c.param)}
+															onClick={(e) => navigate(c.route, c.param, e.currentTarget)}
+															onMouseEnter={() => {
+																clearCloseTimer();
+																prefetch(c.route, c.param);
+															}}
 														>
 															<span>{c.label}</span>
 															{c.code && <span className="mega-code">{c.code}</span>}

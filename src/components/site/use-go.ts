@@ -11,6 +11,14 @@ export const useGo = () => {
 	};
 };
 
+/** hover/focus 시 다음 라우트를 미리 로드 → 클릭 시 즉시 이동 체감 */
+export const usePrefetch = () => {
+	const router = useRouter();
+	return (route: string, param?: string | null) => {
+		router.prefetch(routePath(route, param));
+	};
+};
+
 export const pathToRoute = (pathname: string): string => {
 	if (pathname === "/") return "home";
 	const seg = pathname.split("/").filter(Boolean);

@@ -510,10 +510,10 @@
 	left: 0;
 	right: 0;
 	z-index: 100;
-	background: rgba(255, 255, 255, 0.97);
+	background: rgba(255, 255, 255, 0.98);
 	border-bottom: 1px solid var(--border-default);
 	box-shadow: var(--shadow-sm);
-	backdrop-filter: blur(8px);
+	/* backdrop-filter는 자손 position:fixed(메가패널)의 기준을 헤더로 만들어 위치가 어긋나므로 사용하지 않음 */
 	transition:
 		background-color 0.3s ease,
 		border-color 0.3s ease,
@@ -566,7 +566,7 @@
 	font-size: 15px;
 	font-weight: 500;
 	color: var(--text-body);
-	transition: color 0.18s ease;
+	transition: color 0.12s ease;
 }
 .nav-link:hover {
 	color: var(--color-primary-dark);
@@ -588,21 +588,21 @@
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
-	transform: translateY(-10px);
+	/* 닫힘 상태는 아래쪽(+)으로만 이동 → 패널이 top:80px 위(헤더 영역)로 절대 올라가지 않음 */
+	transform: translateY(6px);
 	transition:
-		opacity 0.26s ease,
-		transform 0.26s ease,
-		visibility 0s linear 0.26s;
+		opacity 0.22s ease,
+		transform 0.22s ease,
+		visibility 0s linear 0.22s;
 }
-.nav-item:hover > .mega-panel,
-.nav-item:focus-within > .mega-panel {
+.nav-item.is-open > .mega-panel {
 	opacity: 1;
 	visibility: visible;
 	pointer-events: auto;
 	transform: none;
 	transition:
-		opacity 0.26s ease,
-		transform 0.26s ease,
+		opacity 0.22s ease,
+		transform 0.22s ease,
 		visibility 0s;
 }
 .mega-inner {
@@ -616,6 +616,12 @@
 	text-transform: uppercase;
 	color: var(--color-accent);
 	margin-bottom: 18px;
+	padding-left: 14px; /* mega-link 좌측 패딩과 정렬 */
+}
+
+/* 메뉴가 열리면 헤더 하단선은 숨기고 패널 상단선만 보이게 → 경계선 한 줄(두께 겹침 방지) */
+.site-header:has(.nav-item.is-open) {
+	border-bottom-color: transparent;
 }
 
 /* 홈 최상단(히어로 위) 투명 헤더 */
@@ -631,26 +637,30 @@
 	color: #fff;
 }
 /* 메가 메뉴가 열리면 투명 헤더도 솔리드로(패널과 자연스럽게 연결) */
-.site-header.at-top:has(.nav-item.has-mega:hover),
-.site-header.at-top:has(.nav-item.has-mega:focus-within) {
+.site-header.at-top:has(.nav-item.is-open) {
 	background: rgba(255, 255, 255, 0.99);
-	border-bottom-color: var(--border-default);
+	border-bottom-color: transparent;
 	box-shadow: var(--shadow-sm);
-	backdrop-filter: blur(8px);
 }
-.site-header.at-top:has(.nav-item.has-mega:hover) .nav-link,
-.site-header.at-top:has(.nav-item.has-mega:hover) .site-burger,
-.site-header.at-top:has(.nav-item.has-mega:focus-within) .nav-link,
-.site-header.at-top:has(.nav-item.has-mega:focus-within) .site-burger {
+.site-header.at-top:has(.nav-item.is-open) .nav-link,
+.site-header.at-top:has(.nav-item.is-open) .site-burger {
 	color: var(--text-body);
 }
-.site-header.at-top:has(.nav-item.has-mega:hover) .site-logo,
-.site-header.at-top:has(.nav-item.has-mega:focus-within) .site-logo {
+.site-header.at-top:has(.nav-item.is-open) .site-logo {
 	color: var(--text-heading);
 }
-.site-header.at-top:has(.nav-item.has-mega:hover) .nav-link.is-active,
-.site-header.at-top:has(.nav-item.has-mega:focus-within) .nav-link.is-active {
+.site-header.at-top:has(.nav-item.is-open) .nav-link.is-active {
 	color: var(--color-primary);
+}
+
+/* 포커스 박스: 마우스 클릭 시 박스 제거(헤더 선과 겹침 방지), 키보드만 깔끔한 링 */
+.nav-link:focus:not(:focus-visible) {
+	outline: none;
+}
+.nav-link:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: -8px;
+	border-radius: 10px;
 }
 
 /* ── 우측 플로팅 퀵 상담 레일 (파운더스식 적층 패널) ──────────────────────────── */
@@ -925,6 +935,24 @@
 }
 .lk {
 	cursor: pointer;
+}
+
+/* ── 라우트 전환 페이지 페이드 (template.tsx 재마운트 시 재생) ──────────────────── */
+@keyframes page-enter {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+.page-enter {
+	animation: page-enter 0.3s ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+	.page-enter {
+		animation: none;
+	}
 }
 
 /* DS Card — hover lift을 JS state 대신 CSS로 처리(접근성/성능) */
