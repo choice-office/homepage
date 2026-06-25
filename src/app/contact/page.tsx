@@ -27,22 +27,15 @@ export default function ContactPage() {
 						<PageSectionTitle title="연락처" />
 						<ContactInfo />
 						<div style={{ marginTop: 24 }}>
-							<MapBlock height={240} />
+							<MapBlock height={400} />
 						</div>
-						<div
-							style={{
-								marginTop: 20,
-								padding: 20,
-								background: "var(--surface-subtle)",
-								borderRadius: "var(--radius)",
-								border: "1px solid var(--border-default)",
-								fontSize: 14,
-								lineHeight: 1.8,
-								color: "var(--text-muted)",
-							}}
-						>
-							운영 시간 평일 09:00 – 18:00 · 외부 출장이 많아 내방 상담은 반드시 사전 연락
-							부탁드립니다.
+						<div style={{ marginTop: 16, fontSize: 13, lineHeight: 1.7 }}>
+							<p style={{ fontWeight: 600, color: "var(--text-body)" }}>
+								운영 시간 · 평일 09:00 – 18:00
+							</p>
+							<p style={{ marginTop: 4, color: "var(--text-muted)" }}>
+								외부 출장이 잦아, 내방 상담은 사전 연락 부탁드립니다.
+							</p>
 						</div>
 					</div>
 					<div>

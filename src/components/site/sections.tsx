@@ -1059,7 +1059,7 @@ export const ContactForm = () => {
 								>
 									<SelectValue placeholder="분야를 선택해 주세요" />
 								</SelectTrigger>
-								<SelectContent>
+								<SelectContent align="start" alignItemWithTrigger={false}>
 									{CONSULT_FIELDS.map((f) => (
 										<SelectItem key={f.v} value={f.v}>
 											{f.label}
@@ -1210,6 +1210,10 @@ export const ContactInfo = () => (
 	</div>
 );
 
+// 실제 지도(구글 맵 임베드 — API 키 불필요). CSP frame-src 에 google.com 허용됨.
+const MAP_QUERY = "서울파이낸스센터 서울특별시 중구 세종대로 136";
+const MAP_EMBED_SRC = `https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&z=16&hl=ko&output=embed`;
+
 export const MapBlock = ({ height = 320 }: { height?: number }) => (
 	<div
 		style={{
@@ -1217,41 +1221,161 @@ export const MapBlock = ({ height = 320 }: { height?: number }) => (
 			borderRadius: "var(--radius)",
 			border: "1px solid var(--border-default)",
 			background: "var(--surface-sunken)",
-			position: "relative",
 			overflow: "hidden",
 		}}
 	>
-		<div
-			style={{
-				position: "absolute",
-				inset: 0,
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				justifyContent: "center",
-				gap: 10,
-				color: "var(--text-muted)",
-			}}
-		>
-			<Icon n="map" style={{ width: 36, height: 36, color: "var(--color-primary-light)" }} />
-			<span style={{ fontSize: 14 }}>서울파이낸스센터 (광화문 인근) · 지도</span>
+		<iframe
+			src={MAP_EMBED_SRC}
+			title="서울파이낸스센터 위치 지도"
+			loading="lazy"
+			referrerPolicy="no-referrer-when-downgrade"
+			style={{ border: 0, width: "100%", height: "100%", display: "block" }}
+		/>
+	</div>
+);
+
+/* 오시는 길 — 프리미엄·미니멀 레이아웃 (주소 우선 + 구분선 행 + 큰 지도) */
+const LOCATION_ROWS: { icon: string; label: string; value: string; href: string | null }[] = [
+	{ icon: "phone", label: "전화 상담", value: "02-6959-9886", href: "tel:0269599886" },
+	{
+		icon: "phone-call",
+		label: "긴급 상담",
+		value: "010-8259-9890",
+		href: "tel:01082599890",
+	},
+	{
+		icon: "mail",
+		label: "이메일",
+		value: "choice@kvisa1345.com",
+		href: "mailto:choice@kvisa1345.com",
+	},
+	{
+		icon: "message-circle",
+		label: "카카오 채널",
+		value: "koreavisa8",
+		href: "https://pf.kakao.com/",
+	},
+	{ icon: "clock", label: "상담 시간", value: "평일 09:00 – 18:00", href: null },
+];
+
+export const LocationDetail = () => (
+	<div className="contact-grid container">
+		<div>
+			<div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+				<Icon
+					n="map-pin"
+					style={{
+						width: 26,
+						height: 26,
+						color: "var(--color-primary)",
+						flex: "0 0 auto",
+						marginTop: 4,
+					}}
+				/>
+				<div>
+					<div
+						style={{
+							fontSize: 12,
+							fontWeight: 600,
+							letterSpacing: ".14em",
+							textTransform: "uppercase",
+							color: "var(--text-muted)",
+						}}
+					>
+						Address
+					</div>
+					<p
+						style={{
+							marginTop: 8,
+							fontSize: 22,
+							fontWeight: 700,
+							lineHeight: 1.5,
+							color: "var(--text-heading)",
+						}}
+					>
+						서울특별시 중구 세종대로 136
+						<br />
+						서울파이낸스센터 3층
+					</p>
+					<p style={{ marginTop: 6, fontSize: 14, color: "var(--text-muted)" }}>
+						지하철 5호선 광화문역 인근
+					</p>
+				</div>
+			</div>
+
+			<div style={{ marginTop: 28, borderTop: "1px solid var(--border-default)" }}>
+				{LOCATION_ROWS.map((r) => {
+					const body = (
+						<>
+							<span
+								style={{
+									display: "inline-flex",
+									alignItems: "center",
+									gap: 10,
+									minWidth: 124,
+									flex: "0 0 auto",
+									color: "var(--text-muted)",
+									fontSize: 14,
+								}}
+							>
+								<Icon n={r.icon} style={{ width: 18, height: 18, color: "var(--color-primary)" }} />
+								{r.label}
+							</span>
+							<span style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}>
+								{r.value}
+							</span>
+						</>
+					);
+					const rowStyle = {
+						display: "flex",
+						alignItems: "center",
+						gap: 16,
+						padding: "16px 0",
+						borderBottom: "1px solid var(--border-default)",
+					} as const;
+					return r.href ? (
+						<a
+							key={r.label}
+							href={r.href}
+							target={r.href.startsWith("http") ? "_blank" : undefined}
+							rel="noopener noreferrer"
+							style={{ ...rowStyle, color: "var(--text-body)" }}
+						>
+							{body}
+						</a>
+					) : (
+						<div key={r.label} style={rowStyle}>
+							{body}
+						</div>
+					);
+				})}
+			</div>
+
 			<a
 				className="lk"
 				href="https://map.naver.com/p/search/서울파이낸스센터"
 				target="_blank"
 				rel="noopener noreferrer"
 				style={{
-					fontSize: 14,
-					fontWeight: 600,
-					color: "var(--color-primary)",
+					marginTop: 20,
 					display: "inline-flex",
 					alignItems: "center",
 					gap: 6,
+					fontSize: 14,
+					fontWeight: 600,
+					color: "var(--color-primary)",
 				}}
 			>
-				지도 앱에서 열기 <Icon n="external-link" style={{ width: 14, height: 14 }} />
+				지도 앱에서 길찾기 <Icon n="external-link" style={{ width: 14, height: 14 }} />
 			</a>
+
+			<p style={{ marginTop: 18, fontSize: 13, lineHeight: 1.7, color: "var(--text-muted)" }}>
+				외부 출장이 많아 내방 상담은 반드시 사전 연락 부탁드립니다.
+				<br />
+				상담 언어 한국어 · English · 中文(WeChat)
+			</p>
 		</div>
+		<MapBlock height={520} />
 	</div>
 );
 
@@ -1344,6 +1468,7 @@ export const FAQ_ = ({
 export const ConsultBar = () => {
 	const go = useGo();
 	const [visible, setVisible] = useState(false);
+	const [svc, setSvc] = useState("");
 	useEffect(() => {
 		const on = () => setVisible(window.scrollY > 360);
 		window.addEventListener("scroll", on, { passive: true });
@@ -1370,7 +1495,7 @@ export const ConsultBar = () => {
 					left: 0,
 					right: 0,
 					bottom: 0,
-					zIndex: 90,
+					zIndex: 40,
 					background: "var(--color-primary-dark)",
 					color: "#fff",
 					transform: visible ? "translateY(0)" : "translateY(100%)",
@@ -1402,24 +1527,29 @@ export const ConsultBar = () => {
 						}}
 					>
 						<span style={{ fontWeight: 600, whiteSpace: "nowrap" }}>신속 상담 신청</span>
-						<select
-							style={{
-								height: 44,
-								padding: "0 14px",
-								borderRadius: "var(--radius)",
-								border: "none",
-								fontFamily: "var(--font-sans)",
-								fontSize: 15,
-								color: "var(--text-body)",
-								flex: "0 1 180px",
-							}}
-						>
-							<option>상담분야 선택</option>
-							{SERVICES.map((s) => (
-								<option key={s.id}>{s.title}</option>
-							))}
-							<option>기타</option>
-						</select>
+						<Select value={svc} onValueChange={(v) => setSvc(v ?? "")}>
+							<SelectTrigger
+								className="border-none"
+								style={{
+									height: 44,
+									flex: "0 1 180px",
+									background: "#fff",
+									borderRadius: "var(--radius)",
+									fontSize: 15,
+									color: "var(--text-body)",
+								}}
+							>
+								<SelectValue placeholder="상담분야 선택" />
+							</SelectTrigger>
+							<SelectContent align="start" alignItemWithTrigger={false}>
+								{SERVICES.map((s) => (
+									<SelectItem key={s.id} value={s.id}>
+										{s.title}
+									</SelectItem>
+								))}
+								<SelectItem value="etc">기타</SelectItem>
+							</SelectContent>
+						</Select>
 						<input
 							placeholder="연락처"
 							style={{
@@ -1427,8 +1557,10 @@ export const ConsultBar = () => {
 								padding: "0 14px",
 								borderRadius: "var(--radius)",
 								border: "none",
+								background: "#fff",
 								fontFamily: "var(--font-sans)",
 								fontSize: 15,
+								color: "var(--text-body)",
 								flex: "1 1 140px",
 								minWidth: 0,
 							}}
@@ -1447,7 +1579,7 @@ export const ConsultBar = () => {
 					left: 0,
 					right: 0,
 					bottom: 0,
-					zIndex: 90,
+					zIndex: 40,
 					background: "var(--color-primary-dark)",
 					boxShadow: "0 -4px 20px rgba(34,34,34,.22)",
 					paddingBottom: "env(safe-area-inset-bottom, 0px)",
@@ -1514,6 +1646,10 @@ export const FloatRail = () => {
 			>
 				<Image src="/icons/youtube.svg" alt="" width={28} height={28} unoptimized />
 				<span>유튜브</span>
+			</a>
+			<a className="float-rail-cell" href={NAVER_BLOG} target="_blank" rel="noopener noreferrer">
+				<Image src="/icons/blog.svg" alt="" width={27} height={27} unoptimized />
+				<span>블로그</span>
 			</a>
 			<button type="button" className="float-rail-cell" onClick={() => go("location")}>
 				<span className="brand-chip brand-map" aria-hidden="true">
