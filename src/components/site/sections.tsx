@@ -3,6 +3,13 @@
 import Image from "next/image";
 import { Fragment, useEffect, useState } from "react";
 import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
 	BLOG,
 	CHANNELS,
 	FAQ,
@@ -18,7 +25,7 @@ import {
 	VIDEOS,
 	YOUTUBE_CHANNEL,
 } from "@/lib/site-data";
-import { Badge, Button, Card, CardBody, CardTitle, Input, Label, Select, Textarea } from "./ds";
+import { Badge, Button, Card, CardBody, CardTitle, Input, Label, Textarea } from "./ds";
 import { Icon } from "./icon";
 import { useGo } from "./use-go";
 
@@ -40,6 +47,7 @@ export const SectionHead = ({
 	light?: boolean;
 }) => (
 	<div
+		data-reveal="blur"
 		style={{
 			textAlign: align,
 			maxWidth: align === "center" ? "660px" : "none",
@@ -195,7 +203,7 @@ export const PageHero = ({
 };
 
 export const PageSectionTitle = ({ title, sub }: { title: string; sub?: string }) => (
-	<div style={{ marginBottom: 40 }}>
+	<div data-reveal style={{ marginBottom: 40 }}>
 		<h2 style={{ fontSize: "clamp(24px,3.4vw,32px)" }}>{title}</h2>
 		<span
 			style={{
@@ -383,7 +391,7 @@ export const StrengthsRow = () => (
 				title="초이스 행정사를 선택하는 이유"
 				sub="실력에 책임감을 더한, 출입국·비자 전문 행정사 사무소입니다."
 			/>
-			<div className="grid-4" style={{ marginTop: 48 }}>
+			<div data-stagger="scale" className="grid-4" style={{ marginTop: 48 }}>
 				{STRENGTHS.map((s) => (
 					<Card key={s.title}>
 						<div
@@ -424,7 +432,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 						sub="출입국·비자 전 분야를 시험 출신 행정사가 직접 다룹니다. 분야를 선택하면 자세히 안내해 드립니다."
 					/>
 				)}
-				<div className="grid-4" style={{ marginTop: heading ? 48 : 0 }}>
+				<div data-stagger className="grid-4" style={{ marginTop: heading ? 48 : 0 }}>
 					{SERVICES.map((s) => (
 						<Card
 							key={s.id}
@@ -489,7 +497,7 @@ export const Process = () => (
 				title="진행 절차"
 				sub="상담부터 결과 안내까지, 모든 과정을 행정사가 직접 챙깁니다."
 			/>
-			<div className="grid-4" style={{ marginTop: 48 }}>
+			<div data-stagger="tilt" className="grid-4" style={{ marginTop: 48 }}>
 				{PROCESS.map((p, i) => (
 					<div key={p.title}>
 						<div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
@@ -522,7 +530,7 @@ export const Process = () => (
 
 export const Stats = () => (
 	<section style={{ background: "var(--color-primary)", padding: "72px 0" }}>
-		<div className="grid-4 container" style={{ gap: 24 }}>
+		<div data-stagger="scale" className="grid-4 container" style={{ gap: 24 }}>
 			{STATS.map((s) => (
 				<div key={s.l} style={{ textAlign: "center", color: "#fff" }}>
 					<div
@@ -554,7 +562,7 @@ export const LangRemoteBand = () => {
 	return (
 		<section style={{ background: "var(--surface-sunken)", padding: "64px 0" }}>
 			<div className="container">
-				<div className="grid-2" style={{ gap: 24 }}>
+				<div data-stagger="split" className="grid-2" style={{ gap: 24 }}>
 					{items.map((it) => (
 						<div
 							key={it.title}
@@ -636,7 +644,7 @@ export const VideoSection = () => (
 					채널 바로가기 <Icon n="external-link" style={{ width: 16, height: 16 }} />
 				</a>
 			</div>
-			<div className="grid-3" style={{ marginTop: 48 }}>
+			<div data-stagger="blur" className="grid-3" style={{ marginTop: 48 }}>
 				{VIDEOS.map((v) => (
 					<a
 						key={v.title}
@@ -740,7 +748,7 @@ export const BlogPreview = () => (
 					블로그 전체보기 <Icon n="external-link" style={{ width: 16, height: 16 }} />
 				</a>
 			</div>
-			<div className="grid-3" style={{ marginTop: 48 }}>
+			<div data-stagger className="grid-3" style={{ marginTop: 48 }}>
 				{BLOG.slice(0, 3).map((b) => (
 					<a
 						key={b.title}
@@ -894,7 +902,7 @@ export const ReviewsPreview = () => {
 						후기 전체보기 <Icon n="arrow-right" style={{ width: 16, height: 16 }} />
 					</button>
 				</div>
-				<div className="grid-3" style={{ marginTop: 48 }}>
+				<div data-stagger="tilt" className="grid-3" style={{ marginTop: 48 }}>
 					{REVIEWS.slice(0, 3).map((r) => (
 						<ReviewCard key={r.title} r={r} />
 					))}
@@ -918,7 +926,7 @@ export const CTABand = () => {
 				padding: "80px 0",
 			}}
 		>
-			<div className="container" style={{ textAlign: "center", color: "#fff" }}>
+			<div data-reveal="scale" className="container" style={{ textAlign: "center", color: "#fff" }}>
 				<h2 style={{ fontSize: "clamp(26px,4vw,36px)", color: "#fff" }}>
 					혼자 고민하지 마세요. 방향부터 함께 잡아드립니다.
 				</h2>
@@ -960,8 +968,20 @@ export const CTABand = () => {
 	);
 };
 
+/* 상담 희망 분야 드롭다운 — 인테이크 명시(업무분야 8종과 별개의 7종) */
+const CONSULT_FIELDS = [
+	{ v: "e6", label: "연예인 비자 (E-6)" },
+	{ v: "e7", label: "전문직 비자 (E-7)" },
+	{ v: "f4", label: "거소증 (F-4)" },
+	{ v: "f5", label: "영주권 (F-5)" },
+	{ v: "f6", label: "결혼비자 (F-6)" },
+	{ v: "nat", label: "국적회복" },
+	{ v: "etc", label: "기타" },
+];
+
 export const ContactForm = () => {
 	const [sent, setSent] = useState(false);
+	const [field, setField] = useState("");
 	return (
 		<Card hover={false} padding="32px">
 			{sent ? (
@@ -1004,23 +1024,39 @@ export const ContactForm = () => {
 							<Label htmlFor="cp">연락처</Label>
 							<Input id="cp" placeholder="010-0000-0000" required />
 						</div>
-						<div style={{ gridColumn: "1 / -1" }}>
+						<div>
+							<Label htmlFor="ce">이메일</Label>
+							<Input id="ce" type="email" placeholder="you@example.com" required />
+						</div>
+						<div>
+							<Label htmlFor="cnat">국적</Label>
+							<Input id="cnat" placeholder="예: 미국 · 中国" required />
+						</div>
+						<div>
+							<Label htmlFor="cv">현재 체류자격</Label>
+							<Input id="cv" placeholder="예: F-4, E-6, 없음" />
+						</div>
+						<div>
 							<Label htmlFor="cf">상담 희망 분야</Label>
-							<Select id="cf" defaultValue="">
-								<option value="" disabled>
-									분야를 선택해 주세요
-								</option>
-								{SERVICES.map((s) => (
-									<option key={s.id}>
-										{s.title} ({s.code})
-									</option>
-								))}
-								<option>기타</option>
+							<Select value={field} onValueChange={(v) => setField(v ?? "")}>
+								<SelectTrigger
+									id="cf"
+									style={{ height: 48, width: "100%", fontSize: 16, borderRadius: "var(--radius)" }}
+								>
+									<SelectValue placeholder="분야를 선택해 주세요" />
+								</SelectTrigger>
+								<SelectContent>
+									{CONSULT_FIELDS.map((f) => (
+										<SelectItem key={f.v} value={f.v}>
+											{f.label}
+										</SelectItem>
+									))}
+								</SelectContent>
 							</Select>
 						</div>
 						<div style={{ gridColumn: "1 / -1" }}>
 							<Label htmlFor="cm">문의 내용</Label>
-							<Textarea id="cm" rows={4} placeholder="현재 체류 자격과 상황을 간단히 적어주세요." />
+							<Textarea id="cm" rows={4} placeholder="상담하고 싶은 내용을 간단히 적어 주세요." />
 						</div>
 					</div>
 					<label
@@ -1420,58 +1456,58 @@ export const ConsultBar = () => {
 
 export const FloatRail = () => {
 	const go = useGo();
-	const items: [string, string, () => void][] = [
-		[
-			"phone",
-			"전화",
-			() => {
-				window.location.href = "tel:0269599886";
-			},
-		],
-		["message-circle", "카톡", () => go("contact")],
-		["globe", "위챗", () => go("contact")],
-		["arrow-up", "TOP", () => window.scrollTo({ top: 0, behavior: "smooth" })],
-	];
+	const kakao = CHANNELS.find((c) => c.label === "카카오 채널")?.href ?? "#";
 	return (
-		<div
-			className="hide-mobile"
-			style={{
-				position: "fixed",
-				right: 20,
-				bottom: 110,
-				zIndex: 95,
-				display: "flex",
-				flexDirection: "column",
-				gap: 10,
-			}}
-		>
-			{items.map(([ic, lb, fn]) => (
-				<button
-					key={lb}
-					type="button"
-					className="lk"
-					onClick={fn}
-					title={lb}
-					style={{
-						width: 52,
-						height: 52,
-						borderRadius: "50%",
-						background: "var(--color-primary)",
-						color: "#fff",
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-						justifyContent: "center",
-						gap: 2,
-						boxShadow: "var(--shadow-md)",
-						border: "none",
-					}}
-				>
-					<Icon n={ic} style={{ width: 18, height: 18, color: "#fff" }} />
-					<span style={{ fontSize: 10 }}>{lb}</span>
-				</button>
-			))}
-		</div>
+		<aside className="float-rail hide-mobile" aria-label="빠른 상담">
+			<a className="float-rail-num" href="tel:0269599886" aria-label="전화 상담 02-6959-9886">
+				<span className="float-rail-phone">
+					<Icon n="phone-call" style={{ width: 20, height: 20 }} />
+				</span>
+				<span className="float-rail-tel">
+					<span className="frl-eyebrow">전화상담</span>
+					<strong>02</strong>
+					<strong>6959-9886</strong>
+				</span>
+			</a>
+			<a className="float-rail-cell" href={kakao} target="_blank" rel="noopener noreferrer">
+				<span className="brand-chip brand-kakao" aria-hidden="true">
+					<svg viewBox="0 0 24 24" width="15" height="15" role="img" aria-label="카카오톡">
+						<title>카카오톡</title>
+						<path
+							fill="#3c1e1e"
+							d="M12 4.2C7 4.2 3 7.4 3 11.3c0 2.5 1.7 4.7 4.2 5.9-.2.6-.6 2.3-.7 2.6-.1.4.1.4.3.3.3-.2 2.6-1.8 3.3-2.3.6.1 1.3.1 1.9.1 5 0 9-3.2 9-7.1S17 4.2 12 4.2z"
+						/>
+					</svg>
+				</span>
+				<span>카톡</span>
+			</a>
+			<a
+				className="float-rail-cell"
+				href={YOUTUBE_CHANNEL}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				<span className="brand-chip brand-youtube" aria-hidden="true">
+					<svg viewBox="0 0 24 24" width="17" height="17" role="img" aria-label="유튜브">
+						<title>유튜브</title>
+						<path fill="#fff" d="M9.8 8.4v7.2l6-3.6z" />
+					</svg>
+				</span>
+				<span>유튜브</span>
+			</a>
+			<button type="button" className="float-rail-cell" onClick={() => go("location")}>
+				<Icon n="map-pin" style={{ width: 22, height: 22 }} />
+				<span>오시는 길</span>
+			</button>
+			<button
+				type="button"
+				className="float-rail-cell"
+				onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+			>
+				<Icon n="arrow-up" style={{ width: 22, height: 22 }} />
+				<span>TOP</span>
+			</button>
+		</aside>
 	);
 };
 
@@ -1535,7 +1571,7 @@ export const Footer = () => {
 				</div>
 				<div style={{ marginTop: 28, fontSize: 14, lineHeight: 1.9 }}>
 					<p>주소 서울특별시 중구 세종대로 136, 서울파이낸스센터 3층</p>
-					<p>대표 행정사 ○○○ · 전화 02-6959-9886 · 이메일 choice@kvisa1345.com</p>
+					<p>대표 행정사 최서연 · 전화 02-6959-9886 · 이메일 choice@kvisa1345.com</p>
 					<p style={{ color: "rgba(255,255,255,0.5)" }}>
 						사업자등록번호 464-11-00966 · 행정사 등록번호 18102025537 · 출입국민원 대행기관
 						19-SB-RG-016

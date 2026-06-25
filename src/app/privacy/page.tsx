@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const EFFECTIVE_DATE = "2026년 6월 22일"; // 시행일
 const CONTACT_EMAIL = "choice@kvisa1345.com"; // 개인정보 문의 이메일
 const CONTACT_TEL = "02-6959-9886"; // 개인정보 문의 전화
-const OFFICER_NAME = "○○○"; // TODO: 개인정보 보호책임자 성함 확정 시 교체
+const OFFICER_NAME = "최서연"; // 개인정보 보호책임자 = 대표 행정사
 const OFFICER_POSITION = "대표 행정사"; // 직책
 
 export default function PrivacyPage() {

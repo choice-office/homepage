@@ -164,10 +164,10 @@
 	--chart-4: oklch(0.88 0.022 85); /* accentSoft */
 	--chart-5: oklch(0.26 0.004 60); /* ink */
 	--radius: 0.375rem;
-	/* Pretendard (CDN, layout.tsx) + 한글 인지 폴백 — 윈도우 렌더링 우수 */
+	/* Noto Sans KR (next/font, layout.tsx 에서 --font-noto-sans-kr 주입) + 시스템 폴백 */
 	--font-sans:
-		"Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo",
-		"Malgun Gothic", "Noto Sans KR", sans-serif;
+		var(--font-noto-sans-kr), "Noto Sans KR", -apple-system, BlinkMacSystemFont, system-ui,
+		"Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 
 /* 다크모드는 현재 비활성화(라이트 전용). 재활성화 대비 톤만 맞춰 둠. */
@@ -218,7 +218,8 @@
 	}
 	html {
 		@apply font-sans;
-		scroll-behavior: smooth;
+		/* 페이지 전환 시 즉시 최상단으로(부드러운 스크롤 X).
+		 * 부드러운 스크롤이 필요한 곳(FloatRail TOP 버튼)은 JS에서 behavior:"smooth" 명시. */
 		/* 고정 헤더(약 5rem) 높이만큼 앵커 스크롤 오프셋 */
 		scroll-padding-top: 5rem;
 	}
@@ -341,6 +342,90 @@
 	}
 }
 
+/* ── 스크롤 진입 리빌 (voxa/remotion식) ──────────────────────────────────────
+ * ScrollReveal(JS)가 <html>.reveal-ready 부여 → 진입 시 .is-visible 토글.
+ * reveal-ready 없으면(JS 미작동) 콘텐츠 항상 표시 → SEO/폴백 안전.
+ * 변형: data-reveal / data-stagger 값으로 섹션마다 다른 모션.
+ *   (기본=up) · scale(팝) · blur(흐림) · tilt(3D 기립) · split(좌우 교차, stagger 전용)
+ * prefers-reduced-motion 사용자는 모션 제거(미디어쿼리 밖이라 자동 노출). */
+@media (prefers-reduced-motion: no-preference) {
+	/* translateX 변형이 만드는 가로 스크롤 방지 가드 */
+	body {
+		overflow-x: hidden;
+	}
+
+	.reveal-ready [data-reveal],
+	.reveal-ready [data-stagger] > * {
+		opacity: 0;
+		transform: translateY(52px);
+		transition:
+			opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 1.15s cubic-bezier(0.22, 1, 0.36, 1),
+			filter 1s cubic-bezier(0.22, 1, 0.36, 1);
+		will-change: opacity, transform, filter;
+	}
+
+	/* scale — 살짝 작아진 상태에서 팝(오버슈트 이징) */
+	.reveal-ready [data-reveal="scale"],
+	.reveal-ready [data-stagger="scale"] > * {
+		transform: scale(0.82) translateY(28px);
+		transition-timing-function: cubic-bezier(0.34, 1.45, 0.5, 1);
+	}
+	/* blur — 흐림에서 또렷하게 */
+	.reveal-ready [data-reveal="blur"],
+	.reveal-ready [data-stagger="blur"] > * {
+		transform: translateY(44px);
+		filter: blur(18px);
+	}
+	/* tilt — 아래에서 3D로 일어서듯 */
+	.reveal-ready [data-reveal="tilt"],
+	.reveal-ready [data-stagger="tilt"] > * {
+		transform: perspective(1100px) rotateX(26deg) translateY(48px);
+		transform-origin: 50% 100%;
+	}
+	/* split — 자식이 좌/우 번갈아 슬라이드(stagger 2~3열용) */
+	.reveal-ready [data-stagger="split"] > *:nth-child(odd) {
+		transform: translateX(-72px);
+	}
+	.reveal-ready [data-stagger="split"] > *:nth-child(even) {
+		transform: translateX(72px);
+	}
+
+	/* 도착 상태 */
+	.reveal-ready [data-reveal].is-visible,
+	.reveal-ready [data-stagger].is-visible > * {
+		opacity: 1;
+		transform: none;
+		filter: none;
+	}
+
+	/* stagger 지연 — 느긋하게 130ms 간격 */
+	.reveal-ready [data-stagger].is-visible > *:nth-child(1) {
+		transition-delay: 0ms;
+	}
+	.reveal-ready [data-stagger].is-visible > *:nth-child(2) {
+		transition-delay: 130ms;
+	}
+	.reveal-ready [data-stagger].is-visible > *:nth-child(3) {
+		transition-delay: 260ms;
+	}
+	.reveal-ready [data-stagger].is-visible > *:nth-child(4) {
+		transition-delay: 390ms;
+	}
+	.reveal-ready [data-stagger].is-visible > *:nth-child(5) {
+		transition-delay: 520ms;
+	}
+	.reveal-ready [data-stagger].is-visible > *:nth-child(6) {
+		transition-delay: 650ms;
+	}
+	.reveal-ready [data-stagger].is-visible > *:nth-child(7) {
+		transition-delay: 780ms;
+	}
+	.reveal-ready [data-stagger].is-visible > *:nth-child(8) {
+		transition-delay: 910ms;
+	}
+}
+
 .container {
 	max-width: 1152px;
 	margin: 0 auto;
@@ -415,6 +500,313 @@
 .menu-toggle {
 	display: none;
 }
+
+/* ── 사이트 헤더 (CSS hover/focus-within 메가메뉴) ─────────────────────────────
+ * 패널이 트리거(nav-item)의 자손이라, 마우스가 패널로 내려가도 hover가 유지됨.
+ * 타이머/JS 상태 없이도 안 닫히고, 키보드(:focus-within)로도 열림. */
+.site-header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+	background: rgba(255, 255, 255, 0.97);
+	border-bottom: 1px solid var(--border-default);
+	box-shadow: var(--shadow-sm);
+	backdrop-filter: blur(8px);
+	transition:
+		background-color 0.3s ease,
+		border-color 0.3s ease,
+		box-shadow 0.3s ease;
+}
+.site-header-bar {
+	max-width: 1320px;
+	height: 80px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.site-logo {
+	background: none;
+	border: none;
+	padding: 0;
+	font-weight: 700;
+	font-size: 20px;
+	letter-spacing: -0.02em;
+	color: var(--text-heading);
+	transition: color 0.2s ease;
+}
+.site-header-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.site-burger {
+	background: none;
+	border: none;
+	padding: 8px;
+	color: var(--text-heading);
+	transition: color 0.2s ease;
+}
+.nav-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 80px;
+	width: 116px;
+}
+.nav-link {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	background: none;
+	border: none;
+	font-size: 15px;
+	font-weight: 500;
+	color: var(--text-body);
+	transition: color 0.18s ease;
+}
+.nav-link:hover {
+	color: var(--color-primary-dark);
+}
+.nav-link.is-active {
+	color: var(--color-primary);
+	font-weight: 700;
+}
+
+/* 메가 패널 — fixed 풀폭, 트리거 hover/focus 시 노출 */
+.mega-panel {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 80px;
+	background: rgba(255, 255, 255, 0.99);
+	border-top: 1px solid var(--border-default);
+	box-shadow: var(--shadow-md);
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transform: translateY(-10px);
+	transition:
+		opacity 0.26s ease,
+		transform 0.26s ease,
+		visibility 0s linear 0.26s;
+}
+.nav-item:hover > .mega-panel,
+.nav-item:focus-within > .mega-panel {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+	transform: none;
+	transition:
+		opacity 0.26s ease,
+		transform 0.26s ease,
+		visibility 0s;
+}
+.mega-inner {
+	max-width: 1320px;
+	padding: 28px 24px 32px;
+}
+.mega-eyebrow {
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--color-accent);
+	margin-bottom: 18px;
+}
+
+/* 홈 최상단(히어로 위) 투명 헤더 */
+.site-header.at-top {
+	background: transparent;
+	border-bottom-color: transparent;
+	box-shadow: none;
+	backdrop-filter: none;
+}
+.site-header.at-top .site-logo,
+.site-header.at-top .nav-link,
+.site-header.at-top .site-burger {
+	color: #fff;
+}
+/* 메가 메뉴가 열리면 투명 헤더도 솔리드로(패널과 자연스럽게 연결) */
+.site-header.at-top:has(.nav-item.has-mega:hover),
+.site-header.at-top:has(.nav-item.has-mega:focus-within) {
+	background: rgba(255, 255, 255, 0.99);
+	border-bottom-color: var(--border-default);
+	box-shadow: var(--shadow-sm);
+	backdrop-filter: blur(8px);
+}
+.site-header.at-top:has(.nav-item.has-mega:hover) .nav-link,
+.site-header.at-top:has(.nav-item.has-mega:hover) .site-burger,
+.site-header.at-top:has(.nav-item.has-mega:focus-within) .nav-link,
+.site-header.at-top:has(.nav-item.has-mega:focus-within) .site-burger {
+	color: var(--text-body);
+}
+.site-header.at-top:has(.nav-item.has-mega:hover) .site-logo,
+.site-header.at-top:has(.nav-item.has-mega:focus-within) .site-logo {
+	color: var(--text-heading);
+}
+.site-header.at-top:has(.nav-item.has-mega:hover) .nav-link.is-active,
+.site-header.at-top:has(.nav-item.has-mega:focus-within) .nav-link.is-active {
+	color: var(--color-primary);
+}
+
+/* ── 우측 플로팅 퀵 상담 레일 (파운더스식 적층 패널) ──────────────────────────── */
+.float-rail {
+	position: fixed;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 90;
+	width: 90px;
+	display: flex;
+	flex-direction: column;
+	border-radius: 14px 0 0 14px;
+	overflow: hidden;
+	background: #fff;
+	border: 1px solid var(--border-default);
+	border-right: none;
+	box-shadow: -6px 14px 38px rgba(34, 28, 22, 0.26);
+}
+.float-rail a,
+.float-rail button {
+	border: none;
+	cursor: pointer;
+	font-family: var(--font-sans);
+	text-decoration: none;
+}
+/* 전화 패널 — 강조 + 시선 유도(은은한 깜빡임 + 아이콘 울림) */
+.float-rail-num {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	padding: 16px 6px 15px;
+	background: var(--color-primary-dark);
+	color: #fff;
+	animation: railBlink 1.7s ease-in-out infinite;
+}
+.float-rail-num:hover {
+	animation: none;
+	background: var(--color-primary);
+}
+.float-rail-phone {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.16);
+	color: #fff;
+	animation: railRing 1.7s ease-in-out infinite;
+}
+.float-rail-tel {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	line-height: 1.14;
+	text-align: center;
+}
+.frl-eyebrow {
+	font-size: 10.5px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: var(--color-accent-soft);
+	margin-bottom: 2px;
+}
+.float-rail-tel strong:nth-of-type(1) {
+	font-size: 11px;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.82);
+}
+.float-rail-tel strong:nth-of-type(2) {
+	font-size: 15px;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+}
+/* 채널 셀 */
+.float-rail-cell {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	padding: 13px 6px;
+	background: #fff;
+	color: var(--text-body);
+	border-top: 1px solid var(--border-default);
+	transition:
+		background 0.18s ease,
+		color 0.18s ease;
+}
+.float-rail-cell span {
+	font-size: 12px;
+	font-weight: 600;
+}
+.float-rail-cell:hover {
+	background: var(--surface-subtle);
+	color: var(--color-primary);
+}
+/* 브랜드 칩 (카카오/유튜브) */
+.brand-chip {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 8px;
+	transition: transform 0.18s ease;
+}
+.brand-kakao {
+	background: #fee500;
+}
+.brand-youtube {
+	background: #ff0000;
+}
+.float-rail-cell:hover .brand-chip {
+	transform: scale(1.08);
+}
+
+@keyframes railBlink {
+	0%,
+	100% {
+		background: var(--color-primary-dark);
+	}
+	50% {
+		background: var(--color-primary);
+	}
+}
+@keyframes railRing {
+	0%,
+	55%,
+	100% {
+		transform: rotate(0deg) scale(1);
+	}
+	60% {
+		transform: rotate(-12deg) scale(1.1);
+	}
+	68% {
+		transform: rotate(12deg) scale(1.1);
+	}
+	76% {
+		transform: rotate(-9deg) scale(1.08);
+	}
+	84% {
+		transform: rotate(6deg) scale(1.04);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.float-rail-num,
+	.float-rail-phone {
+		animation: none;
+	}
+}
+
 .consult-bar-inner {
 	display: flex;
 	align-items: center;

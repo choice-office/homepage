@@ -1,8 +1,9 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { NAV, type NavItem, SERVICES } from "@/lib/site-data";
+import { cn } from "@/lib/utils";
 import { Button } from "./ds";
 import { Icon } from "./icon";
 import { pathToRoute, useGo } from "./use-go";
@@ -44,10 +45,7 @@ export const SiteHeader = () => {
 	const pathname = usePathname();
 	const route = pathToRoute(pathname);
 	const [scrolled, setScrolled] = useState(false);
-	const [openLabel, setOpenLabel] = useState<string | null>(null);
 	const [drawer, setDrawer] = useState(false);
-	const [hovered, setHovered] = useState<string | null>(null);
-	const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	useEffect(() => {
 		const on = () => setScrolled(window.scrollY > 24);
@@ -56,192 +54,68 @@ export const SiteHeader = () => {
 		return () => window.removeEventListener("scroll", on);
 	}, []);
 
-	const anyOpen = !!openLabel;
-	const transparent = route === "home" && !scrolled && !anyOpen;
-	const cancel = () => {
-		if (closeTimer.current) clearTimeout(closeTimer.current);
-	};
-	const enter = (label: string | null) => {
-		cancel();
-		setOpenLabel(label);
-	};
-	const leave = () => {
-		closeTimer.current = setTimeout(() => setOpenLabel(null), 120);
-	};
-
-	const activeItem = NAV.find((n) => n.label === openLabel);
-	const children = activeItem ? megaChildren(activeItem) : [];
-	const txt = transparent ? "rgba(255,255,255,0.92)" : "var(--text-body)";
-	const logoColor = transparent ? "#fff" : "var(--text-heading)";
+	const atTop = route === "home" && !scrolled;
 
 	return (
 		<>
-			<header
-				style={{
-					position: "fixed",
-					top: 0,
-					left: 0,
-					right: 0,
-					zIndex: 100,
-					backgroundColor: transparent ? "rgba(255,255,255,0)" : "rgba(255,255,255,0.97)",
-					borderBottom: transparent ? "1px solid transparent" : "1px solid var(--border-default)",
-					boxShadow: transparent ? "none" : "var(--shadow-sm)",
-					backdropFilter: transparent ? "none" : "blur(8px)",
-					transition: "box-shadow .3s ease, border-color .3s ease",
-				}}
-			>
-				<div
-					className="container"
-					style={{
-						height: 80,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "space-between",
-					}}
-				>
-					<button
-						type="button"
-						className="lk"
-						onClick={() => {
-							go("home");
-							setOpenLabel(null);
-						}}
-						style={{
-							background: "none",
-							border: "none",
-							padding: 0,
-							fontWeight: 700,
-							fontSize: 20,
-							letterSpacing: "-0.02em",
-							color: logoColor,
-						}}
-					>
+			<header className={cn("site-header", atTop && "at-top")}>
+				<div className="site-header-bar container">
+					<button type="button" className="lk site-logo" onClick={() => go("home")}>
 						초이스 행정사 사무소
 					</button>
 
-					<nav className="nav-links" aria-label="메인 메뉴" style={{ height: "100%" }}>
+					<nav className="nav-links" aria-label="메인 메뉴">
 						{NAV.map((n) => {
-							const childRoutes = hasMega(n) ? megaChildren(n).map((c) => c.route) : [];
+							const mega = hasMega(n);
+							const childRoutes = mega ? megaChildren(n).map((c) => c.route) : [];
 							const active =
 								route === n.route ||
 								(n.route === "services" && route === "service") ||
 								childRoutes.includes(route);
 							return (
-								<div
-									key={n.label}
-									style={{
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										height: 80,
-										width: 112,
-									}}
-								>
+								<div className={cn("nav-item", mega && "has-mega")} key={n.label}>
 									<button
 										type="button"
-										className="lk"
-										onMouseEnter={() => {
-											enter(hasMega(n) ? n.label : null);
-											setHovered(n.label);
-										}}
-										onMouseLeave={() => {
-											setHovered(null);
-											leave();
-										}}
-										onClick={() => {
-											go(n.route);
-											setOpenLabel(null);
-										}}
-										style={{
-											background: "none",
-											border: "none",
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center",
-											width: "100%",
-											height: "100%",
-											fontSize: 15,
-											fontWeight: active ? 700 : 500,
-											transition: "color .15s ease",
-											color: active
-												? transparent
-													? "#fff"
-													: "var(--color-primary)"
-												: hovered === n.label
-													? transparent
-														? "#fff"
-														: "var(--color-primary-dark)"
-													: txt,
-										}}
+										className={cn("lk nav-link", active && "is-active")}
+										aria-haspopup={mega || undefined}
+										onClick={() => go(n.route)}
 									>
 										{n.label}
 									</button>
+									{mega && (
+										<div className="mega-panel">
+											<div className="mega-inner container">
+												<div className="mega-eyebrow">{n.label}</div>
+												<div className="mega-row">
+													{megaChildren(n).map((c) => (
+														<button
+															key={c.label}
+															type="button"
+															className="lk mega-link"
+															onClick={() => go(c.route, c.param)}
+														>
+															<span>{c.label}</span>
+															{c.code && <span className="mega-code">{c.code}</span>}
+														</button>
+													))}
+												</div>
+											</div>
+										</div>
+									)}
 								</div>
 							);
 						})}
 					</nav>
 
-					<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+					<div className="site-header-actions">
 						<button
 							type="button"
-							className="menu-toggle lk"
+							className="menu-toggle lk site-burger"
 							onClick={() => setDrawer(true)}
 							aria-label="메뉴 열기"
-							style={{
-								background: "none",
-								border: "none",
-								padding: 8,
-								color: transparent ? "#fff" : "var(--text-heading)",
-							}}
 						>
 							<Icon n="menu" style={{ width: 26, height: 26 }} />
 						</button>
-					</div>
-				</div>
-
-				{/* 메가메뉴 패널 */}
-				<div
-					style={{
-						overflow: "hidden",
-						background: "rgba(255,255,255,0.99)",
-						borderTop: anyOpen ? "1px solid var(--border-default)" : "1px solid transparent",
-						maxHeight: anyOpen ? 320 : 0,
-						transition: "max-height .32s ease",
-						boxShadow: anyOpen ? "var(--shadow-md)" : "none",
-					}}
-				>
-					<div className="container" style={{ padding: anyOpen ? "28px 24px 32px" : "0 24px" }}>
-						<div
-							style={{
-								fontSize: 13,
-								fontWeight: 700,
-								letterSpacing: ".1em",
-								textTransform: "uppercase",
-								color: "var(--color-accent)",
-								marginBottom: 18,
-							}}
-						>
-							{openLabel}
-						</div>
-						<div className="mega-row">
-							{children.map((c) => (
-								<button
-									key={c.label}
-									type="button"
-									className="lk mega-link"
-									onMouseEnter={cancel}
-									onMouseLeave={leave}
-									onClick={() => {
-										go(c.route, c.param);
-										setOpenLabel(null);
-									}}
-									style={{ background: "none", border: "none", textAlign: "left" }}
-								>
-									<span>{c.label}</span>
-									{c.code && <span className="mega-code">{c.code}</span>}
-								</button>
-							))}
-						</div>
 					</div>
 				</div>
 			</header>
@@ -267,10 +141,7 @@ function MobileDrawer({
 		onClose();
 	};
 	return (
-		<div
-			className={`drawer${open ? "open" : ""}`}
-			style={{ pointerEvents: open ? "auto" : "none" }}
-		>
+		<div className={cn("drawer", open && "open")} style={{ pointerEvents: open ? "auto" : "none" }}>
 			<button type="button" className="scrim" aria-label="메뉴 닫기" onClick={onClose} />
 			<div className="panel">
 				<div

@@ -141,7 +141,7 @@ export default function MembersPage() {
 					{single ? (
 						<MemberCard m={TEAM[0]} single />
 					) : (
-						<div className="grid-3">
+						<div data-stagger="scale" className="grid-3">
 							{TEAM.map((m) => (
 								<MemberCard key={m.name} m={m} />
 							))}

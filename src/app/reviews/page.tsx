@@ -19,7 +19,7 @@ export default function ReviewsPage() {
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
-					<div className="grid-3">
+					<div data-stagger="tilt" className="grid-3">
 						{REVIEWS.map((r) => (
 							<ReviewCard key={r.title} r={r} />
 						))}

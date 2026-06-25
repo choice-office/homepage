@@ -1,12 +1,6 @@
 "use client";
 
-import type {
-	CSSProperties,
-	InputHTMLAttributes,
-	ReactNode,
-	SelectHTMLAttributes,
-	TextareaHTMLAttributes,
-} from "react";
+import type { CSSProperties, InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 import { useState } from "react";
 
 type Sx = CSSProperties;
@@ -293,35 +287,5 @@ export const Textarea = ({
 			}}
 			{...rest}
 		/>
-	);
-};
-
-export const Select = ({
-	invalid = false,
-	children,
-	style,
-	...rest
-}: SelectHTMLAttributes<HTMLSelectElement> & { invalid?: boolean }) => {
-	const [f, setF] = useState(false);
-	return (
-		<select
-			onFocus={() => setF(true)}
-			onBlur={() => setF(false)}
-			style={{
-				...fieldStyle(f, invalid),
-				height: 48,
-				padding: "0 40px 0 14px",
-				appearance: "none",
-				cursor: "pointer",
-				backgroundImage:
-					"url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>\")",
-				backgroundRepeat: "no-repeat",
-				backgroundPosition: "right 14px center",
-				...style,
-			}}
-			{...rest}
-		>
-			{children}
-		</select>
 	);
 };

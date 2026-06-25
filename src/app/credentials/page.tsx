@@ -23,7 +23,7 @@ export default function CredentialsPage() {
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
-					<div className="grid-2">
+					<div data-stagger="split" className="grid-2">
 						{CREDENTIALS.map((c) => (
 							<Card
 								key={c.title}

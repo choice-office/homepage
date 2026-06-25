@@ -1,15 +1,22 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
+import { Noto_Sans_KR } from "next/font/google";
 import { GoogleAnalytics } from "@/components/common/google-analytics";
 import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site/header";
+import { ScrollReveal } from "@/components/site/scroll-reveal";
 import { ConsultBar, FloatRail, Footer } from "@/components/site/sections";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
-// 폰트: Pretendard (윈도우 렌더링 우수, 한글 웹 표준). CDN 로드 + globals.css 의 --font-sans 폴백.
-const PRETENDARD_CSS =
-	"https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css";
+// 폰트: Noto Sans KR (next/font 자체 호스팅 — CDN/CSP 불필요, 한/영 동시 지원).
+// CSS 변수 --font-noto-sans-kr 로 노출 → globals.css 의 --font-sans 가 이를 참조.
+const fontSans = Noto_Sans_KR({
+	subsets: ["latin"],
+	weight: ["400", "500", "700"],
+	variable: "--font-noto-sans-kr",
+	display: "swap",
+});
 
 export const viewport: Viewport = {
 	width: "device-width",
@@ -67,15 +74,19 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang={siteConfig.locale} className="h-full antialiased" suppressHydrationWarning>
+		<html
+			lang={siteConfig.locale}
+			className={`${fontSans.variable} h-full antialiased`}
+			suppressHydrationWarning
+		>
 			<body className="flex min-h-full flex-col">
-				<link rel="stylesheet" href={PRETENDARD_CSS} precedence="default" />
 				<script
 					type="application/ld+json"
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 				/>
 				<Providers>
+					<ScrollReveal />
 					<SiteHeader />
 					<main id="main-content" className="flex-1">
 						{children}

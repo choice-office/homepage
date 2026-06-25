@@ -20,7 +20,7 @@ export default function BlogPage() {
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
-					<div className="grid-3">
+					<div data-stagger className="grid-3">
 						{BLOG.map((b) => (
 							<a
 								key={b.title}

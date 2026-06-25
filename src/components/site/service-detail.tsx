@@ -105,7 +105,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
-					<div className="grid-2" style={{ gap: 24 }}>
+					<div data-stagger="split" className="grid-2" style={{ gap: 24 }}>
 						<Block icon="users" title="이런 분께 권합니다">
 							<List items={s.target} />
 						</Block>
@@ -113,7 +113,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 							<List items={s.docs} />
 						</Block>
 					</div>
-					<div className="grid-2" style={{ gap: 24, marginTop: 24 }}>
+					<div data-stagger className="grid-2" style={{ gap: 24, marginTop: 24 }}>
 						<Block icon="route" title="처리 절차">
 							<List items={s.steps} ordered />
 						</Block>
@@ -197,7 +197,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 							}}
 						/>
 					</div>
-					<div className="grid-4">
+					<div data-stagger="scale" className="grid-4">
 						{others.slice(0, 4).map((o) => (
 							<Card
 								key={o.id}

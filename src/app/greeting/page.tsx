@@ -23,7 +23,7 @@ export default function GreetingPage() {
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
-					<div className="grid-2" style={{ gap: 56, alignItems: "stretch" }}>
+					<div data-stagger="split" className="grid-2" style={{ gap: 56, alignItems: "stretch" }}>
 						<div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
 							<Icon
 								n="quote"
@@ -44,22 +44,20 @@ export default function GreetingPage() {
 									color: "var(--text-body)",
 								}}
 							>
-								<p>안녕하세요. 초이스 행정사 사무소를 찾아주셔서 감사합니다.</p>
+								<p>안녕하십니까. ‘실력에 책임감을 더한’ 초이스 행정사 사무소입니다.</p>
 								<p>
-									낯선 제도와 언어 속에서 체류와 비자 문제를 마주하는 일은, 그 자체로 막막하고
-									외로운 과정일 수 있습니다. 작은 서류 하나, 절차 하나가 결과를 좌우하기에 더욱
-									그렇습니다.
+									살다 보면 익숙하지 않은 행정 절차 앞에서 무엇부터 시작해야 할지, 어떤 정보가
+									정확한지 판단하기 어려운 막막한 순간이 있습니다. 초이스 행정사 사무소는 그런
+									상황에서 의뢰인의 입장에서 함께 길을 찾아드리는 역할을 하고 있습니다.
 								</p>
 								<p>
-									초이스 행정사 사무소는 사무장을 거치지 않고, 시험 출신 행정사가 상담부터 서류
-									작성과 접수까지 모든 과정을 직접 책임집니다. 무리한 약속을 드리기보다, 의뢰인의
-									상황을 정확히 살피고 지금 가능한 방향을 솔직하게 말씀드리는 것을 가장 중요한
-									원칙으로 삼고 있습니다.
+									2019년 사무소 개소 이후 외국인 체류 및 비자, 출입국 관련 행정 업무를 중심으로
+									다양한 사례를 직접 다뤄오며 실무 경험을 쌓아왔습니다. 이러한 경험을 바탕으로
+									의뢰인분들의 각 상황에 맞는 현실적인 방향을 안내드리고 있습니다.
 								</p>
 								<p>
-									거소증·영주권·결혼비자·외국인 연예인(E-6)·전문직(E-7) 비자·국적회복까지, 한 분 한
-									분의 사정을 끝까지 함께 살피겠습니다. 혼자 고민하지 마시고, 편하게 문을 두드려
-									주세요.
+									복잡한 행정 절차 앞에서 혼자 고민하지 마세요. 초이스 행정사 사무소가 곁에서
+									함께하겠습니다.
 								</p>
 							</div>
 							<div
