@@ -97,10 +97,6 @@ export default async function BlogDetailPage({ params }: Params) {
 						<span>{post.author}</span>
 						<span aria-hidden="true">·</span>
 						<time dateTime={post.date}>{formatBlogDate(post.date)}</time>
-						<span aria-hidden="true">·</span>
-						<span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-							<Icon n="clock" style={{ width: 14, height: 14 }} /> 읽는 시간 {post.readingMinutes}분
-						</span>
 					</div>
 				</div>
 			</header>

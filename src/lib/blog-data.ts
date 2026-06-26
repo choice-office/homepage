@@ -9,7 +9,6 @@ export type BlogPost = {
 	excerpt: string;
 	author: string;
 	date: string; // ISO yyyy-mm-dd (정렬·표시 기준)
-	readingMinutes: number;
 	cover?: string; // 목록·상세 상단 커버 이미지(없으면 그라데이션 플레이스홀더)
 	content: string; // 에디터 출력 HTML
 };
@@ -23,7 +22,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "F-4 자격과 국내거소신고증(거소증)의 관계, 발급 순서와 준비 서류를 정리했습니다.",
 		author: "초이스 행정사 사무소",
 		date: "2026-05-18",
-		readingMinutes: 5,
 		cover:
 			"https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1200&q=70",
 		content: `
@@ -57,7 +55,6 @@ const POSTS: BlogPost[] = [
 			"교제 과정·관계 입증 자료의 범위와, 면접에서 자주 묻는 사항을 사례 중심으로 살펴봅니다.",
 		author: "초이스 행정사 사무소",
 		date: "2026-04-30",
-		readingMinutes: 6,
 		cover:
 			"https://images.unsplash.com/photo-1529634597503-139d3726fed5?auto=format&fit=crop&w=1200&q=70",
 		content: `
@@ -80,7 +77,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "유형별 영주 요건과 점수제, 신청 전에 점검해야 할 체류·소득 요건을 안내합니다.",
 		author: "초이스 행정사 사무소",
 		date: "2026-04-12",
-		readingMinutes: 7,
 		content: `
 <p>영주(F-5)는 유형이 매우 다양하고, 유형별로 요구하는 체류기간·소득·자격이 다릅니다. <strong>본인이 어떤 유형에 해당하는지</strong>를 먼저 확정해야 합니다.</p>
 <h2>대표적인 점검 항목</h2>
@@ -99,7 +95,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "특정활동(E-7) 자격에서 자주 문제되는 직종 적합성과 경력 입증 포인트를 짚어봅니다.",
 		author: "초이스 행정사 사무소",
 		date: "2026-03-25",
-		readingMinutes: 6,
 		content: `
 <p>특정활동(E-7)은 <strong>직종 적합성</strong>이 가장 자주 문제됩니다. 채용하려는 직무가 허용 직종에 해당하는지, 학력·경력이 그 직종과 연결되는지를 함께 봅니다.</p>
 <h2>자주 문제되는 지점</h2>
@@ -118,7 +113,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "예술흥행 비자의 사전 추천 절차와 계약·일정 서류 준비 순서를 설명합니다.",
 		author: "초이스 행정사 사무소",
 		date: "2026-03-08",
-		readingMinutes: 5,
 		content: `
 <p>예술흥행(E-6)은 사전 <strong>공연추천</strong> 절차가 핵심입니다. 추천 단계에서 계약 조건과 일정, 공연 장소가 일관되게 정리되어 있어야 합니다.</p>
 <h2>준비 순서</h2>
@@ -137,7 +131,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "국적회복 허가의 심사 특성과 결격 사유, 장기 절차를 대비하는 방법을 안내합니다.",
 		author: "초이스 행정사 사무소",
 		date: "2026-02-20",
-		readingMinutes: 8,
 		content: `
 <p>국적회복은 심사 범위가 넓고 관계 기관 조회가 수반되어 <strong>절차가 비교적 깁니다</strong>. 결격 사유가 없는지 사전에 점검하는 것이 시간을 줄이는 가장 확실한 방법입니다.</p>
 <h2>대비 방법</h2>
@@ -156,7 +149,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "연장 신청의 시점, 필요 서류, 자주 놓치는 요건을 한 번에 정리했습니다.",
 		author: "초이스 행정사 사무소",
 		date: "2026-02-02",
-		readingMinutes: 4,
 		content: `
 <p>체류기간 연장은 <strong>만료 전</strong>에 신청하는 것이 원칙입니다. 자격별로 요구하는 소득·재직·거주 요건이 달라 사전 점검이 필요합니다.</p>
 <h2>체크리스트</h2>
@@ -175,7 +167,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "법인 설립과 투자금 요건, 사업의 실재성 입증까지 기본 흐름을 정리합니다.",
 		author: "초이스 행정사 사무소",
 		date: "2026-01-19",
-		readingMinutes: 6,
 		content: `
 <p>기업투자(D-8)는 <strong>투자금 요건</strong>과 <strong>사업의 실재성</strong>을 함께 봅니다. 법인 설립과 투자 송금, 사업장 확보가 일관되게 연결되어야 합니다.</p>
 <h2>기본 흐름</h2>
@@ -194,7 +185,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "초과체류 상태에서의 선택지와, 자진출국 시 규제 완화의 일반적 기준을 살펴봅니다.",
 		author: "초이스 행정사 사무소",
 		date: "2026-01-05",
-		readingMinutes: 5,
 		content: `
 <p>초과체류 상태라면 <strong>현재 상황을 정확히 진단</strong>하는 것이 먼저입니다. 체류 경위와 기간에 따라 선택지와 결과가 크게 달라집니다.</p>
 <h2>일반적 접근</h2>
@@ -213,7 +203,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "F-2 단계에서 미리 관리해야 영주 신청이 수월해지는 요건들을 정리합니다.",
 		author: "초이스 행정사 사무소",
 		date: "2025-12-15",
-		readingMinutes: 6,
 		content: `
 <p>영주(F-5)는 갑자기 준비하기보다, <strong>F-2 단계에서부터 요건을 관리</strong>하는 편이 훨씬 수월합니다. 특히 소득과 체류 연속성이 중요합니다.</p>
 <h2>미리 관리할 항목</h2>
@@ -232,7 +221,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "고용허가제의 기본 구조와, 자격변경·체류관리에서 자주 묻는 사항을 정리합니다.",
 		author: "초이스 행정사 사무소",
 		date: "2025-11-28",
-		readingMinutes: 5,
 		content: `
 <p>고용허가(E-9)는 사업주의 <strong>고용허가서</strong>를 전제로 합니다. 근로자 입장에서는 사업장 변경과 체류관리 요건을 함께 이해해야 합니다.</p>
 <h2>자주 묻는 사항</h2>
@@ -251,7 +239,6 @@ const POSTS: BlogPost[] = [
 		excerpt: "전공과 직무의 연결, 그리고 전환 시점에서 자주 막히는 부분을 짚어봅니다.",
 		author: "초이스 행정사 사무소",
 		date: "2025-11-10",
-		readingMinutes: 6,
 		content: `
 <p>유학(D-2)에서 취업(E-7)으로의 전환은 <strong>전공과 채용 직무의 연관성</strong>이 핵심입니다. 졸업 직후가 가장 흔한 전환 시점입니다.</p>
 <h2>자주 막히는 부분</h2>

@@ -10,7 +10,6 @@
     excerpt: string;
     author: string;
     date: string;          // ISO yyyy-mm-dd (정렬·표시 기준)
-    readingMinutes: number;
     cover?: string;        // 목록·상세 상단 이미지(없으면 그라데이션)
     content: string;       // ★ 본문 = 에디터가 출력하는 HTML 문자열
   };
@@ -41,7 +40,6 @@ create table posts (
   author text not null,
   cover text,
   content text not null,            -- 에디터 출력 HTML
-  reading_minutes int not null default 1,
   published boolean not null default false,
   published_at timestamptz,         -- 정렬 기준
   created_at timestamptz default now(),

@@ -59,18 +59,6 @@ export const BlogCard = ({ post }: { post: BlogPost }) => (
 				</div>
 				<CardTitle style={{ fontSize: 18 }}>{post.title}</CardTitle>
 				<CardBody style={{ fontSize: 15, flex: 1 }}>{post.excerpt}</CardBody>
-				<span
-					style={{
-						display: "inline-flex",
-						alignItems: "center",
-						gap: 8,
-						marginTop: 16,
-						fontSize: 13,
-						color: "var(--text-muted)",
-					}}
-				>
-					<Icon n="clock" style={{ width: 14, height: 14 }} /> 읽는 시간 {post.readingMinutes}분
-				</span>
 			</div>
 		</Card>
 	</Link>
