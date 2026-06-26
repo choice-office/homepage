@@ -10,8 +10,13 @@ import {
 	TrustBand,
 	VideoSection,
 } from "@/components/site/sections";
+import { getPublishedPosts } from "@/lib/blog";
 
-export default function Home() {
+// 홈의 블로그 미리보기를 위해 최신 글을 ISR로 가져온다
+export const revalidate = 60;
+
+export default async function Home() {
+	const latestPosts = await getPublishedPosts();
 	return (
 		<>
 			<Hero />
@@ -22,7 +27,7 @@ export default function Home() {
 			<Stats />
 			<ReviewsPreview />
 			<VideoSection />
-			<BlogPreview />
+			<BlogPreview posts={latestPosts} />
 			<CTABand />
 		</>
 	);

@@ -16,7 +16,7 @@ const config: KnipConfig = {
 
 	// shadcn/ui — pnpx shadcn으로 관리. knip 분석 대상 제외
 	// design/ — 클로드디자인 export 원본(참고용 산출물)이라 분석 제외
-	ignore: ["src/components/ui/**", "design/**"],
+	ignore: ["src/components/ui/**", "design/**", "scripts/**"],
 
 	ignoreDependencies: [
 		// CLI 도구 — import 없이 pnpx로만 사용

@@ -1,64 +1,62 @@
-# 블로그 시스템 — 현재 구조 & 관리자/Supabase 연동 로드맵
+# 블로그 시스템 — 구조 & 상태
 
-## 현재 (정적 데이터 기반)
-- 데이터: `src/lib/blog-data.ts`
-  ```ts
-  type BlogPost = {
-    slug: string;          // URL: /blog/{slug}
-    category: string;
-    title: string;
-    excerpt: string;
-    author: string;
-    date: string;          // ISO yyyy-mm-dd (정렬·표시 기준)
-    cover?: string;        // 목록·상세 상단 이미지(없으면 그라데이션)
-    content: string;       // ★ 본문 = 에디터가 출력하는 HTML 문자열
-  };
-  // BLOG_POSTS(최신순 정렬), BLOG_PAGE_SIZE=9, getBlogPost(slug), formatBlogDate(iso)
-  ```
-- 목록: `app/blog/page.tsx` — 9개/페이지, **페이지네이션을 `searchParams.page`로 관리**(서버에서 `slice`). `<Link href="/blog?page=N">`.
-- 상세: `app/blog/[id]/page.tsx` — 라우트 파라미터명은 `id`지만 값은 **slug**. `generateStaticParams`로 SSG, `generateMetadata`(OG 포함). 본문은 `<div className="prose" dangerouslySetInnerHTML={{__html: post.content}} />`.
-- 본문 스타일: `globals.css`의 `.prose`(+`.blog-prose` 760px 폭). h2/h3/p/ul/ol/blockquote/a/strong/code/hr/**figure·img**(글 중간 이미지) 지원.
-- 카드: `components/site/blog-card.tsx`(서버 컴포넌트, 내부 `<Link>`). 홈 `BlogPreview`와 상세 "관련 글"이 재사용.
-- sitemap: `app/sitemap.ts`가 `BLOG_POSTS`로 글 URL 자동 포함.
+## 현재 상태 (Supabase 가동 중)
+- **공개 읽기 = Supabase 구현 완료.** 정적 `blog-data.ts`는 제거됨. 데이터는 `blog_posts` 등 3개 테이블에서 온다.
+- **관리자(작성/수정) = 미구현(TODO).** 설계만: `docs/BLOG-AUTHORING.md`. 현재 데이터는 `scripts/seed-blog.ts`로 1회 시드.
 
-## 본문(content)을 HTML로 둔 이유 (설계 의도)
-관리자 글쓰기 에디터(첨부 스크린샷 = Tiptap류 리치 에디터: 굵게/기울임/밑줄/취소선/코드/색상/하이라이트/링크/이미지/첨부/정렬/목록/체크리스트/인용/구분선)는 **HTML을 출력**한다. 그래서 본문을 HTML 문자열로 저장하면:
-- 글 중간 이미지·제목·목록·인용을 **있는 그대로** 표현.
-- 관리자에서 등록한 결과가 상세 페이지에 **그대로** 나온다(렌더 경로 불변).
-
-## 다음 단계 — 관리자(velog식) + Supabase 연동
-목표: 관리자 페이지에서 글을 작성/등록하면 `/blog`와 `/blog/[slug]`에 자동 노출.
-
-### 권장 데이터 스키마 (Supabase `posts`)
-```sql
-create table posts (
-  id uuid primary key default gen_random_uuid(),
-  slug text unique not null,
-  category text not null,
-  title text not null,
-  excerpt text not null,
-  author text not null,
-  cover text,
-  content text not null,            -- 에디터 출력 HTML
-  published boolean not null default false,
-  published_at timestamptz,         -- 정렬 기준
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
--- RLS 활성화: 공개 읽기는 published=true만, 쓰기는 service_role(관리자)만.
+### 읽기 레이어 — `src/lib/blog.ts`
+```ts
+type BlogPost = { slug; category; title; excerpt; author; date; content;
+                  cover?; coverAlt?; tldr?; faq?; sources?; dateModified?; metaTitle?; metaDescription? };
+// getPublishedPosts(): Promise<BlogPost[]>   (published만, 최신순, RLS)
+// getPostBySlug(slug): Promise<BlogPost|null>
+// getRelatedPosts(post, n): Promise<BlogPost[]>
+// formatBlogDate(iso), BLOG_PAGE_SIZE=9
 ```
-- `BlogPost`(공개용)와 컬럼이 1:1 대응되도록 유지 → 프런트 렌더 코드 변경 최소화.
+- Supabase **anon 키 + RLS**로 서버에서 읽음(published만 노출). 컬럼(snake_case)→`BlogPost`(camel) 매핑은 `lib/blog.ts`의 `toPost`.
 
-### 연동 시 바꿀 것 (최소 변경 원칙)
-1. `lib/blog-data.ts`의 정적 배열을 **Supabase fetch로 교체**하되, `getBlogPost`/`BLOG_POSTS` 같은 **함수 시그니처는 유지**(페이지 코드 불변).
-2. 목록/상세 페이지에 `export const revalidate = 60`(ISR) 추가 → 글 등록 후 자동 갱신. `generateStaticParams`는 published slug 목록을 fetch.
-3. 본문 이미지/커버를 Supabase Storage에 올리면 도메인이 `*.supabase.co` → 이미 `next.config.ts` remotePatterns에 등록됨.
-4. **보안(중요)**: 본문 HTML은 신뢰 경로(관리자)라도 **저장 시 sanitize** 권장(예: `sanitize-html`/`isomorphic-dompurify`로 허용 태그·속성 화이트리스트). 현재 정적 단계에선 1차 제공 데이터라 그대로 렌더(`dangerouslySetInnerHTML`, biome-ignore 주석 있음).
-5. 관리자 라우트는 인증 뒤에 둔다(Supabase Auth 또는 별도 보호). 작성 폼은 Tiptap 등으로 HTML 출력 → `posts.content`에 저장.
+### 페이지 (모두 ISR `revalidate=60`)
+- 목록 `app/blog/page.tsx` — `getPublishedPosts()` → 9개/페이지, **페이지네이션 `searchParams.page`**.
+- 상세 `app/blog/[id]/page.tsx` — `getPostBySlug` (param명 `id`=slug). `generateStaticParams`=published slugs(빌드 시 fetch) + on-demand(신규글). 본문 `.prose dangerouslySetInnerHTML`. JSON-LD/구조 블록은 `docs/BLOG-SEO.md`.
+- 홈 `app/page.tsx`(async) — `getPublishedPosts()` → `<BlogPreview posts={...} />`(prop). 
+- `app/sitemap.ts`(async) — published 글 URL 포함.
+- 카드 `components/site/blog-card.tsx` — 내부 `<Link>`, 홈/관련글 재사용.
 
-### 에디터 → 저장 → 표시 흐름
+## Supabase 스키마 (생성 완료)
+프로젝트 ref: `pohfmrzgtoxdbwdsrckt`. 테이블 3개 + enum + RLS + storage 버킷.
 ```
-관리자 에디터(HTML 출력) → [sanitize] → Supabase posts.content
-        ↓ (ISR fetch)
-/blog 목록(BlogCard) · /blog/[slug] 상세(.prose 렌더)
+post_status enum: draft | published | archived
+
+blog_categories (id, slug uniq, name, sort_order, created_at)
+blog_authors    (id, slug uniq, name, role, credentials, bio, avatar_url, created_at)
+blog_posts (
+  id, slug uniq(소문자-kebab CHECK), title, excerpt, content(HTML),
+  cover_url, cover_alt, tldr,
+  faq jsonb [{q,a}], sources jsonb [{label,href}],
+  category_id → blog_categories, author_id → blog_authors,
+  status post_status default draft, published_at(정렬),
+  meta_title, meta_description, canonical_url,
+  created_at, updated_at(트리거 자동)
+)
+index: blog_posts(status, published_at desc), blog_posts(category_id)
+RLS: 공개 SELECT = blog_posts(status=published) / categories·authors(true). 쓰기 정책 없음 → service_role만.
+storage bucket 'blog' (public read) — 본문·커버 이미지용. 업로드 정책은 관리자 구현 시.
 ```
+- **설계 의도**: 공유 엔티티(카테고리·작성자)는 정규화(FK), 글-종속 값객체(faq·sources)는 jsonb. `BlogPost`와 컬럼 1:1 매핑 → 렌더 코드 변경 최소.
+- `dateModified` = `updated_at`(시드 시 명시 입력, 이후 UPDATE 트리거 자동), `date` = `published_at`.
+
+## 시드 (`scripts/seed-blog.ts`, 1회용)
+- 초기 글 12편 + 카테고리 10 + 작성자 1을 service_role로 upsert. 데이터: `scripts/seed-data.ts`.
+- 재실행: `export SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=…; npx tsx scripts/seed-blog.ts` (slug upsert라 멱등).
+- `scripts/`는 dev 도구라 tsgo/biome/knip 대상에서 제외(tsconfig·biome·knip 설정).
+
+## 본문(content)을 HTML로 둔 이유
+관리자 리치 에디터(Tiptap류)는 **HTML을 출력** → 글 중간 이미지·제목·목록·인용을 그대로 표현하고, 등록 결과가 상세에 **그대로** 나온다(렌더 경로 불변).
+
+## 다음 단계 — 관리자(velog식) 작성기능 [TODO]
+설계: `docs/BLOG-AUTHORING.md` (**AI 없이 + 극단적 단순함** 원칙). 요지:
+1. Tiptap 시맨틱 WYSIWYG(제목 드롭다운, 붙여넣기 정리) + 빈칸 채우기 템플릿.
+2. 사이드바 폼 = `BlogPost`의 옵션 필드(tldr/faq/sources/작성자/카테고리/커버+alt/slug/meta) — 이미 렌더·JSON-LD가 이 필드들을 소비하므로 **폼만 얹으면** 동작.
+3. 이미지 업로드 → Storage `blog` 버킷(+alt 강제). slug 자동(규칙, AI 없음). 발행 시 `status=published`, `published_at` 세팅 → ISR로 즉시 노출.
+4. 본문 HTML **저장 시 sanitize** 권장. 관리자 라우트는 인증 뒤에.
+5. (선택, 나중) "URL에서 불러오기"는 라이브러리(readability+turndown)로 초안만 — `docs/BLOG-AUTHORING.md` 참고.

@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BlogCard } from "@/components/site/blog-card";
 import { PageHero } from "@/components/site/sections";
-import { BLOG_PAGE_SIZE, BLOG_POSTS } from "@/lib/blog-data";
+import { BLOG_PAGE_SIZE, getPublishedPosts } from "@/lib/blog";
 
 export const metadata: Metadata = {
 	title: "출입국·비자 칼럼",
 	description: "자주 묻는 절차와 요건을, 사례 중심으로 알기 쉽게 정리한 출입국·비자 칼럼입니다.",
 };
+
+// 글 등록(관리자) 시 반영되도록 ISR — 60초마다 재검증
+export const revalidate = 60;
 
 const pageHref = (n: number) => (n <= 1 ? "/blog" : `/blog?page=${n}`);
 
@@ -70,10 +73,11 @@ export default async function BlogPage({
 	searchParams: Promise<{ page?: string }>;
 }) {
 	const { page } = await searchParams;
-	const totalPages = Math.max(1, Math.ceil(BLOG_POSTS.length / BLOG_PAGE_SIZE));
+	const allPosts = await getPublishedPosts();
+	const totalPages = Math.max(1, Math.ceil(allPosts.length / BLOG_PAGE_SIZE));
 	const current = Math.min(totalPages, Math.max(1, Number(page) || 1));
 	const start = (current - 1) * BLOG_PAGE_SIZE;
-	const posts = BLOG_POSTS.slice(start, start + BLOG_PAGE_SIZE);
+	const posts = allPosts.slice(start, start + BLOG_PAGE_SIZE);
 
 	return (
 		<>

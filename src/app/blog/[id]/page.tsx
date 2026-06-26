@@ -6,17 +6,29 @@ import { BlogCard } from "@/components/site/blog-card";
 import { Badge } from "@/components/site/ds";
 import { Icon } from "@/components/site/icon";
 import { siteConfig } from "@/config/site";
-import { BLOG_POSTS, type BlogPost, formatBlogDate, getBlogPost } from "@/lib/blog-data";
+import {
+	type BlogPost,
+	formatBlogDate,
+	getPostBySlug,
+	getPublishedPosts,
+	getRelatedPosts,
+} from "@/lib/blog";
 
 type Params = { params: Promise<{ id: string }> };
 
-export const generateStaticParams = () => BLOG_POSTS.map((p) => ({ id: p.slug }));
+// ISR: 발행/수정 시 반영. 빌드 시 발행글을 정적 생성, 신규 글은 on-demand 렌더.
+export const revalidate = 60;
+
+export const generateStaticParams = async () => {
+	const posts = await getPublishedPosts();
+	return posts.map((p) => ({ id: p.slug }));
+};
 
 const postUrl = (slug: string) => `${siteConfig.url}/blog/${slug}`;
 
 export const generateMetadata = async ({ params }: Params): Promise<Metadata> => {
 	const { id } = await params;
-	const post = getBlogPost(id);
+	const post = await getPostBySlug(id);
 	if (!post) return {};
 	const url = postUrl(post.slug);
 	const title = post.metaTitle ?? post.title;
@@ -83,14 +95,10 @@ const buildJsonLd = (post: BlogPost) => {
 
 export default async function BlogDetailPage({ params }: Params) {
 	const { id } = await params;
-	const post = getBlogPost(id);
+	const post = await getPostBySlug(id);
 	if (!post) notFound();
 
-	const sameCategory = BLOG_POSTS.filter(
-		(p) => p.slug !== post.slug && p.category === post.category,
-	);
-	const fallback = BLOG_POSTS.filter((p) => p.slug !== post.slug);
-	const related = (sameCategory.length > 0 ? sameCategory : fallback).slice(0, 3);
+	const related = await getRelatedPosts(post, 3);
 	const modified = post.dateModified && post.dateModified !== post.date ? post.dateModified : null;
 
 	return (
@@ -181,7 +189,7 @@ export default async function BlogDetailPage({ params }: Params) {
 						>
 							<Image
 								src={post.cover}
-								alt=""
+								alt={post.coverAlt ?? ""}
 								fill
 								priority
 								sizes="(max-width: 820px) 100vw, 760px"

@@ -11,7 +11,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { BLOG_POSTS } from "@/lib/blog-data";
+import type { BlogPost } from "@/lib/blog";
 import {
 	CHANNELS,
 	CONTACT,
@@ -717,7 +717,7 @@ export const VideoSection = () => (
 	</section>
 );
 
-export const BlogPreview = () => (
+export const BlogPreview = ({ posts }: { posts: BlogPost[] }) => (
 	<section className="section" style={{ background: "var(--surface-subtle)" }}>
 		<div className="container">
 			<div
@@ -751,7 +751,7 @@ export const BlogPreview = () => (
 				</Link>
 			</div>
 			<div data-stagger className="grid-3" style={{ marginTop: 48 }}>
-				{BLOG_POSTS.slice(0, 3).map((p) => (
+				{posts.slice(0, 3).map((p) => (
 					<BlogCard key={p.slug} post={p} />
 				))}
 			</div>

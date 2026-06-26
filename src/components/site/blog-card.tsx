@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { type BlogPost, formatBlogDate } from "@/lib/blog-data";
+import { type BlogPost, formatBlogDate } from "@/lib/blog";
 import { Badge, Card, CardBody, CardTitle } from "./ds";
 import { Icon } from "./icon";
 
@@ -20,7 +20,7 @@ export const BlogCard = ({ post }: { post: BlogPost }) => (
 				{post.cover ? (
 					<Image
 						src={post.cover}
-						alt=""
+						alt={post.coverAlt ?? ""}
 						fill
 						sizes="(max-width: 768px) 100vw, 33vw"
 						style={{ objectFit: "cover" }}
