@@ -816,7 +816,7 @@ export const ReviewCard = ({ r }: { r: Review }) => (
 	</Card>
 );
 
-export const ReviewsPreview = () => {
+export const ReviewsPreview = ({ reviews = REVIEWS }: { reviews?: Review[] }) => {
 	const go = useGo();
 	return (
 		<section className="section" style={{ background: "var(--surface-page)" }}>
@@ -857,7 +857,7 @@ export const ReviewsPreview = () => {
 					</button>
 				</div>
 				<div data-stagger="tilt" className="grid-3" style={{ marginTop: 48 }}>
-					{REVIEWS.slice(0, 3).map((r) => (
+					{reviews.slice(0, 3).map((r) => (
 						<ReviewCard key={r.title} r={r} />
 					))}
 				</div>

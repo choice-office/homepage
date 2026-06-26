@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { CTABand, PageHero, ReviewCard } from "@/components/site/sections";
-import { REVIEWS } from "@/lib/site-data";
+import { getPublishedReviews } from "@/lib/reviews";
 
 export const metadata: Metadata = {
 	title: "의뢰인 후기",
@@ -8,7 +8,11 @@ export const metadata: Metadata = {
 		"절차를 마친 의뢰인들이 남겨주신 실제 후기입니다. 개인정보 보호를 위해 익명으로 게재합니다.",
 };
 
-export default function ReviewsPage() {
+// 후기 노출은 관리자에서 토글 — ISR로 주기적 반영
+export const revalidate = 60;
+
+export default async function ReviewsPage() {
+	const reviews = await getPublishedReviews();
 	return (
 		<>
 			<PageHero
@@ -20,7 +24,7 @@ export default function ReviewsPage() {
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
 					<div data-stagger="tilt" className="grid-3">
-						{REVIEWS.map((r) => (
+						{reviews.map((r) => (
 							<ReviewCard key={r.title} r={r} />
 						))}
 					</div>
