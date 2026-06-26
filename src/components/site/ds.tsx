@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
-import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 type Sx = CSSProperties;
 
@@ -45,42 +45,11 @@ export const Badge = ({
 	</span>
 );
 
-/* ── Button ── */
-const btnBase: Sx = {
-	display: "inline-flex",
-	alignItems: "center",
-	justifyContent: "center",
-	gap: 8,
-	fontFamily: "var(--font-sans)",
-	fontWeight: 500,
-	borderRadius: "var(--radius)",
-	border: "1px solid transparent",
-	cursor: "pointer",
-	whiteSpace: "nowrap",
-	textDecoration: "none",
-	transition: "background-color .18s ease, color .18s ease, border-color .18s ease",
-	userSelect: "none",
-};
+/* ── Button (hover는 globals.css .ds-btn-*:hover 로 처리) ── */
 const btnSizes: Record<string, Sx> = {
 	sm: { height: 36, padding: "0 14px", fontSize: 14 },
 	md: { height: 44, padding: "0 20px", fontSize: 16 },
 	lg: { height: 52, padding: "0 28px", fontSize: 17 },
-};
-const btnVariants: Record<string, Sx> = {
-	primary: { background: "var(--action-primary)", color: "var(--color-on-primary)" },
-	outline: {
-		background: "var(--surface-card)",
-		color: "var(--text-heading)",
-		borderColor: "var(--border-default)",
-	},
-	secondary: { background: "var(--color-accent-soft)", color: "var(--color-primary-dark)" },
-	ghost: { background: "transparent", color: "var(--text-body)" },
-};
-const btnHovers: Record<string, Sx> = {
-	primary: { background: "var(--action-primary-hover)" },
-	outline: { background: "var(--surface-subtle)" },
-	secondary: { background: "#d6c9b3" },
-	ghost: { background: "var(--surface-subtle)" },
 };
 
 export const Button = ({
@@ -106,24 +75,11 @@ export const Button = ({
 	type?: "button" | "submit" | "reset";
 	style?: Sx;
 }) => {
-	const [hover, setHover] = useState(false);
-	const composed: Sx = {
-		...btnBase,
-		...btnSizes[size],
-		...btnVariants[variant],
-		...(hover && !disabled ? btnHovers[variant] : null),
-		...(disabled ? { opacity: 0.5, pointerEvents: "none" } : null),
-		...style,
-	};
+	const className = cn("ds-btn", `ds-btn-${variant}`, disabled && "is-disabled");
+	const composed: Sx = { ...btnSizes[size], ...style };
 	if (href) {
 		return (
-			<a
-				href={href}
-				onClick={onClick}
-				style={composed}
-				onMouseEnter={() => setHover(true)}
-				onMouseLeave={() => setHover(false)}
-			>
+			<a href={href} onClick={onClick} className={className} style={composed}>
 				{iconStart}
 				{children}
 				{iconEnd}
@@ -135,9 +91,8 @@ export const Button = ({
 			type={type}
 			onClick={onClick}
 			disabled={disabled}
+			className={className}
 			style={composed}
-			onMouseEnter={() => setHover(true)}
-			onMouseLeave={() => setHover(false)}
 		>
 			{iconStart}
 			{children}
@@ -211,21 +166,7 @@ export const CardBody = ({ children, style }: { children: ReactNode; style?: Sx 
 	</p>
 );
 
-/* ── Forms ── */
-const fieldStyle = (focus: boolean, invalid: boolean): Sx => ({
-	width: "100%",
-	boxSizing: "border-box",
-	fontFamily: "var(--font-sans)",
-	fontSize: 16,
-	color: "var(--text-body)",
-	background: "var(--surface-card)",
-	border: `1px solid ${invalid ? "#b4452f" : focus ? "var(--color-primary)" : "var(--border-default)"}`,
-	borderRadius: "var(--radius)",
-	outline: "none",
-	boxShadow: focus ? "0 0 0 3px rgba(108,93,76,0.18)" : "none",
-	transition: "border-color .15s ease, box-shadow .15s ease",
-});
-
+/* ── Forms (focus는 globals.css .ds-field:focus 로 처리) ── */
 export const Label = ({
 	children,
 	htmlFor,
@@ -254,38 +195,24 @@ export const Input = ({
 	invalid = false,
 	style,
 	...rest
-}: InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean }) => {
-	const [f, setF] = useState(false);
-	return (
-		<input
-			onFocus={() => setF(true)}
-			onBlur={() => setF(false)}
-			style={{ ...fieldStyle(f, invalid), height: 48, padding: "0 14px", ...style }}
-			{...rest}
-		/>
-	);
-};
+}: InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean }) => (
+	<input
+		className={cn("ds-field", invalid && "is-invalid")}
+		style={{ height: 48, padding: "0 14px", ...style }}
+		{...rest}
+	/>
+);
 
 export const Textarea = ({
 	invalid = false,
 	rows = 4,
 	style,
 	...rest
-}: TextareaHTMLAttributes<HTMLTextAreaElement> & { invalid?: boolean }) => {
-	const [f, setF] = useState(false);
-	return (
-		<textarea
-			rows={rows}
-			onFocus={() => setF(true)}
-			onBlur={() => setF(false)}
-			style={{
-				...fieldStyle(f, invalid),
-				padding: "12px 14px",
-				lineHeight: 1.6,
-				resize: "vertical",
-				...style,
-			}}
-			{...rest}
-		/>
-	);
-};
+}: TextareaHTMLAttributes<HTMLTextAreaElement> & { invalid?: boolean }) => (
+	<textarea
+		className={cn("ds-field", invalid && "is-invalid")}
+		rows={rows}
+		style={{ padding: "12px 14px", lineHeight: 1.6, resize: "vertical", ...style }}
+		{...rest}
+	/>
+);

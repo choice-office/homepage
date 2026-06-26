@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { CTABand, LocationDetail, PageHero } from "@/components/site/sections";
+import { CONTACT } from "@/lib/site-data";
 
 export const metadata: Metadata = {
 	title: "오시는 길",
-	description:
-		"서울특별시 중구 세종대로 136, 서울파이낸스센터 3층. 외부 출장이 많아 내방 상담은 사전 연락 부탁드립니다.",
+	description: `${CONTACT.address}. 외부 출장이 많아 내방 상담은 사전 연락 부탁드립니다.`,
 };
 
 const ABOUT_CRUMB = { label: "사무소 소개", route: "greeting" };

@@ -14,6 +14,7 @@ import {
 import { BLOG_POSTS } from "@/lib/blog-data";
 import {
 	CHANNELS,
+	CONTACT,
 	FAQ,
 	HERO_IMG,
 	NAV,
@@ -904,7 +905,7 @@ export const CTABand = () => {
 						무료 상담 신청
 					</Button>
 					<Button
-						href="tel:0269599886"
+						href={CONTACT.phone.href}
 						size="lg"
 						style={{
 							background: "transparent",
@@ -913,7 +914,7 @@ export const CTABand = () => {
 						}}
 						iconStart={<Icon n="phone" style={{ width: 17, height: 17 }} />}
 					>
-						02-6959-9886
+						{CONTACT.phone.display}
 					</Button>
 				</div>
 			</div>
@@ -1155,7 +1156,7 @@ export const ContactInfo = () => (
 			<span style={{ display: "flex", flexDirection: "column" }}>
 				<span style={{ fontSize: 13, color: "var(--text-muted)" }}>주소</span>
 				<span style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}>
-					서울특별시 중구 세종대로 136, 서울파이낸스센터 3층
+					{CONTACT.address}
 				</span>
 			</span>
 		</div>
@@ -1163,7 +1164,7 @@ export const ContactInfo = () => (
 );
 
 // 실제 지도(구글 맵 임베드 — API 키 불필요). CSP frame-src 에 google.com 허용됨.
-const MAP_QUERY = "서울파이낸스센터 서울특별시 중구 세종대로 136";
+const MAP_QUERY = CONTACT.address;
 const MAP_EMBED_SRC = `https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&z=16&hl=ko&output=embed`;
 
 export const MapBlock = ({ height = 320 }: { height?: number }) => (
@@ -1188,26 +1189,21 @@ export const MapBlock = ({ height = 320 }: { height?: number }) => (
 
 /* 오시는 길 — 프리미엄·미니멀 레이아웃 (주소 우선 + 구분선 행 + 큰 지도) */
 const LOCATION_ROWS: { icon: string; label: string; value: string; href: string | null }[] = [
-	{ icon: "phone", label: "전화 상담", value: "02-6959-9886", href: "tel:0269599886" },
+	{ icon: "phone", label: "전화 상담", value: CONTACT.phone.display, href: CONTACT.phone.href },
 	{
 		icon: "phone-call",
 		label: "긴급 상담",
-		value: "010-8259-9890",
-		href: "tel:01082599890",
+		value: CONTACT.mobile.display,
+		href: CONTACT.mobile.href,
 	},
-	{
-		icon: "mail",
-		label: "이메일",
-		value: "choice@kvisa1345.com",
-		href: "mailto:choice@kvisa1345.com",
-	},
+	{ icon: "mail", label: "이메일", value: CONTACT.email, href: `mailto:${CONTACT.email}` },
 	{
 		icon: "message-circle",
 		label: "카카오 채널",
-		value: "koreavisa8",
-		href: "https://pf.kakao.com/",
+		value: CONTACT.kakao.handle,
+		href: CONTACT.kakao.href,
 	},
-	{ icon: "clock", label: "상담 시간", value: "평일 09:00 – 18:00", href: null },
+	{ icon: "clock", label: "상담 시간", value: CONTACT.hours, href: null },
 ];
 
 export const LocationDetail = () => (
@@ -1245,12 +1241,10 @@ export const LocationDetail = () => (
 							color: "var(--text-heading)",
 						}}
 					>
-						서울특별시 중구 세종대로 136
-						<br />
-						서울파이낸스센터 3층
+						{CONTACT.address}
 					</p>
 					<p style={{ marginTop: 6, fontSize: 14, color: "var(--text-muted)" }}>
-						지하철 5호선 광화문역 인근
+						{CONTACT.addressNote}
 					</p>
 				</div>
 			</div>
@@ -1434,7 +1428,7 @@ export const ConsultBar = () => {
 			icon: "phone",
 			label: "전화 상담",
 			onClick: () => {
-				window.location.href = "tel:0269599886";
+				window.location.href = CONTACT.phone.href;
 			},
 		},
 	];
@@ -1464,10 +1458,10 @@ export const ConsultBar = () => {
 						<div>
 							<div style={{ fontSize: 12, color: "rgba(255,255,255,.7)" }}>실시간 전화 상담</div>
 							<a
-								href="tel:0269599886"
+								href={CONTACT.phone.href}
 								style={{ fontSize: 22, fontWeight: 700, color: "#fff", letterSpacing: "-.01em" }}
 							>
-								02-6959-9886
+								{CONTACT.phone.display}
 							</a>
 						</div>
 					</div>
@@ -1576,7 +1570,11 @@ export const FloatRail = () => {
 	const kakao = CHANNELS.find((c) => c.label === "카카오 채널")?.href ?? "#";
 	return (
 		<aside className="float-rail hide-mobile" aria-label="빠른 상담">
-			<a className="float-rail-num" href="tel:0269599886" aria-label="전화 상담 02-6959-9886">
+			<a
+				className="float-rail-num"
+				href={CONTACT.phone.href}
+				aria-label={`전화 상담 ${CONTACT.phone.display}`}
+			>
 				<span className="float-rail-phone">
 					<Icon n="phone-call" style={{ width: 20, height: 20 }} />
 				</span>
@@ -1680,8 +1678,10 @@ export const Footer = () => {
 					</nav>
 				</div>
 				<div style={{ marginTop: 28, fontSize: 14, lineHeight: 1.9 }}>
-					<p>주소 서울특별시 중구 세종대로 136, 서울파이낸스센터 3층</p>
-					<p>대표 행정사 최서연 · 전화 02-6959-9886 · 이메일 choice@kvisa1345.com</p>
+					<p>주소 {CONTACT.address}</p>
+					<p>
+						대표 행정사 최서연 · 전화 {CONTACT.phone.display} · 이메일 {CONTACT.email}
+					</p>
 					<p style={{ color: "rgba(255,255,255,0.5)" }}>
 						사업자등록번호 464-11-00966 · 행정사 등록번호 18102025537 · 출입국민원 대행기관
 						19-SB-RG-016

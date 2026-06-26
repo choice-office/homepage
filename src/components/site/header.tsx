@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { NAV, type NavItem, SERVICES } from "@/lib/site-data";
+import { CONTACT, NAV, type NavItem, SERVICES } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 import { Button } from "./ds";
 import { Icon } from "./icon";
@@ -301,13 +301,13 @@ function MobileDrawer({
 					무료 상담 신청
 				</Button>
 				<Button
-					href="tel:0269599886"
+					href={CONTACT.phone.href}
 					variant="outline"
 					size="lg"
 					style={{ width: "100%", marginTop: 10 }}
 					iconStart={<Icon n="phone" style={{ width: 16, height: 16 }} />}
 				>
-					02-6959-9886
+					{CONTACT.phone.display}
 				</Button>
 			</div>
 		</div>

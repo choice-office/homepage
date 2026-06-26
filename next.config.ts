@@ -88,14 +88,11 @@ const nextConfig: NextConfig = {
 	},
 
 	images: {
+		// 실제 사용 도메인만 허용(오픈 이미지 프록시 방지). 새 출처 추가 시 여기에 등록.
 		remotePatterns: [
-			{
-				// TODO(배포 전): 모든 https 도메인 허용 → 실제 사용 도메인으로 좁힐 것
-				// 예) { protocol: "https", hostname: "images.unsplash.com" }
-				//     { protocol: "https", hostname: "*.supabase.co" }
-				protocol: "https",
-				hostname: "**",
-			},
+			{ protocol: "https", hostname: "images.unsplash.com" },
+			// 관리자에서 업로드한 블로그 이미지(Supabase Storage) 대비
+			{ protocol: "https", hostname: "*.supabase.co" },
 		],
 	},
 };

@@ -1047,6 +1047,82 @@
 	color: var(--text-muted);
 }
 
+/* DS Button — hover를 JS state 대신 CSS로 처리(리렌더/객체할당 제거) */
+.ds-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	font-family: var(--font-sans);
+	font-weight: 500;
+	border-radius: var(--radius);
+	border: 1px solid transparent;
+	cursor: pointer;
+	white-space: nowrap;
+	text-decoration: none;
+	user-select: none;
+	transition:
+		background-color 0.18s ease,
+		color 0.18s ease,
+		border-color 0.18s ease;
+}
+.ds-btn-primary {
+	background: var(--action-primary);
+	color: var(--color-on-primary);
+}
+.ds-btn-primary:hover {
+	background: var(--action-primary-hover);
+}
+.ds-btn-outline {
+	background: var(--surface-card);
+	color: var(--text-heading);
+	border-color: var(--border-default);
+}
+.ds-btn-outline:hover {
+	background: var(--surface-subtle);
+}
+.ds-btn-secondary {
+	background: var(--color-accent-soft);
+	color: var(--color-primary-dark);
+}
+.ds-btn-secondary:hover {
+	background: #d6c9b3;
+}
+.ds-btn-ghost {
+	background: transparent;
+	color: var(--text-body);
+}
+.ds-btn-ghost:hover {
+	background: var(--surface-subtle);
+}
+.ds-btn.is-disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+/* DS Field(Input/Textarea) — focus를 CSS로 처리 */
+.ds-field {
+	width: 100%;
+	box-sizing: border-box;
+	font-family: var(--font-sans);
+	font-size: 16px;
+	color: var(--text-body);
+	background: var(--surface-card);
+	border: 1px solid var(--border-default);
+	border-radius: var(--radius);
+	outline: none;
+	transition:
+		border-color 0.15s ease,
+		box-shadow 0.15s ease;
+}
+.ds-field:focus {
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgba(108, 93, 76, 0.18);
+}
+.ds-field.is-invalid {
+	border-color: #b4452f;
+}
+
 /* DS Card — hover lift을 JS state 대신 CSS로 처리(접근성/성능) */
 .ds-card {
 	background: var(--surface-card);

@@ -79,40 +79,52 @@ export const TEAM: Member[] = [
 	},
 ];
 
+// ★ 연락처/주소 단일 출처 — 전화·주소·이메일은 여기만 바꾸면 사이트 전체에 반영된다.
+export const CONTACT = {
+	phone: { display: "02-6959-9886", href: "tel:0269599886" },
+	mobile: { display: "010-8259-9890", href: "tel:01082599890", note: "외부 출장 중 급한 문의 시" },
+	kakao: { handle: "koreavisa8", href: "https://pf.kakao.com/" },
+	wechat: { handle: "koreavisa8" },
+	email: "choice@kvisa1345.com",
+	address: "서울특별시 중구 세종대로 136, 서울파이낸스센터 3층",
+	addressNote: "지하철 5호선 광화문역 인근",
+	hours: "평일 09:00 – 18:00",
+} as const;
+
 export const CHANNELS = [
 	{
 		icon: "phone",
 		label: "전화 상담",
-		value: "02-6959-9886",
-		href: "tel:0269599886",
+		value: CONTACT.phone.display,
+		href: CONTACT.phone.href,
 		note: null as string | null,
 	},
 	{
 		icon: "phone-call",
 		label: "긴급 상담 (휴대폰)",
-		value: "010-8259-9890",
-		href: "tel:01082599890",
-		note: "외부 출장 중 급한 문의 시",
+		value: CONTACT.mobile.display,
+		href: CONTACT.mobile.href,
+		note: CONTACT.mobile.note as string | null,
 	},
 	{
 		icon: "message-circle",
 		label: "카카오 채널",
-		value: "koreavisa8",
-		href: "https://pf.kakao.com/",
+		value: CONTACT.kakao.handle,
+		href: CONTACT.kakao.href as string | null,
 		note: null as string | null,
 	},
 	{
 		icon: "globe",
 		label: "위챗 (WeChat)",
-		value: "koreavisa8",
+		value: CONTACT.wechat.handle,
 		href: null as string | null,
 		note: "中文 상담",
 	},
 	{
 		icon: "mail",
 		label: "이메일",
-		value: "choice@kvisa1345.com",
-		href: "mailto:choice@kvisa1345.com",
+		value: CONTACT.email,
+		href: `mailto:${CONTACT.email}`,
 		note: null as string | null,
 	},
 ];
