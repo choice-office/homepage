@@ -9,6 +9,17 @@
 
 > **상세 가이드**: 킥오프/섹션 조합은 SPEC.md, 셋업 체크리스트는 SETUP.md 참고
 
+## ⚠️ 이 프로젝트(초이스 행정사)의 실제 설계 — 작업 전 `docs/` 먼저 읽기
+
+이 저장소는 위 보일러플레이트에서 출발했지만 **실제 구조가 다르다**(예: 섹션은 `components/site/sections.tsx` 단일 파일, 디자인시스템은 `components/site/ds.tsx`). 아래 보일러플레이트 설명보다 **`docs/`의 내용을 우선**한다. 구현/리뷰 시작 전 관련 문서를 읽을 것:
+
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — 실제 디렉터리·데이터 모델·내비게이션·스타일·애니메이션·렌더링 구조
+- **[docs/PATTERNS.md](docs/PATTERNS.md)** — 자주 하는 작업의 정해진 구현 방식(Cookbook): DS 컴포넌트, CONTACT, 새 페이지/섹션, 폼/액션, 커밋·배포
+- **[docs/BLOG.md](docs/BLOG.md)** — 블로그 데이터 모델(HTML 본문)과 **관리자(velog식)+Supabase 연동 로드맵** ← 다음 구현
+- **[docs/DECISIONS.md](docs/DECISIONS.md)** — 의도적 설계 결정 & 보류 항목(되돌리지 말 것 / 재분석하지 말 것)
+
+코드를 바꾼 뒤 위 문서의 사실이 달라지면 해당 문서도 함께 갱신한다.
+
 ## 자동 작업 모드 (중요 — 항상 적용)
 
 **랜딩페이지/홈페이지 관련 요청이 들어오면 `.omc/skills/landing-start/SKILL.md`를 즉시 읽고 그 로직에 따라 자동으로 모드를 선택해서 실행한다. 사용자에게 모드를 물어보지 않는다.**
