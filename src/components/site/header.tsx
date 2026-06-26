@@ -87,10 +87,10 @@ export const SiteHeader = () => {
 		clearCloseTimer();
 		setOpenMega(label);
 	};
-	// 영역을 벗어나면 약간의 지연 후 닫기 → 대각선 이동 중 "스쳐서 닫힘" 방지
+	// 영역을 완전히 벗어나면 ~200ms 뒤 닫기 → 대각선 이동/빈 공간 통과 중 "스쳐서 닫힘" 방지
 	const scheduleClose = () => {
 		clearCloseTimer();
-		closeTimer.current = setTimeout(() => setOpenMega(null), 150);
+		closeTimer.current = setTimeout(() => setOpenMega(null), 200);
 	};
 
 	// 클릭 시: 이동 + 메뉴 닫기 + 포커스 박스 제거(blur)
@@ -109,7 +109,12 @@ export const SiteHeader = () => {
 						초이스 행정사 사무소
 					</button>
 
-					<nav className="nav-links" aria-label="메인 메뉴" onMouseLeave={scheduleClose}>
+					<nav
+						className="nav-links"
+						aria-label="메인 메뉴"
+						onMouseEnter={clearCloseTimer}
+						onMouseLeave={scheduleClose}
+					>
 						{NAV.map((n) => {
 							const mega = hasMega(n);
 							const childRoutes = mega ? megaChildren(n).map((c) => c.route) : [];
