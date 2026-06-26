@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { type Review, REVIEWS } from "@/lib/site-data";
+import { REVIEWS, type Review } from "@/lib/site-data";
 
 // 의뢰인 후기 공개 읽기 레이어 — Supabase(reviews)에서 노출(is_published) 후기만 읽는다(RLS).
 // 작성/수정/노출 토글은 관리자(choice-admin)에서 처리. DB가 비어 있거나 미설정이면 정적 REVIEWS로 폴백.
