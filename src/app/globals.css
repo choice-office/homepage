@@ -1047,6 +1047,90 @@
 	color: var(--text-muted);
 }
 
+/* 블로그 상세 — 요점(TL;DR) / FAQ / 출처 / 면책 (SEO·AEO 구조 블록) */
+.post-tldr {
+	display: flex;
+	gap: 14px;
+	align-items: flex-start;
+	margin: 0 0 32px;
+	padding: 18px 20px;
+	background: var(--surface-subtle);
+	border: 1px solid var(--border-default);
+	border-left: 3px solid var(--color-primary);
+	border-radius: var(--radius);
+}
+.post-tldr-label {
+	flex: 0 0 auto;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	color: var(--color-primary);
+	padding-top: 2px;
+}
+.post-tldr p {
+	margin: 0;
+	font-size: 16px;
+	line-height: 1.7;
+	color: var(--text-body);
+	font-weight: 500;
+}
+.post-faq {
+	margin-top: 48px;
+	padding-top: 32px;
+	border-top: 1px solid var(--border-default);
+}
+.post-faq > h2,
+.post-sources > h2 {
+	font-size: 22px;
+	font-weight: 700;
+	color: var(--text-heading);
+	margin-bottom: 20px;
+}
+.post-faq-item {
+	padding: 16px 0;
+	border-bottom: 1px solid var(--border-default);
+}
+.post-faq-item h3 {
+	font-size: 17px;
+	font-weight: 700;
+	color: var(--text-heading);
+	margin: 0 0 8px;
+}
+.post-faq-item p {
+	margin: 0;
+	font-size: 16px;
+	line-height: 1.7;
+	color: var(--text-body);
+}
+.post-sources {
+	margin-top: 40px;
+}
+.post-sources ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.post-sources a {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 15px;
+	color: var(--color-primary);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+.post-disclaimer {
+	margin: 40px 0 0;
+	padding-top: 20px;
+	border-top: 1px solid var(--border-default);
+	font-size: 13px;
+	line-height: 1.7;
+	color: var(--text-muted);
+}
+
 /* DS Button — hover를 JS state 대신 CSS로 처리(리렌더/객체할당 제거) */
 .ds-btn {
 	display: inline-flex;

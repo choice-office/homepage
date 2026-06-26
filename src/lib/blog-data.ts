@@ -2,15 +2,25 @@
 // 본문(content)은 에디터가 출력하는 HTML 문자열. 상세 페이지에서 .prose 컨테이너에 렌더하므로
 // 제목/목록/인용/이미지(글 중간 삽입)까지 자연스럽게 표현된다.
 
+export type BlogFaq = { q: string; a: string };
+export type BlogSource = { label: string; href: string };
+
 export type BlogPost = {
 	slug: string; // URL: /blog/{slug}
 	category: string;
 	title: string;
 	excerpt: string;
 	author: string;
-	date: string; // ISO yyyy-mm-dd (정렬·표시 기준)
-	cover?: string; // 목록·상세 상단 커버 이미지(없으면 그라데이션 플레이스홀더)
+	date: string; // ISO yyyy-mm-dd (정렬·표시 기준 = datePublished)
 	content: string; // 에디터 출력 HTML
+	cover?: string; // 목록·상세 상단 커버 이미지(없으면 그라데이션 플레이스홀더)
+	// ── SEO/AEO 옵션 (채우면 렌더·JSON-LD에 반영, 비우면 생략/기본값) — docs/BLOG-SEO.md
+	tldr?: string; // 상단 "요점" 콜아웃(답-우선)
+	faq?: BlogFaq[]; // 가시 FAQ 블록 + FAQPage JSON-LD
+	sources?: BlogSource[]; // 참고/근거 링크(E-E-A-T)
+	dateModified?: string; // 없으면 date
+	metaTitle?: string; // 없으면 title
+	metaDescription?: string; // 없으면 excerpt
 };
 
 // 최신순 정렬을 코드가 보장하도록 date 기준 내림차순으로 노출한다.
@@ -46,6 +56,19 @@ const POSTS: BlogPost[] = [
 <blockquote>혈통 입증 서류는 국가·세대에 따라 요구 범위가 달라집니다. 사전에 점검하면 보정 요청을 크게 줄일 수 있습니다.</blockquote>
 <p>서류의 적격 여부는 개별 사정에 따라 달라지므로, 신청 전에 한 번 점검받는 것을 권합니다.</p>
 `,
+		dateModified: "2026-05-20",
+		tldr: "F-4는 ‘체류자격’, 거소증은 그 자격으로 국내 거소를 신고하고 받는 ‘증명서’입니다. 자격 확보 → 거소 신고 순서로 진행합니다.",
+		faq: [
+			{
+				q: "F-4와 거소증은 같은 건가요?",
+				a: "아니요. F-4는 체류자격이고, 거소증(국내거소신고증)은 그 자격을 가진 분이 국내 거소를 신고하고 발급받는 증명서입니다.",
+			},
+			{
+				q: "거소 신고에는 무엇이 필요한가요?",
+				a: "여권·사진과 함께 국내 거소를 입증할 서류(임대차계약서 등)가 필요합니다. 개별 사정에 따라 추가 서류가 요구될 수 있습니다.",
+			},
+		],
+		sources: [{ label: "하이코리아 — 출입국·외국인정책본부", href: "https://www.hikorea.go.kr" }],
 	},
 	{
 		slug: "f6-marriage-visa-relationship-proof",
@@ -69,6 +92,13 @@ const POSTS: BlogPost[] = [
 <p>상대방의 가족관계, 만남의 경위, 향후 거주 계획 등 <em>두 사람의 답변이 일치하는지</em>를 확인합니다. 준비 단계에서 서로의 기억을 맞춰 두는 것이 좋습니다.</p>
 <blockquote>자료는 많을수록 좋은 것이 아니라, <strong>일관성</strong>이 있어야 합니다.</blockquote>
 `,
+		tldr: "F-6 심사의 핵심은 ‘관계의 진정성’입니다. 자료의 양보다, 교제부터 현재까지가 일관되게 설명되는지가 중요합니다.",
+		faq: [
+			{
+				q: "관계 입증 자료는 어디까지 준비하나요?",
+				a: "교제 과정 사진·대화, 왕래(출입국·항공권) 기록, 경제적 부양 능력 입증 등을 일관성 있게 준비합니다. 양보다 일관성이 중요합니다.",
+			},
+		],
 	},
 	{
 		slug: "f5-permanent-residence-requirements",

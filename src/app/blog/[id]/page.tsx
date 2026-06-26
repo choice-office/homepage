@@ -6,29 +6,79 @@ import { BlogCard } from "@/components/site/blog-card";
 import { Badge } from "@/components/site/ds";
 import { Icon } from "@/components/site/icon";
 import { siteConfig } from "@/config/site";
-import { BLOG_POSTS, formatBlogDate, getBlogPost } from "@/lib/blog-data";
+import { BLOG_POSTS, type BlogPost, formatBlogDate, getBlogPost } from "@/lib/blog-data";
 
 type Params = { params: Promise<{ id: string }> };
 
 export const generateStaticParams = () => BLOG_POSTS.map((p) => ({ id: p.slug }));
 
+const postUrl = (slug: string) => `${siteConfig.url}/blog/${slug}`;
+
 export const generateMetadata = async ({ params }: Params): Promise<Metadata> => {
 	const { id } = await params;
 	const post = getBlogPost(id);
 	if (!post) return {};
-	const url = `${siteConfig.url}/blog/${post.slug}`;
+	const url = postUrl(post.slug);
+	const title = post.metaTitle ?? post.title;
+	const description = post.metaDescription ?? post.excerpt;
 	return {
-		title: post.title,
-		description: post.excerpt,
+		title,
+		description,
 		alternates: { canonical: url },
 		openGraph: {
 			type: "article",
-			title: post.title,
-			description: post.excerpt,
+			title,
+			description,
 			url,
+			publishedTime: post.date,
+			modifiedTime: post.dateModified ?? post.date,
 			images: post.cover ? [{ url: post.cover }] : undefined,
 		},
 	};
+};
+
+// JSON-LD: BlogPosting + BreadcrumbList(+ FAQPage는 faq 있을 때만). docs/BLOG-SEO.md
+const buildJsonLd = (post: BlogPost) => {
+	const url = postUrl(post.slug);
+	const graph: Record<string, unknown>[] = [
+		{
+			"@type": "BlogPosting",
+			headline: post.title,
+			description: post.metaDescription ?? post.excerpt,
+			image: post.cover ? [post.cover] : undefined,
+			datePublished: post.date,
+			dateModified: post.dateModified ?? post.date,
+			author: { "@type": "Person", name: post.author },
+			publisher: {
+				"@type": "Organization",
+				name: siteConfig.name,
+				logo: { "@type": "ImageObject", url: siteConfig.ogImage },
+			},
+			mainEntityOfPage: { "@type": "WebPage", "@id": url },
+			articleSection: post.category,
+			inLanguage: "ko",
+		},
+		{
+			"@type": "BreadcrumbList",
+			itemListElement: [
+				{ "@type": "ListItem", position: 1, name: "홈", item: siteConfig.url },
+				{ "@type": "ListItem", position: 2, name: "블로그", item: `${siteConfig.url}/blog` },
+				{ "@type": "ListItem", position: 3, name: post.category },
+				{ "@type": "ListItem", position: 4, name: post.title, item: url },
+			],
+		},
+	];
+	if (post.faq?.length) {
+		graph.push({
+			"@type": "FAQPage",
+			mainEntity: post.faq.map((f) => ({
+				"@type": "Question",
+				name: f.q,
+				acceptedAnswer: { "@type": "Answer", text: f.a },
+			})),
+		});
+	}
+	return { "@context": "https://schema.org", "@graph": graph };
 };
 
 export default async function BlogDetailPage({ params }: Params) {
@@ -41,9 +91,15 @@ export default async function BlogDetailPage({ params }: Params) {
 	);
 	const fallback = BLOG_POSTS.filter((p) => p.slug !== post.slug);
 	const related = (sameCategory.length > 0 ? sameCategory : fallback).slice(0, 3);
+	const modified = post.dateModified && post.dateModified !== post.date ? post.dateModified : null;
 
 	return (
 		<>
+			<script
+				type="application/ld+json"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: 구조화 데이터(JSON-LD)
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd(post)) }}
+			/>
 			<header
 				className="section"
 				style={{ paddingTop: 128, paddingBottom: 0, background: "var(--surface-page)" }}
@@ -97,6 +153,14 @@ export default async function BlogDetailPage({ params }: Params) {
 						<span>{post.author}</span>
 						<span aria-hidden="true">·</span>
 						<time dateTime={post.date}>{formatBlogDate(post.date)}</time>
+						{modified && (
+							<>
+								<span aria-hidden="true">·</span>
+								<span>
+									수정 <time dateTime={modified}>{formatBlogDate(modified)}</time>
+								</span>
+							</>
+						)}
 					</div>
 				</div>
 			</header>
@@ -125,9 +189,50 @@ export default async function BlogDetailPage({ params }: Params) {
 							/>
 						</div>
 					)}
+
+					{post.tldr && (
+						<aside className="post-tldr">
+							<span className="post-tldr-label">요점</span>
+							<p>{post.tldr}</p>
+						</aside>
+					)}
+
 					{/* 본문은 관리자 에디터가 출력한 HTML. 추후 Supabase 저장 시 입력 단계에서 sanitize 권장. */}
 					{/* biome-ignore lint/security/noDangerouslySetInnerHtml: 1차 제공(관리자 작성) 블로그 본문 HTML */}
 					<div className="prose" dangerouslySetInnerHTML={{ __html: post.content }} />
+
+					{post.faq && post.faq.length > 0 && (
+						<section className="post-faq" aria-labelledby="faq-heading">
+							<h2 id="faq-heading">자주 묻는 질문</h2>
+							{post.faq.map((f) => (
+								<div key={f.q} className="post-faq-item">
+									<h3>{f.q}</h3>
+									<p>{f.a}</p>
+								</div>
+							))}
+						</section>
+					)}
+
+					{post.sources && post.sources.length > 0 && (
+						<section className="post-sources" aria-labelledby="sources-heading">
+							<h2 id="sources-heading">참고 · 근거</h2>
+							<ul>
+								{post.sources.map((s) => (
+									<li key={s.href}>
+										<a href={s.href} target="_blank" rel="noopener noreferrer">
+											{s.label}
+											<Icon n="external-link" style={{ width: 13, height: 13 }} />
+										</a>
+									</li>
+								))}
+							</ul>
+						</section>
+					)}
+
+					<p className="post-disclaimer">
+						본 글은 일반적인 정보 제공을 위한 것으로 법률 자문이 아니며, 개별 사안은 사실관계에 따라
+						결론이 달라질 수 있어 사전 상담을 권합니다.
+					</p>
 				</div>
 			</article>
 

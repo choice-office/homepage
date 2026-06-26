@@ -15,7 +15,9 @@
 
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — 실제 디렉터리·데이터 모델·내비게이션·스타일·애니메이션·렌더링 구조
 - **[docs/PATTERNS.md](docs/PATTERNS.md)** — 자주 하는 작업의 정해진 구현 방식(Cookbook): DS 컴포넌트, CONTACT, 새 페이지/섹션, 폼/액션, 커밋·배포
-- **[docs/BLOG.md](docs/BLOG.md)** — 블로그 데이터 모델(HTML 본문)과 **관리자(velog식)+Supabase 연동 로드맵** ← 다음 구현
+- **[docs/BLOG.md](docs/BLOG.md)** — 블로그 데이터 모델(HTML 본문)과 **관리자+Supabase 연동 로드맵**
+- **[docs/BLOG-SEO.md](docs/BLOG-SEO.md)** — 블로그 SEO/AEO: 데이터 모델·JSON-LD·공개 렌더(구현됨)
+- **[docs/BLOG-AUTHORING.md](docs/BLOG-AUTHORING.md)** — 어드민 작성 포맷·UX 설계(미구현, **AI 없이 + 극단적 단순함** 원칙)
 - **[docs/DECISIONS.md](docs/DECISIONS.md)** — 의도적 설계 결정 & 보류 항목(되돌리지 말 것 / 재분석하지 말 것)
 
 코드를 바꾼 뒤 위 문서의 사실이 달라지면 해당 문서도 함께 갱신한다.

@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/site/header";
 import { ScrollReveal } from "@/components/site/scroll-reveal";
 import { ConsultBar, FloatRail, Footer } from "@/components/site/sections";
 import { siteConfig } from "@/config/site";
+import { CONTACT } from "@/lib/site-data";
 import "./globals.css";
 
 // 폰트: Noto Sans KR (next/font 자체 호스팅 — CDN/CSP 불필요, 한/영 동시 지원).
@@ -62,11 +63,23 @@ export const metadata: Metadata = {
 
 const jsonLd = {
 	"@context": "https://schema.org",
-	"@type": "Organization",
+	"@type": ["Organization", "LegalService"],
 	name: siteConfig.name,
 	url: siteConfig.url,
 	logo: siteConfig.ogImage,
+	image: siteConfig.ogImage,
 	description: siteConfig.description,
+	telephone: CONTACT.phone.display,
+	email: CONTACT.email,
+	address: {
+		"@type": "PostalAddress",
+		streetAddress: CONTACT.address,
+		addressLocality: "서울",
+		addressCountry: "KR",
+	},
+	areaServed: "KR",
+	openingHours: "Mo-Fr 09:00-18:00",
+	knowsLanguage: ["ko", "en", "zh"],
 };
 
 export default function RootLayout({
