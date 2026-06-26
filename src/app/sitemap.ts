@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
+import { BLOG_POSTS } from "@/lib/blog-data";
 import { SERVICES } from "@/lib/site-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -28,5 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 		priority: 0.6,
 	}));
 
-	return [...staticRoutes, ...serviceRoutes];
+	const blogRoutes: MetadataRoute.Sitemap = BLOG_POSTS.map((p) => ({
+		url: u(`/blog/${p.slug}`),
+		lastModified: new Date(p.date),
+		changeFrequency: "monthly",
+		priority: 0.5,
+	}));
+
+	return [...staticRoutes, ...serviceRoutes, ...blogRoutes];
 }

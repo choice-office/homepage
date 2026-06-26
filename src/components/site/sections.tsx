@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { type FormEvent, Fragment, useEffect, useState } from "react";
 import { submitContact } from "@/app/actions/contact";
 import {
@@ -10,8 +11,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { BLOG_POSTS } from "@/lib/blog-data";
 import {
-	BLOG,
 	CHANNELS,
 	FAQ,
 	HERO_IMG,
@@ -26,6 +27,7 @@ import {
 	VIDEOS,
 	YOUTUBE_CHANNEL,
 } from "@/lib/site-data";
+import { BlogCard } from "./blog-card";
 import { Badge, Button, Card, CardBody, CardTitle, Input, Label, Textarea } from "./ds";
 import { Icon } from "./icon";
 import { useGo } from "./use-go";
@@ -729,14 +731,12 @@ export const BlogPreview = () => (
 				<SectionHead
 					eyebrow="Blog"
 					title="비자 정보 · 소식"
-					sub="네이버 블로그에서 절차·요건을 사례 중심으로 정리해 전해드립니다."
+					sub="절차·요건을 사례 중심으로 알기 쉽게 정리해 전해드립니다."
 					align="left"
 				/>
-				<a
+				<Link
 					className="lk"
-					href={NAVER_BLOG}
-					target="_blank"
-					rel="noopener noreferrer"
+					href="/blog"
 					style={{
 						display: "inline-flex",
 						alignItems: "center",
@@ -746,60 +746,12 @@ export const BlogPreview = () => (
 						whiteSpace: "nowrap",
 					}}
 				>
-					블로그 전체보기 <Icon n="external-link" style={{ width: 16, height: 16 }} />
-				</a>
+					블로그 전체보기 <Icon n="arrow-right" style={{ width: 16, height: 16 }} />
+				</Link>
 			</div>
 			<div data-stagger className="grid-3" style={{ marginTop: 48 }}>
-				{BLOG.slice(0, 3).map((b) => (
-					<a
-						key={b.title}
-						className="lk"
-						href={NAVER_BLOG}
-						target="_blank"
-						rel="noopener noreferrer"
-						style={{ display: "block" }}
-					>
-						<Card
-							padding="0"
-							style={{
-								overflow: "hidden",
-								display: "flex",
-								flexDirection: "column",
-								height: "100%",
-							}}
-						>
-							<div
-								style={{
-									height: 132,
-									background:
-										"linear-gradient(150deg, var(--color-surface-alt), var(--color-accent-soft))",
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-								}}
-							>
-								<Icon
-									n="file-text"
-									style={{ width: 38, height: 38, color: "var(--color-primary)", opacity: 0.55 }}
-								/>
-							</div>
-							<div style={{ padding: 24, display: "flex", flexDirection: "column", flex: 1 }}>
-								<div
-									style={{
-										display: "flex",
-										justifyContent: "space-between",
-										alignItems: "center",
-										marginBottom: 12,
-									}}
-								>
-									<Badge>{b.cat}</Badge>
-									<span style={{ fontSize: 13, color: "var(--text-muted)" }}>{b.date}</span>
-								</div>
-								<CardTitle style={{ fontSize: 17 }}>{b.title}</CardTitle>
-								<CardBody style={{ fontSize: 15, flex: 1 }}>{b.excerpt}</CardBody>
-							</div>
-						</Card>
-					</a>
+				{BLOG_POSTS.slice(0, 3).map((p) => (
+					<BlogCard key={p.slug} post={p} />
 				))}
 			</div>
 		</div>

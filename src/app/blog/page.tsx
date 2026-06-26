@@ -1,15 +1,80 @@
 import type { Metadata } from "next";
-import { Badge, Card, CardBody, CardTitle } from "@/components/site/ds";
-import { Icon } from "@/components/site/icon";
+import Link from "next/link";
+import { BlogCard } from "@/components/site/blog-card";
 import { PageHero } from "@/components/site/sections";
-import { BLOG, NAVER_BLOG } from "@/lib/site-data";
+import { BLOG_PAGE_SIZE, BLOG_POSTS } from "@/lib/blog-data";
 
 export const metadata: Metadata = {
 	title: "출입국·비자 칼럼",
 	description: "자주 묻는 절차와 요건을, 사례 중심으로 알기 쉽게 정리한 출입국·비자 칼럼입니다.",
 };
 
-export default function BlogPage() {
+const pageHref = (n: number) => (n <= 1 ? "/blog" : `/blog?page=${n}`);
+
+const Pagination = ({ current, totalPages }: { current: number; totalPages: number }) => {
+	const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+	const itemStyle = (active: boolean) => ({
+		display: "inline-flex",
+		alignItems: "center",
+		justifyContent: "center",
+		minWidth: 40,
+		height: 40,
+		padding: "0 12px",
+		borderRadius: "var(--radius)",
+		border: "1px solid var(--border-default)",
+		fontSize: 15,
+		fontWeight: active ? 700 : 500,
+		background: active ? "var(--color-primary)" : "var(--surface-card)",
+		color: active ? "var(--color-primary-foreground, #fff)" : "var(--text-body)",
+	});
+	return (
+		<nav
+			aria-label="블로그 페이지"
+			style={{
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				gap: 8,
+				marginTop: 40,
+				flexWrap: "wrap",
+			}}
+		>
+			{current > 1 && (
+				<Link className="lk" href={pageHref(current - 1)} style={itemStyle(false)} rel="prev">
+					이전
+				</Link>
+			)}
+			{pages.map((n) => (
+				<Link
+					key={n}
+					className="lk"
+					href={pageHref(n)}
+					aria-current={n === current ? "page" : undefined}
+					style={itemStyle(n === current)}
+				>
+					{n}
+				</Link>
+			))}
+			{current < totalPages && (
+				<Link className="lk" href={pageHref(current + 1)} style={itemStyle(false)} rel="next">
+					다음
+				</Link>
+			)}
+		</nav>
+	);
+};
+
+export default async function BlogPage({
+	searchParams,
+}: {
+	searchParams: Promise<{ page?: string }>;
+}) {
+	const { page } = await searchParams;
+	const totalPages = Math.max(1, Math.ceil(BLOG_POSTS.length / BLOG_PAGE_SIZE));
+	const current = Math.min(totalPages, Math.max(1, Number(page) || 1));
+	const start = (current - 1) * BLOG_PAGE_SIZE;
+	const posts = BLOG_POSTS.slice(start, start + BLOG_PAGE_SIZE);
+
 	return (
 		<>
 			<PageHero
@@ -21,80 +86,11 @@ export default function BlogPage() {
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
 					<div data-stagger className="grid-3">
-						{BLOG.map((b) => (
-							<a
-								key={b.title}
-								className="lk"
-								href={NAVER_BLOG}
-								target="_blank"
-								rel="noopener noreferrer"
-								style={{ display: "block" }}
-							>
-								<Card
-									padding="0"
-									style={{
-										overflow: "hidden",
-										display: "flex",
-										flexDirection: "column",
-										height: "100%",
-									}}
-								>
-									<div
-										style={{
-											height: 140,
-											background:
-												"linear-gradient(150deg, var(--color-surface-alt), var(--color-accent-soft))",
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center",
-										}}
-									>
-										<Icon
-											n="file-text"
-											style={{
-												width: 40,
-												height: 40,
-												color: "var(--color-primary)",
-												opacity: 0.55,
-											}}
-										/>
-									</div>
-									<div style={{ padding: 24, display: "flex", flexDirection: "column", flex: 1 }}>
-										<div
-											style={{
-												display: "flex",
-												justifyContent: "space-between",
-												alignItems: "center",
-												marginBottom: 12,
-											}}
-										>
-											<Badge>{b.cat}</Badge>
-											<span style={{ fontSize: 13, color: "var(--text-muted)" }}>{b.date}</span>
-										</div>
-										<CardTitle style={{ fontSize: 18 }}>{b.title}</CardTitle>
-										<CardBody style={{ fontSize: 15, flex: 1 }}>{b.excerpt}</CardBody>
-										<span
-											style={{
-												display: "inline-flex",
-												alignItems: "center",
-												gap: 8,
-												marginTop: 16,
-												fontSize: 13,
-												color: "var(--text-muted)",
-											}}
-										>
-											<Icon n="clock" style={{ width: 14, height: 14 }} /> 읽는 시간 {b.read}
-										</span>
-									</div>
-								</Card>
-							</a>
+						{posts.map((p) => (
+							<BlogCard key={p.slug} post={p} />
 						))}
 					</div>
-					<p
-						style={{ textAlign: "center", marginTop: 32, fontSize: 14, color: "var(--text-muted)" }}
-					>
-						네이버 블로그에서 더 많은 글을 보실 수 있습니다.
-					</p>
+					{totalPages > 1 && <Pagination current={current} totalPages={totalPages} />}
 				</div>
 			</section>
 		</>

@@ -955,6 +955,98 @@
 	}
 }
 
+/* ── 블로그 상세: 읽기 좋은 폭 + 본문(.prose) 타이포그래피 ─────────────────────── */
+.blog-prose {
+	max-width: 760px;
+}
+.prose {
+	font-size: 17px;
+	line-height: 1.8;
+	color: var(--text-body);
+	word-break: keep-all;
+}
+.prose > :first-child {
+	margin-top: 0;
+}
+.prose p {
+	margin: 1.1em 0;
+}
+.prose h2 {
+	font-size: 1.5em;
+	font-weight: 700;
+	line-height: 1.35;
+	color: var(--text-heading);
+	margin: 1.9em 0 0.7em;
+}
+.prose h3 {
+	font-size: 1.25em;
+	font-weight: 700;
+	line-height: 1.4;
+	color: var(--text-heading);
+	margin: 1.6em 0 0.6em;
+}
+.prose ul,
+.prose ol {
+	margin: 1.1em 0;
+	padding-left: 1.4em;
+}
+.prose li {
+	margin: 0.4em 0;
+}
+.prose ul li {
+	list-style: disc;
+}
+.prose ol li {
+	list-style: decimal;
+}
+.prose a {
+	color: var(--color-primary);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+.prose strong {
+	font-weight: 700;
+	color: var(--text-heading);
+}
+.prose blockquote {
+	margin: 1.6em 0;
+	padding: 4px 20px;
+	border-left: 3px solid var(--color-primary);
+	background: var(--surface-subtle);
+	border-radius: 0 var(--radius) var(--radius) 0;
+	color: var(--text-muted);
+}
+.prose blockquote p {
+	margin: 0.6em 0;
+}
+.prose hr {
+	border: none;
+	border-top: 1px solid var(--border-default);
+	margin: 2.4em 0;
+}
+.prose code {
+	font-family: var(--font-mono, ui-monospace, monospace);
+	font-size: 0.9em;
+	background: var(--surface-subtle);
+	padding: 0.15em 0.4em;
+	border-radius: 6px;
+}
+.prose figure {
+	margin: 2em 0;
+}
+.prose img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: var(--radius);
+}
+.prose figcaption {
+	margin-top: 10px;
+	text-align: center;
+	font-size: 14px;
+	color: var(--text-muted);
+}
+
 /* DS Card — hover lift을 JS state 대신 CSS로 처리(접근성/성능) */
 .ds-card {
 	background: var(--surface-card);
