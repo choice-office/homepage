@@ -6,7 +6,7 @@
 - **인라인 style + CSS 변수**가 기본. Claude Design export를 포팅한 결과. 새 코드는 이 스타일을 따른다(전면 Tailwind 이관은 아래 '보류').
 - **사이트 컴포넌트는 `ds.tsx`** 를 쓰고 `components/ui/*`(shadcn)는 거의 안 쓴다(Select 제외). `ui/`는 직접 수정 금지.
 - **헤더 메가메뉴는 JS 상태 기반**(순수 CSS hover 아님). 이유: 클릭 시 강제 닫힘/hover-intent 지연/포커스 정리를 위해 필요. 헤더에 **`backdrop-filter` 금지**(fixed 메가패널 기준이 헤더로 잡혀 위치가 어긋남 — 실제로 겪고 제거함).
-  - 동작(의도): 패널은 헤더 아래로 **슬라이드다운**(닫힘 `translateY(-10px)`+opacity0 → 열림 0; 헤더 z-100·솔리드 bg가 윗부분을 가려 '아래로 펼쳐지듯'). 항목↔항목/항목↔패널 이동은 **DOM 중첩**(패널이 nav 자손)으로 유지되고, nav `onMouseLeave`→**200ms 뒤 닫힘**, nav `onMouseEnter`→타이머 취소(빈 공간 통과 브리지).
+  - 동작(의도, 2026-06 재구현): 패널은 **단일 공유 풀폭 시트**가 헤더 아래로 **슬라이드다운**(닫힘 `translateY(-10px)`+opacity0 → 열림 0, `z-index:-1` 로 바 뒤에서 펼쳐지듯). **활성 메뉴의 하위만** eyebrow + 4열 그리드(`.mega-row`)로 노출 — 메뉴 간 이동 시 시트는 유지되고 내용만 교체. 메뉴 항목은 **동일 너비**(116px), 캐럿 아이콘 없음, 우측에 전화+무료상담 CTA. 시트가 `nav` 자손이라 시트 hover 중 nav `mouseleave` 미발생(브리지 불필요); nav `onMouseLeave`→**180ms 뒤 닫힘**, `onMouseEnter`→타이머 취소. 클릭 시 `setOpenMega(null)`+blur. at-top 솔리드 전환은 `:has()` 대신 `.mega-open` 상태 클래스로. (과거 per-item 풀폭 패널이 4열 그리드로 흩어져 트리거와 분리돼 보이던 문제를 단일 시트+활성 메뉴만으로 정리.)
 - **페이지 전환은 `app/template.tsx` + `.page-enter` CSS 페이드.** React `<ViewTransition>`/Next `experimental.viewTransition`은 **쓰지 않는다**: React 19.2 stable엔 `ViewTransition` export가 없고(canary 전용), Next 공식 문서가 프로덕션 비권장. `next-view-transitions` 라이브러리도 nav 전체를 감싸는 부담이라 미채택.
 - **블로그 본문 = HTML 문자열**(에디터 출력 가정). docs/BLOG.md 참고.
 - **연락처는 `CONTACT` 단일 출처**(site-data). 전화/주소/이메일 하드코딩 금지.

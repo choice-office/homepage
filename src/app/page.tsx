@@ -1,4 +1,5 @@
 import {
+	Affiliations,
 	BlogPreview,
 	CTABand,
 	Hero,
@@ -30,6 +31,7 @@ export default async function Home() {
 			<VideoSection />
 			<BlogPreview posts={latestPosts} />
 			<CTABand />
+			<Affiliations />
 		</>
 	);
 }

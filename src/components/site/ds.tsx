@@ -108,14 +108,16 @@ export const Card = ({
 	padding = "var(--space-6)",
 	style,
 	onClick,
+	className,
 }: {
 	children: ReactNode;
 	hover?: boolean;
 	padding?: string | number;
 	style?: Sx;
 	onClick?: () => void;
+	className?: string;
 }) => {
-	const cls = `ds-card${hover ? " is-hover" : ""}`;
+	const cls = cn("ds-card", hover && "is-hover", className);
 	// 카드 자체가 클릭 동작을 가지면 button(키보드/포커스 기본 지원), 아니면 div
 	if (onClick) {
 		return (

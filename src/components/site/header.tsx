@@ -19,9 +19,9 @@ const SVC_SHORT: Record<string, string> = {
 	nat: "국적회복",
 };
 
-type MegaChild = { label: string; route: string; param?: string; code?: string | null };
+type DropChild = { label: string; route: string; param?: string; code?: string | null };
 
-function megaChildren(item: NavItem): MegaChild[] {
+function dropChildren(item: NavItem): DropChild[] {
 	if (item.route === "services") {
 		return SERVICES.map((s) => ({
 			label: SVC_SHORT[s.id] || s.title,
@@ -38,7 +38,7 @@ function megaChildren(item: NavItem): MegaChild[] {
 	}));
 }
 
-const hasMega = (item: NavItem) => item.route === "services" || !!item.children?.length;
+const hasDropdown = (item: NavItem) => item.route === "services" || !!item.children?.length;
 
 export const SiteHeader = () => {
 	const go = useGo();
@@ -60,13 +60,15 @@ export const SiteHeader = () => {
 	// Esc 로 닫기
 	useEffect(() => {
 		const onKey = (e: KeyboardEvent) => {
-			if (e.key === "Escape") setOpenMega(null);
+			if (e.key === "Escape") {
+				setOpenMega(null);
+				(document.activeElement as HTMLElement | null)?.blur();
+			}
 		};
 		window.addEventListener("keydown", onKey);
 		return () => window.removeEventListener("keydown", onKey);
 	}, []);
 
-	// 언마운트 시 타이머 정리
 	useEffect(
 		() => () => {
 			if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -82,28 +84,30 @@ export const SiteHeader = () => {
 			closeTimer.current = null;
 		}
 	};
-	// 즉시 열기(항목 간 이동은 지연 없음)
-	const openNow = (label: string | null) => {
+	// 항목 hover/focus: 하위가 있으면 열고, 없으면 닫는다.
+	const open = (item: NavItem) => {
 		clearCloseTimer();
-		setOpenMega(label);
+		setOpenMega(hasDropdown(item) ? item.label : null);
 	};
-	// 영역을 완전히 벗어나면 ~200ms 뒤 닫기 → 대각선 이동/빈 공간 통과 중 "스쳐서 닫힘" 방지
+	// 영역을 완전히 벗어나면 ~180ms 뒤 닫기(빈 공간 통과/대각선 이동 중 스쳐 닫힘 방지)
 	const scheduleClose = () => {
 		clearCloseTimer();
-		closeTimer.current = setTimeout(() => setOpenMega(null), 200);
+		closeTimer.current = setTimeout(() => setOpenMega(null), 180);
 	};
-
-	// 클릭 시: 이동 + 메뉴 닫기 + 포커스 박스 제거(blur)
-	const navigate = (r: string, p?: string, el?: HTMLElement | null) => {
+	// 클릭: 이동 + 닫기 + 포커스 박스 제거
+	const navigate = (r: string, p: string | undefined, el: HTMLElement | null) => {
 		clearCloseTimer();
 		go(r, p);
 		setOpenMega(null);
 		el?.blur();
 	};
 
+	const activeNav = openMega ? (NAV.find((n) => n.label === openMega) ?? null) : null;
+	const activeChildren = activeNav ? dropChildren(activeNav) : [];
+
 	return (
 		<>
-			<header className={cn("site-header", atTop && "at-top")}>
+			<header className={cn("site-header", atTop && "at-top", openMega && "mega-open")}>
 				<div className="site-header-bar container">
 					<button type="button" className="lk site-logo" onClick={() => go("home")}>
 						초이스 행정사 사무소
@@ -116,67 +120,73 @@ export const SiteHeader = () => {
 						onMouseLeave={scheduleClose}
 					>
 						{NAV.map((n) => {
-							const mega = hasMega(n);
-							const childRoutes = mega ? megaChildren(n).map((c) => c.route) : [];
+							const drop = hasDropdown(n);
+							const childRoutes = drop ? dropChildren(n).map((c) => c.route) : [];
 							const active =
 								route === n.route ||
 								(n.route === "services" && route === "service") ||
 								childRoutes.includes(route);
-							const panelId = `mega-${n.route}`;
+							const panelId = `nav-dd-${n.route}`;
 							return (
-								<div
-									className={cn(
-										"nav-item",
-										mega && "has-mega",
-										mega && openMega === n.label && "is-open",
-									)}
-									key={n.label}
-								>
+								<div className={cn("nav-item", drop && "has-dropdown")} key={n.label}>
 									<button
 										type="button"
 										className={cn("lk nav-link", active && "is-active")}
-										aria-controls={mega ? panelId : undefined}
-										aria-expanded={mega ? openMega === n.label : undefined}
+										aria-haspopup={drop ? "true" : undefined}
+										aria-controls={drop ? panelId : undefined}
+										aria-expanded={drop ? openMega === n.label : undefined}
 										aria-current={active ? "page" : undefined}
 										onClick={(e) => navigate(n.route, undefined, e.currentTarget)}
 										onMouseEnter={() => {
-											openNow(mega ? n.label : null);
+											open(n);
 											prefetch(n.route);
 										}}
-										onFocus={() => openNow(mega ? n.label : null)}
+										onFocus={() => open(n)}
 									>
 										{n.label}
 									</button>
-									{mega && (
-										<div className="mega-panel" id={panelId}>
-											<div className="mega-inner container">
-												<div className="mega-eyebrow">{n.label}</div>
-												<div className="mega-row">
-													{megaChildren(n).map((c) => (
-														<button
-															key={c.label}
-															type="button"
-															className="lk mega-link"
-															onClick={(e) => navigate(c.route, c.param, e.currentTarget)}
-															onMouseEnter={() => {
-																clearCloseTimer();
-																prefetch(c.route, c.param);
-															}}
-														>
-															<span>{c.label}</span>
-															{c.code && <span className="mega-code">{c.code}</span>}
-														</button>
-													))}
-												</div>
-											</div>
-										</div>
-									)}
 								</div>
 							);
 						})}
+
+						{/* 풀폭 슬라이드다운 시트 — nav 자손이라 패널 hover 시에도 nav의 mouseleave가 안 뜸.
+						    활성 메뉴의 하위만 노출. 내용은 eyebrow + 4열 그리드(이전 디자인). */}
+						<div
+							className={cn("mega-panel", openMega && "is-open")}
+							id={activeNav ? `nav-dd-${activeNav.route}` : undefined}
+						>
+							{activeNav && (
+								<div className="mega-inner container">
+									<div className="mega-eyebrow">{activeNav.label}</div>
+									<div className="mega-row">
+										{activeChildren.map((c) => (
+											<button
+												key={c.label}
+												type="button"
+												className="lk mega-link"
+												onClick={(e) => navigate(c.route, c.param, e.currentTarget)}
+												onMouseEnter={() => prefetch(c.route, c.param)}
+											>
+												<span>{c.label}</span>
+												{c.code && <span className="mega-code">{c.code}</span>}
+											</button>
+										))}
+									</div>
+								</div>
+							)}
+						</div>
 					</nav>
 
 					<div className="site-header-actions">
+						<div className="header-desktop-actions">
+							<a className="lk header-phone" href={CONTACT.phone.href}>
+								<Icon n="phone" style={{ width: 16, height: 16 }} />
+								<span>{CONTACT.phone.display}</span>
+							</a>
+							<Button variant="primary" size="sm" onClick={() => go("contact")}>
+								무료 상담
+							</Button>
+						</div>
 						<button
 							type="button"
 							className="menu-toggle lk site-burger"
@@ -234,7 +244,7 @@ function MobileDrawer({
 				</div>
 				<nav style={{ display: "flex", flexDirection: "column" }}>
 					{NAV.map((n) => {
-						const kids = hasMega(n) ? megaChildren(n) : null;
+						const kids = hasDropdown(n) ? dropChildren(n) : null;
 						const isExp = exp === n.label;
 						return (
 							<div key={n.label} style={{ borderBottom: "1px solid var(--border-default)" }}>

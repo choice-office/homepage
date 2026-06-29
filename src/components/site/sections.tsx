@@ -274,7 +274,7 @@ export const Hero = () => {
 						}}
 					>
 						<span style={{ height: 1, width: 32, background: "var(--color-accent-soft)" }} />
-						출입국 · 비자 전문 행정사 사무소
+						F4, F5, E6 등 출입국 비자 전문 행정사 사무소
 					</span>
 					<h1
 						style={{
@@ -284,9 +284,9 @@ export const Hero = () => {
 							color: "#fff",
 						}}
 					>
-						복잡한 출입국 절차,
+						출입국 비자 서류,
 						<br />
-						<span style={{ color: "var(--color-accent-soft)" }}>혼자 고민하지 마세요</span>
+						<span style={{ color: "var(--color-accent-soft)" }}>너무 복잡하지 않으셨나요?</span>
 					</h1>
 					<p
 						style={{
@@ -296,9 +296,11 @@ export const Hero = () => {
 							color: "rgba(255,255,255,0.86)",
 						}}
 					>
-						거소증 · 영주권 · 결혼비자 · 국적회복까지,
+						혼자 고민하지 마세요.
 						<br />
-						시험 출신 행정사가 상담부터 접수까지 직접 책임집니다.
+						거소증, 영주권, 결혼비자, 국적회복까지.
+						<br />
+						비자 대행 전문 행정사인 제가 직접 처리해 드립니다.
 					</p>
 					<div style={{ display: "flex", gap: 12, marginTop: 40, flexWrap: "wrap" }}>
 						<Button
@@ -322,7 +324,7 @@ export const Hero = () => {
 						</Button>
 					</div>
 					<p style={{ marginTop: 32, fontSize: 14, color: "rgba(255,255,255,0.72)" }}>
-						사무장 없는 사무소 · 법무부 등록 출입국민원 대행기관 · 한국어 · English 상담
+						법무부 등록 출입국민원 대행기관 · 한국어 · English 문의 가능
 					</p>
 				</div>
 			</div>
@@ -350,40 +352,30 @@ export const Hero = () => {
 	);
 };
 
+/* 히어로 바로 아래 — 비자 종류별 빠른 이동 메뉴(클릭 시 해당 업무분야로) */
 export const TrustBand = () => {
-	const items = [
-		"거소증 F-4",
-		"영주권 F-5",
-		"결혼비자 F-6",
-		"연예인 비자 E-6",
-		"전문직 비자 E-7",
-		"국적회복",
-		"단기초청 C-3",
-	];
-	// marquee는 동일 목록을 3벌 이어붙여 무한 스크롤 → 복제본 라벨로 고유 key 부여
-	const all = ["a", "b", "c"].flatMap((copy) => items.map((t) => ({ key: `${copy}-${t}`, t })));
+	const go = useGo();
 	return (
-		<div
-			style={{
-				background: "var(--color-primary-dark)",
-				color: "rgba(255,255,255,0.88)",
-				padding: "16px 0",
-				overflow: "hidden",
-				whiteSpace: "nowrap",
-			}}
-		>
-			<div style={{ display: "inline-flex", animation: "marquee 32s linear infinite" }}>
-				{all.map(({ key, t }) => (
-					<span
-						key={key}
-						style={{ fontSize: 15, fontWeight: 500, display: "inline-flex", alignItems: "center" }}
-					>
-						<span style={{ padding: "0 28px" }}>{t}</span>
-						<span style={{ color: "var(--color-primary-light)" }}>◆</span>
-					</span>
-				))}
+		<section style={{ background: "var(--surface-subtle)", padding: "28px 0" }}>
+			<div className="container">
+				<div className="quicknav-grid" data-reveal>
+					{SERVICES.map((s) => (
+						<button
+							type="button"
+							key={s.id}
+							className="quicknav-tile"
+							onClick={() => go("service", s.id)}
+						>
+							<span className="quicknav-ico" aria-hidden="true">
+								<Icon n={s.icon} style={{ width: 23, height: 23 }} />
+							</span>
+							<span className="quicknav-label">{s.title}</span>
+							<span className="quicknav-code">{s.code}</span>
+						</button>
+					))}
+				</div>
 			</div>
-		</div>
+		</section>
 	);
 };
 
@@ -395,25 +387,33 @@ export const StrengthsRow = () => (
 				title="초이스 행정사를 선택하는 이유"
 				sub="실력에 책임감을 더한, 출입국·비자 전문 행정사 사무소입니다."
 			/>
-			<div data-stagger="scale" className="grid-4" style={{ marginTop: 48 }}>
+
+			{/* 핵심 차별점: 행정사가 직접 진행 (상담→서류 작성→접수) */}
+			<div className="strength-feature" data-reveal>
+				<div className="strength-feature-icon">
+					<Icon n="user-check" style={{ width: 30, height: 30 }} />
+				</div>
+				<div className="strength-feature-body">
+					<h3 className="strength-feature-title">행정사가 직접 관리하는 사무소</h3>
+					<p className="strength-feature-desc">
+						상담부터 서류 작성, 접수까지 — 직원이 아닌 행정사가 직접 진행합니다. 중간 과정 없이
+						빠르고 확실하게 진행됩니다.
+					</p>
+					<div className="strength-flow" aria-hidden="true">
+						<span className="strength-flow-step">상담</span>
+						<Icon n="chevron-right" style={{ width: 16, height: 16 }} />
+						<span className="strength-flow-step">서류 작성</span>
+						<Icon n="chevron-right" style={{ width: 16, height: 16 }} />
+						<span className="strength-flow-step">접수</span>
+					</div>
+				</div>
+			</div>
+
+			<div data-stagger="scale" className="grid-3" style={{ marginTop: 24 }}>
 				{STRENGTHS.map((s) => (
-					<Card key={s.title}>
-						<div
-							style={{
-								width: 52,
-								height: 52,
-								borderRadius: "var(--radius)",
-								background: "var(--color-accent-soft)",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								marginBottom: 20,
-							}}
-						>
-							<Icon
-								n={s.icon}
-								style={{ width: 26, height: 26, color: "var(--color-primary-dark)" }}
-							/>
+					<Card key={s.title} className="strength-card">
+						<div className="strength-card-icon">
+							<Icon n={s.icon} style={{ width: 26, height: 26 }} />
 						</div>
 						<CardTitle>{s.title}</CardTitle>
 						<CardBody>{s.desc}</CardBody>
@@ -436,7 +436,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 						sub="출입국·비자 전 분야를 시험 출신 행정사가 직접 다룹니다. 분야를 선택하면 자세히 안내해 드립니다."
 					/>
 				)}
-				<div data-stagger className="grid-4" style={{ marginTop: heading ? 48 : 0 }}>
+				<div data-stagger className="grid-4 svc-grid" style={{ marginTop: heading ? 48 : 0 }}>
 					{SERVICES.map((s) => (
 						<Card
 							key={s.id}
@@ -452,27 +452,15 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 									marginBottom: 16,
 								}}
 							>
-								<div
-									style={{
-										width: 44,
-										height: 44,
-										borderRadius: "var(--radius)",
-										background: "var(--color-accent-soft)",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-									}}
-								>
-									<Icon
-										n={s.icon}
-										style={{ width: 22, height: 22, color: "var(--color-primary-dark)" }}
-									/>
-								</div>
+								<span className="svc-icon" aria-hidden="true">
+									<Icon n={s.icon} style={{ width: 23, height: 23 }} />
+								</span>
 								<Badge>{s.code}</Badge>
 							</div>
 							<CardTitle style={{ fontSize: 18 }}>{s.title}</CardTitle>
 							<CardBody style={{ fontSize: 15, flex: 1 }}>{s.summary}</CardBody>
 							<span
+								className="svc-more"
 								style={{
 									display: "inline-flex",
 									alignItems: "center",
@@ -534,7 +522,7 @@ export const Process = () => (
 
 export const Stats = () => (
 	<section style={{ background: "var(--color-primary)", padding: "72px 0" }}>
-		<div data-stagger="scale" className="grid-4 container" style={{ gap: 24 }}>
+		<div data-stagger="scale" className="grid-3 container" style={{ gap: 24 }}>
 			{STATS.map((s) => (
 				<div key={s.l} style={{ textAlign: "center", color: "#fff" }}>
 					<div
@@ -555,7 +543,7 @@ export const LangRemoteBand = () => {
 		{
 			icon: "languages",
 			title: "한국어 · English · 中文(WeChat)",
-			desc: "대표 행정사의 미국 어학연수 경험을 바탕으로 영어 상담이 가능하며, 위챗으로 중국 의뢰인도 편하게 상담합니다.",
+			desc: "영어로도 편하게 문의하실 수 있고, 위챗으로 중국 의뢰인의 연락도 받습니다. 상담은 한국어로 정확하게 진행됩니다.",
 		},
 		{
 			icon: "monitor-smartphone",
@@ -760,13 +748,18 @@ export const BlogPreview = ({ posts }: { posts: BlogPost[] }) => (
 );
 
 export const ReviewCard = ({ r }: { r: Review }) => (
-	<Card hover padding="28px" style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+	<Card
+		hover
+		className="review-card"
+		padding="28px"
+		style={{ display: "flex", flexDirection: "column", height: "100%" }}
+	>
 		<div
 			style={{
 				display: "flex",
 				justifyContent: "space-between",
 				alignItems: "center",
-				marginBottom: 16,
+				marginBottom: 18,
 			}}
 		>
 			<Badge>{r.tag}</Badge>
@@ -774,8 +767,10 @@ export const ReviewCard = ({ r }: { r: Review }) => (
 				{r.flag} {r.country}
 			</span>
 		</div>
-		<Icon n="quote" style={{ width: 26, height: 26, color: "var(--color-primary-light)" }} />
-		<h3 style={{ fontSize: 18, lineHeight: 1.5, marginTop: 12 }}>{r.title}</h3>
+		<span className="review-quote" aria-hidden="true">
+			<Icon n="quote" style={{ width: 22, height: 22 }} />
+		</span>
+		<h3 style={{ fontSize: 18, lineHeight: 1.5, marginTop: 16 }}>{r.title}</h3>
 		<p
 			style={{ fontSize: 15, color: "var(--text-body)", lineHeight: 1.75, marginTop: 12, flex: 1 }}
 		>
@@ -1568,56 +1563,119 @@ export const ConsultBar = () => {
 export const FloatRail = () => {
 	const go = useGo();
 	const kakao = CHANNELS.find((c) => c.label === "카카오 채널")?.href ?? "#";
+	const [showWechat, setShowWechat] = useState(false);
 	return (
-		<aside className="float-rail hide-mobile" aria-label="빠른 상담">
-			<a
-				className="float-rail-num"
-				href={CONTACT.phone.href}
-				aria-label={`전화 상담 ${CONTACT.phone.display}`}
-			>
-				<span className="float-rail-phone">
-					<Icon n="phone-call" style={{ width: 20, height: 20 }} />
-				</span>
-				<span className="float-rail-tel">
-					<span className="frl-eyebrow">전화상담</span>
-					<strong>02</strong>
-					<strong>6959-9886</strong>
-				</span>
-			</a>
-			<a className="float-rail-cell" href={kakao} target="_blank" rel="noopener noreferrer">
-				<Image src="/icons/kakao.svg" alt="" width={27} height={27} unoptimized />
-				<span>카톡</span>
-			</a>
-			<a
-				className="float-rail-cell"
-				href={YOUTUBE_CHANNEL}
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				<Image src="/icons/youtube.svg" alt="" width={28} height={28} unoptimized />
-				<span>유튜브</span>
-			</a>
-			<a className="float-rail-cell" href={NAVER_BLOG} target="_blank" rel="noopener noreferrer">
-				<Image src="/icons/blog.svg" alt="" width={27} height={27} unoptimized />
-				<span>블로그</span>
-			</a>
-			<button type="button" className="float-rail-cell" onClick={() => go("location")}>
-				<span className="brand-chip brand-map" aria-hidden="true">
-					<Icon n="map-pin" style={{ width: 16, height: 16, color: "#fff" }} />
-				</span>
-				<span>오시는 길</span>
-			</button>
-			<button
-				type="button"
-				className="float-rail-cell"
-				onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-			>
-				<Icon n="arrow-up" style={{ width: 22, height: 22 }} />
-				<span>TOP</span>
-			</button>
-		</aside>
+		<Fragment>
+			{showWechat && (
+				<div className="float-wechat-pop hide-mobile" role="dialog" aria-label="위챗 QR 코드">
+					<button
+						type="button"
+						className="float-wechat-close"
+						onClick={() => setShowWechat(false)}
+						aria-label="닫기"
+					>
+						<Icon n="x" style={{ width: 16, height: 16 }} />
+					</button>
+					<Image
+						src="/wechat-qr.jpeg"
+						alt="초이스 행정사 사무소 위챗 QR 코드"
+						width={188}
+						height={188}
+						unoptimized
+					/>
+					<p>QR을 스캔해 위챗 친구로 추가해 주세요</p>
+				</div>
+			)}
+			<aside className="float-rail hide-mobile" aria-label="빠른 상담">
+				<a
+					className="float-rail-num"
+					href={CONTACT.phone.href}
+					aria-label={`전화 상담 ${CONTACT.phone.display}`}
+				>
+					<span className="float-rail-phone">
+						<Icon n="phone-call" style={{ width: 20, height: 20 }} />
+					</span>
+					<span className="float-rail-tel">
+						<span className="frl-eyebrow">전화상담</span>
+						<strong>02</strong>
+						<strong>6959-9886</strong>
+					</span>
+				</a>
+				<a className="float-rail-cell" href={kakao} target="_blank" rel="noopener noreferrer">
+					<Image src="/icons/kakao.svg" alt="" width={27} height={27} unoptimized />
+					<span>카톡</span>
+				</a>
+				<a
+					className="float-rail-cell"
+					href={YOUTUBE_CHANNEL}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<Image src="/icons/youtube.svg" alt="" width={28} height={28} unoptimized />
+					<span>유튜브</span>
+				</a>
+				<a className="float-rail-cell" href={NAVER_BLOG} target="_blank" rel="noopener noreferrer">
+					<Image src="/icons/blog.svg" alt="" width={27} height={27} unoptimized />
+					<span>블로그</span>
+				</a>
+				<button
+					type="button"
+					className="float-rail-cell"
+					onClick={() => setShowWechat((v) => !v)}
+					aria-expanded={showWechat}
+				>
+					<Image src="/icons/wechat.svg" alt="" width={28} height={28} unoptimized />
+					<span>위챗</span>
+				</button>
+				<button type="button" className="float-rail-cell" onClick={() => go("location")}>
+					<span className="brand-chip brand-map" aria-hidden="true">
+						<Icon n="map-pin" style={{ width: 16, height: 16, color: "#fff" }} />
+					</span>
+					<span>오시는 길</span>
+				</button>
+				<button
+					type="button"
+					className="float-rail-cell"
+					onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+				>
+					<Icon n="arrow-up" style={{ width: 22, height: 22 }} />
+					<span>TOP</span>
+				</button>
+			</aside>
+		</Fragment>
 	);
 };
+
+/* 공식 등록·소속 밴드 — 메인 하단 신뢰 지표.
+ * 현재는 emblem 아이콘 자리표시. 협회 공식 로고 SVG 를 받으면 public/badges/ 에 넣고
+ * .affiliation-emblem 자리를 <Image>(또는 인라인 svg)로 교체하면 된다. (docs 안내 참고) */
+type Affiliation = { name: string; note?: string; icon: string };
+const AFFILIATIONS: Affiliation[] = [
+	{ name: "법무부 등록 출입국민원 대행기관", note: "등록번호 19-SB-RG-016", icon: "stamp" },
+	{ name: "대한행정사회", note: "행정사 법정단체 소속", icon: "shield-check" },
+	{ name: "한국행정사회", note: "시험 출신 행정사", icon: "badge-check" },
+];
+
+export const Affiliations = () => (
+	<section className="affiliations">
+		<div className="container">
+			<p className="affiliations-label">공식 등록 · 소속</p>
+			<ul className="affiliations-row">
+				{AFFILIATIONS.map((a) => (
+					<li className="affiliation" key={a.name}>
+						<span className="affiliation-emblem" aria-hidden="true">
+							<Icon n={a.icon} style={{ width: 24, height: 24 }} />
+						</span>
+						<span className="affiliation-text">
+							<span className="affiliation-name">{a.name}</span>
+							{a.note && <span className="affiliation-note">{a.note}</span>}
+						</span>
+					</li>
+				))}
+			</ul>
+		</div>
+	</section>
+);
 
 export const Footer = () => {
 	const go = useGo();

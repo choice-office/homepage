@@ -220,8 +220,8 @@
 		@apply font-sans;
 		/* 페이지 전환 시 즉시 최상단으로(부드러운 스크롤 X).
 		 * 부드러운 스크롤이 필요한 곳(FloatRail TOP 버튼)은 JS에서 behavior:"smooth" 명시. */
-		/* 고정 헤더(약 5rem) 높이만큼 앵커 스크롤 오프셋 */
-		scroll-padding-top: 5rem;
+		/* 고정 헤더(88px) 높이만큼 앵커 스크롤 오프셋 */
+		scroll-padding-top: 5.5rem;
 	}
 }
 
@@ -273,7 +273,7 @@
 	--space-20: 80px;
 	--space-24: 96px;
 	--section-y: 96px;
-	--header-h: 80px;
+	--header-h: 88px;
 	--radius-sm: 4px;
 	--radius: 6px;
 	--radius-md: 8px;
@@ -399,6 +399,13 @@
 		filter: none;
 	}
 
+	/* 재진입 리셋: 화면을 벗어날 때 트랜지션 없이 즉시 초기 상태로(위로 스크롤 시 역재생 방지).
+	   transition 선언과 동일 specificity이지만 소스 순서상 뒤라 우선 적용된다. */
+	.reveal-ready .reveal-instant,
+	.reveal-ready .reveal-instant > * {
+		transition: none;
+	}
+
 	/* stagger 지연 — 느긋하게 130ms 간격 */
 	.reveal-ready [data-stagger].is-visible > *:nth-child(1) {
 		transition-delay: 0ms;
@@ -464,15 +471,126 @@
 	display: grid;
 	grid-template-columns: 1fr 1.2fr;
 }
+/* ── 사이트 헤더 (풀폭 슬라이드다운 메가 시트) ───────────────────────────────────
+ * 시트는 nav 의 자손이라 시트를 hover 해도 nav 의 mouseleave 가 안 떠 hover-intent 유지.
+ * 활성 메뉴의 하위만 보이고, 컬럼은 트리거 좌측(marginLeft, header.tsx)에 정렬된다.
+ * 열림/닫힘은 JS 상태(openMega)로 제어 — 클릭 닫힘/포커스 정리/지연 닫힘 위해.
+ * backdrop-filter 금지: fixed 시트 기준이 헤더로 잡혀 위치가 어긋남(과거 이슈). */
+.site-header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+	background: rgba(255, 255, 255, 0.98);
+	border-bottom: 1px solid var(--border-default);
+	box-shadow: var(--shadow-sm);
+	transition:
+		background-color 0.3s ease,
+		border-color 0.3s ease,
+		box-shadow 0.3s ease;
+}
+.site-header-bar {
+	max-width: 1320px;
+	height: 88px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+}
+.site-logo {
+	flex-shrink: 0;
+	background: none;
+	border: none;
+	padding: 0;
+	font-weight: 700;
+	font-size: 20px;
+	letter-spacing: -0.02em;
+	color: var(--text-heading);
+	transition: color 0.2s ease;
+}
+
+/* 가운데 내비 — 각 항목 동일 너비 */
 .nav-links {
 	display: flex;
-	gap: 6px;
 	align-items: stretch;
+}
+.nav-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 88px;
+	width: 116px;
+}
+.nav-link {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	background: none;
+	border: none;
+	font-size: 16px;
+	font-weight: 500;
+	color: var(--text-body);
+	white-space: nowrap;
+	transition: color 0.15s ease;
+}
+.nav-link:hover {
+	color: var(--color-primary-dark);
+}
+.nav-link.is-active {
+	color: var(--color-primary);
+	font-weight: 700;
+}
+
+/* 풀폭 슬라이드다운 시트 */
+.mega-panel {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 88px;
+	background: rgba(255, 255, 255, 0.99);
+	border-bottom: 1px solid var(--border-default);
+	box-shadow: 0 22px 34px -24px rgba(34, 28, 22, 0.34);
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transform: translateY(-10px);
+	transition:
+		opacity 0.26s ease,
+		transform 0.26s ease,
+		visibility 0s linear 0.26s;
+	z-index: -1; /* 헤더 바 뒤에서 아래로 펼쳐지듯 */
+}
+.mega-panel.is-open {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+	transform: translateY(0);
+	transition:
+		opacity 0.26s ease,
+		transform 0.26s ease,
+		visibility 0s;
+}
+/* 시트 내용 — eyebrow 라벨 + 4열 그리드(이전 디자인) */
+.mega-inner {
+	max-width: 1320px;
+	padding: 32px 24px 40px;
+}
+.mega-eyebrow {
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--color-accent);
+	margin-bottom: 16px;
+	padding-left: 14px; /* mega-link 좌측 패딩과 정렬 */
 }
 .mega-row {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	gap: 6px 16px;
+	gap: 10px 28px;
 }
 .mega-link {
 	display: flex;
@@ -484,6 +602,9 @@
 	font-weight: 500;
 	color: var(--text-body);
 	white-space: nowrap;
+	text-align: left;
+	background: none;
+	border: none;
 	transition:
 		background 0.15s ease,
 		color 0.15s ease;
@@ -497,49 +618,30 @@
 	font-weight: 500;
 	color: var(--text-muted);
 }
-.menu-toggle {
-	display: none;
-}
 
-/* ── 사이트 헤더 (CSS hover/focus-within 메가메뉴) ─────────────────────────────
- * 패널이 트리거(nav-item)의 자손이라, 마우스가 패널로 내려가도 hover가 유지됨.
- * 타이머/JS 상태 없이도 안 닫히고, 키보드(:focus-within)로도 열림. */
-.site-header {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 100;
-	background: rgba(255, 255, 255, 0.98);
-	border-bottom: 1px solid var(--border-default);
-	box-shadow: var(--shadow-sm);
-	/* backdrop-filter는 자손 position:fixed(메가패널)의 기준을 헤더로 만들어 위치가 어긋나므로 사용하지 않음 */
-	transition:
-		background-color 0.3s ease,
-		border-color 0.3s ease,
-		box-shadow 0.3s ease;
-}
-.site-header-bar {
-	max-width: 1320px;
-	height: 80px;
+/* 우측 액션: 전화 + CTA(데스크탑), 버거(모바일) */
+.site-header-actions {
+	flex-shrink: 0;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	gap: 14px;
 }
-.site-logo {
-	background: none;
-	border: none;
-	padding: 0;
-	font-weight: 700;
-	font-size: 20px;
-	letter-spacing: -0.02em;
+.header-desktop-actions {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+.header-phone {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 15px;
+	font-weight: 600;
 	color: var(--text-heading);
 	transition: color 0.2s ease;
 }
-.site-header-actions {
-	display: flex;
-	align-items: center;
-	gap: 10px;
+.header-phone:hover {
+	color: var(--color-primary);
 }
 .site-burger {
 	background: none;
@@ -548,81 +650,13 @@
 	color: var(--text-heading);
 	transition: color 0.2s ease;
 }
-.nav-item {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 80px;
-	width: 116px;
-}
-.nav-link {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	height: 100%;
-	background: none;
-	border: none;
-	font-size: 15px;
-	font-weight: 500;
-	color: var(--text-body);
-	transition: color 0.12s ease;
-}
-.nav-link:hover {
-	color: var(--color-primary-dark);
-}
-.nav-link.is-active {
-	color: var(--color-primary);
-	font-weight: 700;
+.menu-toggle {
+	display: none;
 }
 
-/* 메가 패널 — fixed 풀폭, 트리거 hover/focus 시 노출 */
-.mega-panel {
-	position: fixed;
-	left: 0;
-	right: 0;
-	top: 80px;
-	background: rgba(255, 255, 255, 0.99);
-	border-top: 1px solid var(--border-default);
-	box-shadow: var(--shadow-md);
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-	transform-origin: top center;
-	/* 닫힘: 헤더 뒤(위쪽)에 숨었다가 열릴 때 아래로 슬라이드다운(헤더가 윗부분을 가려 '아래로 펼쳐지듯') */
-	transform: translateY(-10px);
-	transition:
-		opacity 0.24s ease,
-		transform 0.24s ease,
-		visibility 0s linear 0.24s;
-}
-.nav-item.is-open > .mega-panel {
-	opacity: 1;
-	visibility: visible;
-	pointer-events: auto;
-	transform: none;
-	transition:
-		opacity 0.24s ease,
-		transform 0.24s ease,
-		visibility 0s;
-}
-.mega-inner {
-	max-width: 1320px;
-	padding: 28px 24px 32px;
-}
-.mega-eyebrow {
-	font-size: 13px;
-	font-weight: 700;
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
-	color: var(--color-accent);
-	margin-bottom: 18px;
-	padding-left: 14px; /* mega-link 좌측 패딩과 정렬 */
-}
-
-/* 메뉴가 열리면 헤더 하단선은 숨기고 패널 상단선만 보이게 → 경계선 한 줄(두께 겹침 방지) */
-.site-header:has(.nav-item.is-open) {
-	border-bottom-color: transparent;
+/* 메뉴 열려도 헤더 하단선 유지 → 헤더 바와 시트 사이 얇은 경계선 */
+.site-header.mega-open {
+	border-bottom-color: var(--border-default);
 }
 
 /* 홈 최상단(히어로 위) 투명 헤더 */
@@ -630,38 +664,47 @@
 	background: transparent;
 	border-bottom-color: transparent;
 	box-shadow: none;
-	backdrop-filter: none;
 }
 .site-header.at-top .site-logo,
 .site-header.at-top .nav-link,
+.site-header.at-top .header-phone,
 .site-header.at-top .site-burger {
 	color: #fff;
 }
-/* 메가 메뉴가 열리면 투명 헤더도 솔리드로(패널과 자연스럽게 연결) */
-.site-header.at-top:has(.nav-item.is-open) {
+/* 메뉴 열리면 투명 헤더도 솔리드로(시트와 자연스럽게 연결) */
+.site-header.at-top.mega-open {
 	background: rgba(255, 255, 255, 0.99);
-	border-bottom-color: transparent;
+	border-bottom-color: var(--border-default);
 	box-shadow: var(--shadow-sm);
 }
-.site-header.at-top:has(.nav-item.is-open) .nav-link,
-.site-header.at-top:has(.nav-item.is-open) .site-burger {
-	color: var(--text-body);
-}
-.site-header.at-top:has(.nav-item.is-open) .site-logo {
+.site-header.at-top.mega-open .site-logo {
 	color: var(--text-heading);
 }
-.site-header.at-top:has(.nav-item.is-open) .nav-link.is-active {
+.site-header.at-top.mega-open .nav-link,
+.site-header.at-top.mega-open .header-phone,
+.site-header.at-top.mega-open .site-burger {
+	color: var(--text-body);
+}
+.site-header.at-top.mega-open .nav-link.is-active {
 	color: var(--color-primary);
 }
 
-/* 포커스 박스: 마우스 클릭 시 박스 제거(헤더 선과 겹침 방지), 키보드만 깔끔한 링 */
+/* 포커스 링: 마우스 클릭은 제거, 키보드(:focus-visible)만 표시 */
 .nav-link:focus:not(:focus-visible) {
 	outline: none;
 }
-.nav-link:focus-visible {
+.nav-link:focus-visible,
+.mega-link:focus-visible {
 	outline: 2px solid var(--color-primary);
-	outline-offset: -8px;
-	border-radius: 10px;
+	outline-offset: -6px;
+	border-radius: 9px;
+}
+
+/* 좁은 데스크탑에서는 전화번호 숨김(혼잡 방지) */
+@media (max-width: 1120px) {
+	.header-phone {
+		display: none;
+	}
 }
 
 /* ── 우측 플로팅 퀵 상담 레일 (파운더스식 적층 패널) ──────────────────────────── */
@@ -691,6 +734,7 @@
 /* 전화 패널 — 강조 + 시선 유도(은은한 깜빡임 + 아이콘 울림) */
 .float-rail-num {
 	position: relative;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -699,11 +743,30 @@
 	padding: 16px 6px 15px;
 	background: var(--color-primary-dark);
 	color: #fff;
-	animation: railBlink 1.7s ease-in-out infinite;
+	animation: railBlink 1.4s ease-in-out infinite;
+}
+/* 빛이 사선으로 스쳐 지나가는 샤인(빤짝) 효과 */
+.float-rail-num::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background: linear-gradient(
+		115deg,
+		transparent 35%,
+		rgba(255, 255, 255, 0.5) 50%,
+		transparent 65%
+	);
+	transform: translateX(-130%);
+	animation: railShine 2.6s ease-in-out infinite;
 }
 .float-rail-num:hover {
 	animation: none;
 	background: var(--color-primary);
+}
+.float-rail-num:hover::before {
+	animation-duration: 1.4s;
 }
 .float-rail-phone {
 	display: inline-flex;
@@ -786,7 +849,17 @@
 		background: var(--color-primary-dark);
 	}
 	50% {
-		background: var(--color-primary);
+		background: var(--color-primary-light);
+	}
+}
+@keyframes railShine {
+	0%,
+	58% {
+		transform: translateX(-130%);
+	}
+	82%,
+	100% {
+		transform: translateX(130%);
 	}
 }
 @keyframes railRing {
@@ -810,8 +883,12 @@
 }
 @media (prefers-reduced-motion: reduce) {
 	.float-rail-num,
-	.float-rail-phone {
+	.float-rail-phone,
+	.float-rail-num::before {
 		animation: none;
+	}
+	.float-rail-num::before {
+		display: none;
 	}
 }
 
@@ -859,6 +936,9 @@
 		grid-template-columns: 1fr;
 	}
 	.nav-links {
+		display: none;
+	}
+	.header-desktop-actions {
 		display: none;
 	}
 	.menu-toggle {
@@ -1230,4 +1310,459 @@ button.ds-card {
 	text-align: left;
 	cursor: pointer;
 	appearance: none;
+}
+
+/* ── Why Choice — 핵심 차별점 featured 블록 ─────────────────────────── */
+.strength-feature {
+	display: flex;
+	align-items: center;
+	gap: 28px;
+	margin-top: 48px;
+	padding: 32px 36px;
+	border-radius: 18px;
+	border: 1px solid var(--border-default);
+	background: linear-gradient(135deg, #faf8f4 0%, #f1ece2 100%);
+	box-shadow: var(--shadow-xs);
+}
+.strength-feature-icon {
+	flex-shrink: 0;
+	width: 64px;
+	height: 64px;
+	border-radius: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--color-primary);
+	color: var(--color-on-primary);
+	box-shadow: 0 8px 20px rgba(108, 93, 76, 0.28);
+}
+.strength-feature-title {
+	margin: 0;
+	font-size: 22px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	color: var(--text-heading);
+}
+.strength-feature-desc {
+	margin: 10px 0 0;
+	font-size: 16px;
+	line-height: 1.7;
+	color: var(--text-body);
+	max-width: 760px;
+}
+.strength-flow {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 18px;
+	color: var(--color-primary-light);
+}
+.strength-flow-step {
+	display: inline-flex;
+	align-items: center;
+	padding: 7px 16px;
+	border-radius: var(--radius-pill);
+	background: #fff;
+	border: 1px solid var(--border-default);
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--color-primary-dark);
+}
+
+/* Why Choice — 3개 강점 카드(featured 아래) */
+.strength-card {
+	position: relative;
+	overflow: hidden;
+	padding-top: 30px;
+}
+.strength-card::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.3s ease;
+}
+.strength-card.is-hover:hover::before {
+	transform: scaleX(1);
+}
+.strength-card-icon {
+	width: 54px;
+	height: 54px;
+	border-radius: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 20px;
+	background: var(--color-accent-soft);
+	color: var(--color-primary-dark);
+	transition:
+		background 0.25s ease,
+		color 0.25s ease,
+		transform 0.25s ease;
+}
+.strength-card.is-hover:hover .strength-card-icon {
+	background: var(--color-primary);
+	color: var(--color-on-primary);
+	transform: translateY(-2px);
+}
+
+@media (max-width: 640px) {
+	.strength-feature {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 20px;
+		padding: 26px 22px;
+	}
+	.strength-flow {
+		flex-wrap: wrap;
+	}
+}
+
+/* ── 공식 등록·소속 밴드 (메인 하단) ─────────────────────────────────── */
+.affiliations {
+	padding: 40px 0;
+	background: var(--surface-subtle);
+	border-top: 1px solid var(--border-default);
+}
+.affiliations-label {
+	margin: 0 0 22px;
+	text-align: center;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+}
+.affiliations-row {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: stretch;
+	gap: 16px 40px;
+}
+.affiliation {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+.affiliation-emblem {
+	flex-shrink: 0;
+	width: 48px;
+	height: 48px;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #fff;
+	border: 1px solid var(--border-default);
+	color: var(--color-primary);
+}
+.affiliation-logo {
+	flex-shrink: 0;
+	height: 44px;
+	width: auto;
+	object-fit: contain;
+}
+.affiliation-text {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+.affiliation-name {
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--text-heading);
+	letter-spacing: -0.01em;
+}
+.affiliation-note {
+	font-size: 12.5px;
+	color: var(--text-muted);
+}
+
+@media (max-width: 720px) {
+	.affiliations-row {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+		max-width: 360px;
+		margin: 0 auto;
+	}
+}
+
+/* ── 히어로 하단 빠른 이동 메뉴(비자 종류별) ─────────────────────────── */
+.quicknav-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
+}
+.quicknav-tile {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	padding: 20px 22px;
+	background: var(--surface-card);
+	border: 1px solid var(--border-default);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow-xs);
+	cursor: pointer;
+	text-align: left;
+	appearance: none;
+	font-family: var(--font-sans);
+	color: var(--text-heading);
+	transition:
+		border-color 0.18s ease,
+		box-shadow 0.18s ease,
+		transform 0.18s ease;
+}
+.quicknav-tile:hover {
+	border-color: var(--color-primary);
+	box-shadow: var(--shadow-card-hover);
+	transform: translateY(-3px);
+}
+.quicknav-ico {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 46px;
+	height: 46px;
+	border-radius: 12px;
+	background: var(--color-primary);
+	color: #fff;
+	transition: transform 0.18s ease;
+}
+.quicknav-tile:hover .quicknav-ico {
+	transform: scale(1.08);
+}
+.quicknav-label {
+	flex: 1;
+	min-width: 0;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+.quicknav-code {
+	flex: 0 0 auto;
+	font-size: 12.5px;
+	font-weight: 600;
+	color: var(--color-primary);
+	background: var(--color-accent-soft);
+	padding: 4px 9px;
+	border-radius: var(--radius-pill);
+}
+@media (max-width: 960px) {
+	.quicknav-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+@media (max-width: 480px) {
+	.quicknav-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* 타일별 다양한 진입 애니메이션(좌·우·위에서 낙하·팝) — 기본 up 모션 미사용 */
+@media (prefers-reduced-motion: no-preference) {
+	/* 그리드 컨테이너 자체의 기본 reveal은 무력화(컨테이너는 즉시 노출) */
+	.reveal-ready .quicknav-grid[data-reveal] {
+		opacity: 1;
+		transform: none;
+		filter: none;
+		transition: none;
+	}
+	.reveal-ready .quicknav-grid > * {
+		opacity: 0;
+	}
+	.reveal-ready .quicknav-grid.is-visible > * {
+		animation: qnPop 0.66s cubic-bezier(0.34, 1.4, 0.5, 1) both;
+	}
+	/* 방향 배분 — 떨어짐 / 좌 / 우 / 팝 (대칭) */
+	.reveal-ready .quicknav-grid.is-visible > *:nth-child(1) {
+		animation-name: qnDrop;
+		animation-delay: 0ms;
+	}
+	.reveal-ready .quicknav-grid.is-visible > *:nth-child(2) {
+		animation-name: qnLeft;
+		animation-delay: 80ms;
+	}
+	.reveal-ready .quicknav-grid.is-visible > *:nth-child(3) {
+		animation-name: qnRight;
+		animation-delay: 160ms;
+	}
+	.reveal-ready .quicknav-grid.is-visible > *:nth-child(4) {
+		animation-name: qnPop;
+		animation-delay: 240ms;
+	}
+	.reveal-ready .quicknav-grid.is-visible > *:nth-child(5) {
+		animation-name: qnPop;
+		animation-delay: 320ms;
+	}
+	.reveal-ready .quicknav-grid.is-visible > *:nth-child(6) {
+		animation-name: qnRight;
+		animation-delay: 400ms;
+	}
+	.reveal-ready .quicknav-grid.is-visible > *:nth-child(7) {
+		animation-name: qnLeft;
+		animation-delay: 480ms;
+	}
+	.reveal-ready .quicknav-grid.is-visible > *:nth-child(8) {
+		animation-name: qnDrop;
+		animation-delay: 560ms;
+	}
+}
+@keyframes qnPop {
+	from {
+		opacity: 0;
+		transform: scale(0.72);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+@keyframes qnLeft {
+	from {
+		opacity: 0;
+		transform: translateX(-56px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+@keyframes qnRight {
+	from {
+		opacity: 0;
+		transform: translateX(56px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+@keyframes qnDrop {
+	from {
+		opacity: 0;
+		transform: translateY(-46px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* ── 업무분야 카드: 아이콘 대비 강화 + 클릭 유도 ─────────────────────── */
+.svc-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 46px;
+	height: 46px;
+	border-radius: var(--radius);
+	background: var(--color-primary);
+	color: #fff;
+	box-shadow: 0 6px 14px -6px rgba(82, 70, 54, 0.55);
+	transition:
+		transform 0.2s ease,
+		background 0.2s ease;
+}
+.svc-grid .ds-card:hover {
+	border-color: var(--color-primary);
+}
+.svc-grid .ds-card:hover .svc-icon {
+	transform: scale(1.06);
+	background: var(--color-accent);
+}
+.svc-more svg {
+	transition: transform 0.2s ease;
+}
+.svc-grid .ds-card:hover .svc-more svg {
+	transform: translateX(4px);
+}
+
+/* ── 후기 카드 입체감 ─────────────────────────────────────────── */
+.review-card {
+	border-top: 3px solid var(--color-primary);
+	box-shadow: 0 14px 32px -20px rgba(34, 28, 22, 0.4);
+}
+.review-card.is-hover:hover {
+	box-shadow: 0 24px 50px -22px rgba(34, 28, 22, 0.5);
+	transform: translateY(-4px);
+}
+.review-quote {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background: var(--color-accent-soft);
+	color: var(--color-primary);
+	box-shadow: 0 5px 12px -6px rgba(82, 70, 54, 0.5);
+}
+
+/* ── 위챗 QR 팝오버(우측 플로팅 레일 옆) ──────────────────────────── */
+.float-wechat-pop {
+	position: fixed;
+	right: 102px;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 95;
+	width: 232px;
+	padding: 18px 18px 14px;
+	background: #fff;
+	border: 1px solid var(--border-default);
+	border-radius: 14px;
+	box-shadow: -8px 16px 44px rgba(34, 28, 22, 0.28);
+	text-align: center;
+	animation: wechatPop 0.18s ease;
+}
+.float-wechat-pop img {
+	width: 188px;
+	height: 188px;
+	display: block;
+	margin: 0 auto;
+	border-radius: 8px;
+}
+.float-wechat-pop p {
+	margin: 12px 0 0;
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--text-body);
+}
+.float-wechat-close {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	border: none;
+	border-radius: 8px;
+	background: var(--surface-subtle);
+	color: var(--text-body);
+	cursor: pointer;
+}
+.float-wechat-close:hover {
+	background: var(--color-accent-soft);
+}
+@keyframes wechatPop {
+	from {
+		opacity: 0;
+		transform: translate(8px, -50%);
+	}
+	to {
+		opacity: 1;
+		transform: translate(0, -50%);
+	}
 }

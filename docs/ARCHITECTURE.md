@@ -56,7 +56,7 @@ src/
 - `usePrefetch()`로 hover/focus 시 다음 라우트를 prefetch(헤더 메뉴).
 - `routePath(route,param)`(site-data, 정방향) ↔ `pathToRoute(pathname)`(use-go, 역방향)는 짝을 이루는 매핑이다. 라우트 추가 시 **둘 다** 갱신.
 - **블로그는 실제 `<Link href>`/`<a>`를 쓴다.** 신규 내부 링크는 SEO를 위해 `<Link>`를 우선 고려한다(기존 버튼 기반은 docs/DECISIONS.md의 '보류' 참고).
-- 헤더 메가메뉴(`header.tsx`)는 **JS 상태(`openMega`)** 로 연다: hover/focus open, 클릭 시 이동+즉시 닫힘+blur, 영역 이탈 시 150ms 지연 닫힘(hover-intent), Esc 닫힘. 패널은 `position:fixed; top:80px`. **헤더에 `backdrop-filter` 금지**(자손 fixed 패널 기준이 어긋남).
+- 헤더(`header.tsx`)는 로고(좌) · **동일 너비 메뉴**(중앙, 캐럿 없음) · 전화+무료상담 CTA(우, 데스크탑) 구성. 하위메뉴는 **JS 상태(`openMega`)** 로 연다: hover/focus open, 클릭 시 이동+즉시 닫힘+blur, 영역 이탈 시 180ms 지연 닫힘(hover-intent), Esc 닫힘. 패널은 **단일 공유 풀폭 슬라이드다운 시트**(`position:fixed; top:80px`, `nav` 자손이라 시트 hover 중 `mouseleave` 미발생)로, **활성 메뉴의 하위만** eyebrow 라벨 + 4열 그리드(`.mega-row`)로 보여준다. 투명 헤더(홈 최상단)는 열릴 때 `.mega-open` 으로 솔리드 전환. **헤더에 `backdrop-filter` 금지**(자손 fixed 시트 기준이 어긋남).
 
 ## 스타일 모델 (중요)
 - 색/간격은 `globals.css`의 **CSS 변수**(oklch). 컴포넌트는 인라인 `style={{ color: "var(--text-heading)" }}` 식으로 변수를 참조.
