@@ -194,7 +194,7 @@ export const PageHero = ({
 						display: "block",
 						width: 56,
 						height: 3,
-						borderRadius: 2,
+						borderRadius: 0,
 						background: "var(--color-accent-soft)",
 						marginTop: 22,
 					}}
@@ -614,69 +614,6 @@ export const Stats = () => (
 	</section>
 );
 
-export const LangRemoteBand = () => {
-	const items = [
-		{
-			icon: "languages",
-			title: "한국어 · English · 中文(WeChat)",
-			desc: "영어로도 편하게 문의하실 수 있고, 위챗으로 중국 의뢰인의 연락도 받습니다. 상담은 한국어로 정확하게 진행됩니다.",
-		},
-		{
-			icon: "monitor-smartphone",
-			title: "전국 · 해외 어디서나 비대면 상담",
-			desc: "출입국 사무소를 직접 방문하지 않아도, 행정사 대행으로 상담부터 접수까지 원격으로 진행합니다.",
-		},
-	];
-	return (
-		<section style={{ background: "var(--surface-sunken)", padding: "64px 0" }}>
-			<div className="container">
-				<div data-stagger="split" className="grid-2" style={{ gap: 24 }}>
-					{items.map((it) => (
-						<div
-							key={it.title}
-							style={{
-								display: "flex",
-								gap: 18,
-								alignItems: "flex-start",
-								background: "var(--surface-card)",
-								border: "1px solid var(--border-default)",
-								borderRadius: "var(--radius)",
-								padding: 28,
-							}}
-						>
-							<div
-								style={{
-									flex: "0 0 auto",
-									width: 52,
-									height: 52,
-									borderRadius: "var(--radius)",
-									background: "var(--color-accent-soft)",
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-								}}
-							>
-								<Icon
-									n={it.icon}
-									style={{ width: 26, height: 26, color: "var(--color-primary-dark)" }}
-								/>
-							</div>
-							<div>
-								<h3 style={{ fontSize: 19 }}>{it.title}</h3>
-								<p
-									style={{ fontSize: 15, color: "var(--text-body)", lineHeight: 1.7, marginTop: 8 }}
-								>
-									{it.desc}
-								</p>
-							</div>
-						</div>
-					))}
-				</div>
-			</div>
-		</section>
-	);
-};
-
 export const VideoSection = () => (
 	<section className="section" style={{ background: "var(--surface-page)" }}>
 		<div className="container">
@@ -762,7 +699,7 @@ export const VideoSection = () => (
 										fontSize: 12,
 										fontWeight: 600,
 										padding: "3px 8px",
-										borderRadius: 4,
+										borderRadius: 0,
 									}}
 								>
 									{v.dur}
@@ -1685,7 +1622,7 @@ export const FloatRail = () => {
 					<span>위챗</span>
 				</button>
 				<a className="float-rail-cell" href={NAVER_BLOG} target="_blank" rel="noopener noreferrer">
-					<Image src="/blog.svg" alt="" width={26} height={26} unoptimized />
+					<Image src="/icons/blog.svg" alt="" width={26} height={26} unoptimized />
 					<span>블로그</span>
 				</a>
 				<a
@@ -1694,7 +1631,7 @@ export const FloatRail = () => {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					<Image src="/youtube.svg" alt="" width={26} height={26} unoptimized />
+					<Image src="/icons/youtube.svg" alt="" width={26} height={26} unoptimized />
 					<span>유튜브</span>
 				</a>
 				<button type="button" className="float-rail-cell" onClick={() => go("location")}>
@@ -1718,7 +1655,7 @@ export const FloatRail = () => {
 /* 법무부는 문양(crest)만 제공 → 문양+명칭 표기, 협회 2곳은 공식 로고 락업(가로형)을 그대로 노출 */
 type Affiliation =
 	| { kind: "emblem"; emblem: string; name: string; note: string }
-	| { kind: "logo"; logo: string; alt: string; w: number; h: number; note: string };
+	| { kind: "logo"; logo: string; alt: string; w: number; h: number; note: string; boxH?: number };
 const AFFILIATIONS: Affiliation[] = [
 	{
 		kind: "emblem",
@@ -1740,6 +1677,7 @@ const AFFILIATIONS: Affiliation[] = [
 		alt: "한국시험행정사회",
 		w: 800,
 		h: 200,
+		boxH: 48,
 		note: "시험 출신 행정사",
 	},
 ];
@@ -1772,6 +1710,7 @@ export const Affiliations = () => (
 									alt={a.alt}
 									width={a.w}
 									height={a.h}
+									style={a.boxH ? { height: a.boxH } : undefined}
 								/>
 							)}
 						</span>

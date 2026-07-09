@@ -3,8 +3,7 @@ import { ContactForm, ContactInfo, MapBlock, PageHero } from "@/components/site/
 
 export const metadata: Metadata = {
 	title: "문의하기",
-	description:
-		"복잡한 출입국·비자 절차, 담당 행정사가 직접 확인하고 연락드립니다. 한국어·English·中文 상담 가능.",
+	description: "복잡한 출입국·비자 절차, 담당 행정사가 직접 확인하고 연락드립니다.",
 };
 
 export default function ContactPage() {
@@ -12,12 +11,7 @@ export default function ContactPage() {
 		<>
 			<PageHero
 				title="문의하기"
-				sub={
-					<>
-						복잡한 출입국·비자 절차, 담당 행정사가 직접 확인하고 연락드립니다.{" "}
-						<span style={{ whiteSpace: "nowrap" }}>(한국어 · English · 中文 상담)</span>
-					</>
-				}
+				sub="복잡한 출입국·비자 절차, 담당 행정사가 직접 확인하고 연락드립니다."
 				crumbs={[{ label: "홈", route: "home" }, { label: "문의하기" }]}
 			/>
 			<section className="section contact-section">

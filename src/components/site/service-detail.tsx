@@ -192,7 +192,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 								width: 48,
 								height: 3,
 								background: "var(--color-accent)",
-								borderRadius: 2,
+								borderRadius: 0,
 								marginTop: 18,
 							}}
 						/>

@@ -3,7 +3,6 @@ import {
 	BlogPreview,
 	CTABand,
 	Hero,
-	LangRemoteBand,
 	LocationSection,
 	ReviewsPreview,
 	ServicesGrid,
@@ -25,7 +24,6 @@ export default async function Home() {
 			<Hero />
 			<StrengthsCarousel />
 			<Stats />
-			<LangRemoteBand />
 			<ServicesGrid />
 			<StrengthsRow />
 			<ReviewsPreview reviews={reviews} />

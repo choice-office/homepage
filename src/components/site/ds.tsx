@@ -35,7 +35,7 @@ export const Badge = ({
 			fontSize: 13,
 			lineHeight: 1,
 			padding: "6px 12px",
-			borderRadius: "6px",
+			borderRadius: "0",
 			whiteSpace: "nowrap",
 			...badgeVariants[variant],
 			...style,
