@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { type FormEvent, Fragment, useEffect, useState } from "react";
+import { type FormEvent, Fragment, type ReactNode, useEffect, useState } from "react";
 import { submitContact } from "@/app/actions/contact";
 import {
 	Select,
@@ -18,6 +18,7 @@ import {
 	FAQ,
 	HERO_IMG,
 	NAV,
+	NAVER_BLOG,
 	PROCESS,
 	REVIEWS,
 	type Review,
@@ -90,7 +91,7 @@ export const PageHero = ({
 }: {
 	eyebrow?: string;
 	title: string;
-	sub?: string;
+	sub?: ReactNode;
 	crumbs?: Crumb[];
 }) => {
 	const go = useGo();
@@ -99,7 +100,7 @@ export const PageHero = ({
 			style={{
 				position: "relative",
 				overflow: "hidden",
-				padding: "152px 0 68px",
+				padding: "176px 0 84px",
 				background: "#241d16",
 			}}
 		>
@@ -116,7 +117,7 @@ export const PageHero = ({
 					position: "absolute",
 					inset: 0,
 					background:
-						"linear-gradient(120deg, rgba(82,70,54,0.94) 0%, rgba(82,70,54,0.82) 45%, rgba(36,29,22,0.68) 100%)",
+						"linear-gradient(115deg, rgba(30,24,18,0.95) 0%, rgba(52,43,33,0.86) 44%, rgba(82,70,54,0.58) 100%)",
 				}}
 			/>
 			<div className="container" style={{ position: "relative", zIndex: 2 }}>
@@ -176,15 +177,37 @@ export const PageHero = ({
 						{eyebrow}
 					</span>
 				)}
-				<h1 style={{ fontSize: "clamp(32px,5vw,46px)", marginTop: 12, color: "#fff" }}>{title}</h1>
+				<h1
+					style={{
+						fontSize: "clamp(34px, 5.5vw, 52px)",
+						fontWeight: 800,
+						letterSpacing: "-0.02em",
+						lineHeight: 1.14,
+						marginTop: 14,
+						color: "#fff",
+					}}
+				>
+					{title}
+				</h1>
+				<span
+					style={{
+						display: "block",
+						width: 56,
+						height: 3,
+						borderRadius: 2,
+						background: "var(--color-accent-soft)",
+						marginTop: 22,
+					}}
+				/>
 				{sub && (
 					<p
 						style={{
-							fontSize: 18,
-							color: "rgba(255,255,255,.85)",
-							marginTop: 16,
-							maxWidth: 720,
-							lineHeight: 1.7,
+							fontSize: "clamp(16px, 2vw, 19px)",
+							color: "rgba(255,255,255,.82)",
+							marginTop: 22,
+							maxWidth: 640,
+							lineHeight: 1.75,
+							wordBreak: "keep-all",
 						}}
 					>
 						{sub}
@@ -194,35 +217,6 @@ export const PageHero = ({
 		</section>
 	);
 };
-
-export const PageSectionTitle = ({ title, sub }: { title: string; sub?: string }) => (
-	<div data-reveal style={{ marginBottom: 40 }}>
-		<h2 style={{ fontSize: "clamp(24px,3.4vw,32px)" }}>{title}</h2>
-		<span
-			style={{
-				display: "block",
-				width: 48,
-				height: 3,
-				background: "var(--color-accent)",
-				borderRadius: 2,
-				margin: "18px 0 0",
-			}}
-		/>
-		{sub && (
-			<p
-				style={{
-					fontSize: 17,
-					color: "var(--text-muted)",
-					marginTop: 18,
-					lineHeight: 1.7,
-					maxWidth: 720,
-				}}
-			>
-				{sub}
-			</p>
-		)}
-	</div>
-);
 
 export const Hero = () => {
 	const go = useGo();
@@ -1007,9 +1001,18 @@ const CONSULT_FIELDS = [
 	{ v: "etc", label: "기타" },
 ];
 
+// 입력값을 010-xxxx-xxxx 형태로 자동 정리(숫자만 추출 후 3-4-4 하이픈)
+const formatKrPhone = (raw: string) => {
+	const d = raw.replace(/\D/g, "").slice(0, 11);
+	if (d.length < 4) return d;
+	if (d.length < 8) return `${d.slice(0, 3)}-${d.slice(3)}`;
+	return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`;
+};
+
 export const ContactForm = () => {
 	const [sent, setSent] = useState(false);
 	const [field, setField] = useState("");
+	const [phone, setPhone] = useState("");
 	const [pending, setPending] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -1029,7 +1032,7 @@ export const ContactForm = () => {
 	};
 
 	return (
-		<Card hover={false} padding="32px">
+		<Card hover={false} padding="36px" className="contact-form-card">
 			{sent ? (
 				<div style={{ textAlign: "center", padding: "40px 0" }}>
 					<div
@@ -1056,14 +1059,24 @@ export const ContactForm = () => {
 				</div>
 			) : (
 				<form onSubmit={handleSubmit}>
-					<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+					<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
 						<div>
 							<Label htmlFor="cn">성함</Label>
 							<Input id="cn" name="name" placeholder="홍길동" required />
 						</div>
 						<div>
 							<Label htmlFor="cp">연락처</Label>
-							<Input id="cp" name="phone" placeholder="010-0000-0000" required />
+							<Input
+								id="cp"
+								name="phone"
+								type="tel"
+								inputMode="numeric"
+								maxLength={13}
+								placeholder="010-0000-0000"
+								required
+								value={phone}
+								onChange={(e) => setPhone(formatKrPhone(e.target.value))}
+							/>
 						</div>
 						<div>
 							<Label htmlFor="ce">이메일</Label>
@@ -1102,6 +1115,7 @@ export const ContactForm = () => {
 								name="message"
 								rows={4}
 								placeholder="상담하고 싶은 내용을 간단히 적어 주세요."
+								style={{ height: 140, resize: "none" }}
 							/>
 						</div>
 					</div>
@@ -1145,7 +1159,7 @@ export const ContactForm = () => {
 						disabled={pending}
 						style={{ width: "100%", marginTop: 20 }}
 					>
-						{pending ? "접수 중…" : "무료 상담 신청"}
+						{pending ? "접수 중…" : "상담 신청"}
 					</Button>
 				</form>
 			)}
@@ -1153,89 +1167,51 @@ export const ContactForm = () => {
 	);
 };
 
-export const ContactInfo = () => (
-	<div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-		{CHANNELS.map((c) => {
-			const inner = (
-				<>
-					<span
-						style={{
-							width: 44,
-							height: 44,
-							borderRadius: "var(--radius)",
-							background: "var(--color-accent-soft)",
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							flex: "0 0 auto",
-						}}
-					>
-						<Icon
-							n={c.icon}
-							style={{ width: 20, height: 20, color: "var(--color-primary-dark)" }}
-						/>
-					</span>
-					<span style={{ display: "flex", flexDirection: "column" }}>
-						<span style={{ fontSize: 13, color: "var(--text-muted)" }}>
-							{c.label}
-							{c.note ? ` · ${c.note}` : ""}
+export const ContactInfo = ({ tone = "light" }: { tone?: "light" | "dark" }) => {
+	const rows = [
+		...CHANNELS.map((c) => ({
+			key: c.label,
+			icon: c.icon,
+			label: c.note ? `${c.label} · ${c.note}` : c.label,
+			value: c.value,
+			href: c.href ?? null,
+		})),
+		{ key: "addr", icon: "map-pin", label: "주소", value: CONTACT.address, href: null },
+	];
+	return (
+		<ul className="contact-info" data-tone={tone}>
+			{rows.map((r) => {
+				const inner = (
+					<>
+						<span className="contact-info-icon" aria-hidden="true">
+							<Icon n={r.icon} style={{ width: 20, height: 20 }} />
 						</span>
-						<span
-							style={{
-								fontSize: 16,
-								fontWeight: 600,
-								color: "var(--text-heading)",
-								whiteSpace: "nowrap",
-							}}
-						>
-							{c.value}
+						<span className="contact-info-text">
+							<span className="contact-info-label">{r.label}</span>
+							<span className="contact-info-value">{r.value}</span>
 						</span>
-					</span>
-				</>
-			);
-			return c.href ? (
-				<a
-					key={c.label}
-					href={c.href}
-					target={c.href.startsWith("http") ? "_blank" : undefined}
-					rel="noopener noreferrer"
-					style={{ display: "flex", alignItems: "center", gap: 14, color: "var(--text-body)" }}
-				>
-					{inner}
-				</a>
-			) : (
-				<div
-					key={c.label}
-					style={{ display: "flex", alignItems: "center", gap: 14, color: "var(--text-body)" }}
-				>
-					{inner}
-				</div>
-			);
-		})}
-		<div style={{ display: "flex", alignItems: "center", gap: 14, color: "var(--text-body)" }}>
-			<span
-				style={{
-					width: 44,
-					height: 44,
-					borderRadius: "var(--radius)",
-					background: "var(--color-accent-soft)",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					flex: "0 0 auto",
-				}}
-			>
-				<Icon n="map-pin" style={{ width: 20, height: 20, color: "var(--color-primary-dark)" }} />
-			</span>
-			<span style={{ display: "flex", flexDirection: "column" }}>
-				<span style={{ fontSize: 13, color: "var(--text-muted)" }}>주소</span>
-				<span style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}>
-					{CONTACT.address}
-				</span>
-			</span>
-		</div>
-	</div>
-);
+					</>
+				);
+				return (
+					<li className="contact-info-row" key={r.key}>
+						{r.href ? (
+							<a
+								className="contact-info-link"
+								href={r.href}
+								target={r.href.startsWith("http") ? "_blank" : undefined}
+								rel="noopener noreferrer"
+							>
+								{inner}
+							</a>
+						) : (
+							<div className="contact-info-static">{inner}</div>
+						)}
+					</li>
+				);
+			})}
+		</ul>
+	);
+};
 
 // 실제 지도(구글 맵 임베드 — API 키 불필요). CSP frame-src 에 google.com 허용됨.
 const MAP_QUERY = CONTACT.address;
@@ -1708,6 +1684,19 @@ export const FloatRail = () => {
 					<Image src="/icons/wechat.svg" alt="" width={26} height={26} unoptimized />
 					<span>위챗</span>
 				</button>
+				<a className="float-rail-cell" href={NAVER_BLOG} target="_blank" rel="noopener noreferrer">
+					<Image src="/blog.svg" alt="" width={26} height={26} unoptimized />
+					<span>블로그</span>
+				</a>
+				<a
+					className="float-rail-cell"
+					href={YOUTUBE_CHANNEL}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<Image src="/youtube.svg" alt="" width={26} height={26} unoptimized />
+					<span>유튜브</span>
+				</a>
 				<button type="button" className="float-rail-cell" onClick={() => go("location")}>
 					<span className="brand-chip brand-map" aria-hidden="true">
 						<Icon n="map-pin" style={{ width: 16, height: 16, color: "#fff" }} />

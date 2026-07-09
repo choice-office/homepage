@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
-import {
-	ContactForm,
-	ContactInfo,
-	MapBlock,
-	PageHero,
-	PageSectionTitle,
-} from "@/components/site/sections";
+import { ContactForm, ContactInfo, MapBlock, PageHero } from "@/components/site/sections";
 
 export const metadata: Metadata = {
 	title: "문의하기",
-	description: "상담은 무료입니다. 행정사가 직접 연락드립니다. (한국어 · English · 中文)",
+	description:
+		"복잡한 출입국·비자 절차, 담당 행정사가 직접 확인하고 연락드립니다. 한국어·English·中文 상담 가능.",
 };
 
 export default function ContactPage() {
@@ -17,29 +12,38 @@ export default function ContactPage() {
 		<>
 			<PageHero
 				title="문의하기"
-				sub="상담은 무료입니다. 행정사가 직접 연락드립니다. (한국어 · English · 中文)"
+				sub={
+					<>
+						복잡한 출입국·비자 절차, 담당 행정사가 직접 확인하고 연락드립니다.{" "}
+						<span style={{ whiteSpace: "nowrap" }}>(한국어 · English · 中文 상담)</span>
+					</>
+				}
 				crumbs={[{ label: "홈", route: "home" }, { label: "문의하기" }]}
 			/>
-			<section className="section" style={{ background: "var(--surface-page)" }}>
-				<div className="contact-grid container">
-					<div>
-						<PageSectionTitle title="연락처" />
-						<ContactInfo />
-						<div style={{ marginTop: 24 }}>
-							<MapBlock height={400} />
-						</div>
-						<div style={{ marginTop: 16, fontSize: 13, lineHeight: 1.7 }}>
-							<p style={{ fontWeight: 600, color: "var(--text-body)" }}>
-								운영 시간 · 평일 09:00 – 18:00
-							</p>
-							<p style={{ marginTop: 4, color: "var(--text-muted)" }}>
-								외부 출장이 잦아, 내방 상담은 사전 연락 부탁드립니다.
-							</p>
+			<section className="section contact-section">
+				<div className="contact-shell container">
+					<div className="contact-col" data-reveal>
+						<h2 className="contact-col-title">연락처</h2>
+						<span className="contact-rule" />
+						<div className="contact-aside">
+							<ContactInfo tone="dark" />
+							<div className="contact-hours">
+								<p className="contact-hours-title">운영 시간 · 평일 09:00 – 18:00</p>
+								<p className="contact-hours-note">
+									외부 출장이 잦아, 내방 상담은 사전 연락 부탁드립니다.
+								</p>
+							</div>
 						</div>
 					</div>
-					<div>
-						<PageSectionTitle title="무료 상담 신청" />
+					<div className="contact-col" data-reveal>
+						<h2 className="contact-col-title">상담 신청</h2>
+						<span className="contact-rule" />
 						<ContactForm />
+					</div>
+				</div>
+				<div className="contact-mapwrap container">
+					<div className="contact-map" data-reveal>
+						<MapBlock height={460} />
 					</div>
 				</div>
 			</section>

@@ -172,7 +172,7 @@ export const VIDEOS = [
 	{ tag: "결혼비자 · F-6", title: "결혼비자(F-6) 준비, 관계 입증은 어떻게", dur: "8:40" },
 	{ tag: "영주권 · F-5", title: "영주권(F-5) 요건, 지금 신청 가능할까", dur: "7:05" },
 ];
-export const YOUTUBE_CHANNEL = "https://www.youtube.com/results?search_query=Korea+Visa+Master";
+export const YOUTUBE_CHANNEL = "https://www.youtube.com/@kvisa1345";
 export const NAVER_BLOG = "https://blog.naver.com/k-visa1345";
 
 export type Service = {
