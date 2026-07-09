@@ -502,30 +502,43 @@
 	flex-shrink: 0;
 	display: inline-flex;
 	align-items: center;
+	gap: 6px;
 	background: none;
 	border: none;
 	padding: 0;
 }
-.site-logo-img {
+.site-logo-mark,
+.site-logo-word {
 	display: block;
 	height: 40px;
 	width: auto;
 	transition: filter 0.2s ease;
 }
-/* 로고 문구가 검정 → 어두운 배경(히어로 위 투명 헤더)에서는 흰색으로 반전 */
-.site-header.at-top .site-logo-img {
+/* 나비는 항상 골드, 글자만: 밝은 헤더=원본(검정), 히어로 위 투명 헤더=흰색 반전 */
+.site-header.at-top .site-logo-word {
 	filter: brightness(0) invert(1);
 }
-.site-header.at-top.mega-open .site-logo-img {
+.site-header.at-top.mega-open .site-logo-word {
 	filter: none;
 }
 @media (max-width: 640px) {
-	.site-logo-img {
+	.site-logo-mark,
+	.site-logo-word {
 		height: 30px;
 	}
 }
-/* 푸터(어두운 배경) 로고 — 흰색 반전 */
-.footer-logo-img {
+/* 푸터(어두운 배경) 로고 — 나비는 골드 원본, 글자만 흰색 반전 */
+.footer-logo {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+.footer-logo-mark {
+	display: block;
+	height: 40px;
+	width: auto;
+}
+.footer-logo-word {
 	display: block;
 	height: 40px;
 	width: auto;
@@ -542,9 +555,10 @@
 	align-items: center;
 	justify-content: center;
 	height: 88px;
-	width: 116px;
+	width: 140px;
 }
 .nav-link {
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -558,8 +572,25 @@
 	white-space: nowrap;
 	transition: color 0.15s ease;
 }
+/* 고급 hover 인디케이터 — 텍스트 아래 짧은 밑줄 바가 가운데서 펼쳐짐 */
+.nav-link::after {
+	content: "";
+	position: absolute;
+	bottom: 27px;
+	left: 50%;
+	width: 30px;
+	height: 2px;
+	background: var(--color-accent);
+	transform: translateX(-50%) scaleX(0);
+	transform-origin: center;
+	transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
 .nav-link:hover {
 	color: var(--color-primary-dark);
+}
+.nav-link:hover::after,
+.nav-link.is-active::after {
+	transform: translateX(-50%) scaleX(1);
 }
 .nav-link.is-active {
 	color: var(--color-primary);
@@ -692,6 +723,13 @@
 .site-header.at-top .header-phone,
 .site-header.at-top .site-burger {
 	color: #fff;
+}
+/* 히어로 위 투명 헤더에서는 밑줄 바를 밝은 톤으로(대비 확보) */
+.site-header.at-top .nav-link::after {
+	background: var(--color-accent-soft);
+}
+.site-header.at-top.mega-open .nav-link::after {
+	background: var(--color-accent);
 }
 /* 메뉴 열리면 투명 헤더도 솔리드로(시트와 자연스럽게 연결) */
 .site-header.at-top.mega-open {

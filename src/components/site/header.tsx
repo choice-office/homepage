@@ -117,12 +117,20 @@ export const SiteHeader = () => {
 						aria-label="초이스 행정사 사무소 홈"
 					>
 						<Image
-							src="/header-logo.png"
-							alt="초이스 행정사 사무소"
-							width={1525}
+							src="/logo-mark.png"
+							alt=""
+							width={246}
 							height={203}
 							priority
-							className="site-logo-img"
+							className="site-logo-mark"
+						/>
+						<Image
+							src="/logo-word.png"
+							alt="초이스 행정사 사무소"
+							width={1259}
+							height={203}
+							priority
+							className="site-logo-word"
 						/>
 					</button>
 
@@ -191,15 +199,6 @@ export const SiteHeader = () => {
 					</nav>
 
 					<div className="site-header-actions">
-						<div className="header-desktop-actions">
-							<a className="lk header-phone" href={CONTACT.phone.href}>
-								<Icon n="phone" style={{ width: 16, height: 16 }} />
-								<span>{CONTACT.phone.display}</span>
-							</a>
-							<Button variant="primary" size="sm" onClick={() => go("contact")}>
-								무료 상담
-							</Button>
-						</div>
 						<button
 							type="button"
 							className="menu-toggle lk site-burger"

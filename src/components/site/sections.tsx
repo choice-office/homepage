@@ -1823,13 +1823,22 @@ export const Footer = () => {
 						aria-label="초이스 행정사 사무소 홈"
 						style={{ background: "none", border: "none", padding: 0 }}
 					>
-						<Image
-							src="/header-logo.png"
-							alt="초이스 행정사 사무소"
-							width={1525}
-							height={203}
-							className="footer-logo-img"
-						/>
+						<span className="footer-logo">
+							<Image
+								src="/logo-mark.png"
+								alt=""
+								width={246}
+								height={203}
+								className="footer-logo-mark"
+							/>
+							<Image
+								src="/logo-word.png"
+								alt="초이스 행정사 사무소"
+								width={1259}
+								height={203}
+								className="footer-logo-word"
+							/>
+						</span>
 					</button>
 					<nav style={{ display: "flex", gap: 22, fontSize: 14, flexWrap: "wrap" }}>
 						{NAV.map((n) => (
