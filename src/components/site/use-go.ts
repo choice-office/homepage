@@ -27,7 +27,6 @@ export const pathToRoute = (pathname: string): string => {
 	const map: Record<string, string> = {
 		greeting: "greeting",
 		members: "profile",
-		credentials: "credentials",
 		location: "location",
 		services: "services",
 		reviews: "reviews",

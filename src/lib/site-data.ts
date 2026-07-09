@@ -17,7 +17,6 @@ export const NAV: NavItem[] = [
 		children: [
 			{ label: "인사말", route: "greeting" },
 			{ label: "구성원", route: "profile" },
-			{ label: "자격 · 인증", route: "credentials" },
 			{ label: "오시는 길", route: "location" },
 			{ label: "자주 묻는 질문", route: "faq" },
 		],
@@ -96,6 +95,7 @@ export type Member = {
 	tags: string[];
 	career: { icon: string; text: string }[];
 	reg: string;
+	bio: { label: string; items: string[] }[];
 };
 
 /* 구성원 — 인원이 늘어도 자연스러운 구조(1명 → 2~3명 확장) */
@@ -113,6 +113,59 @@ export const TEAM: Member[] = [
 			{ icon: "building-2", text: "법무부 등록 출입국민원 대행기관 운영" },
 		],
 		reg: "행정사 등록번호 18102025537 · 출입국민원 대행기관 19-SB-RG-016",
+		bio: [
+			{ label: "학력", items: ["숙명여자대학교"] },
+			{
+				label: "주요 경력",
+				items: [
+					"現 초이스 행정사사무소 대표 행정사",
+					"前 출입국업무 전문 행정사사무소 근무",
+					"前 외국계기업 6년 근무",
+				],
+			},
+			{
+				label: "보유 자격",
+				items: [
+					"행정사 · 제6회 행정사 자격시험 합격",
+					"민원행정상담사",
+					"행정처분구제분석사",
+					"학교폭력예방상담사",
+					"다문화심리상담사 1급",
+				],
+			},
+			{
+				label: "소속 · 자문",
+				items: [
+					"대한행정사회 정회원",
+					"한국시험행정사회 정회원",
+					"대한행정사협회 공로상 수상",
+					"한국시험행정사회 자문위원",
+				],
+			},
+			{
+				label: "교육 이수",
+				items: [
+					"미국 어학연수 과정 수료 (Los Angeles, USA)",
+					"대한행정사회 출입국업무 전문가과정 이수",
+					"대한행정사회 출입국관리 실무과정 이수",
+					"대한행정사회 출입국 VISA업무 실전과정 이수",
+					"대한행정사회 중앙교육연수원 연수교육 이수",
+					"공인행정사협회 역량강화 교육 이수 (행정심판 전문가과정 · 이민행정 체류실무특강 · 민사분쟁에서 행정사의 업무와 역할 외 다수)",
+				],
+			},
+			{
+				label: "봉사활동",
+				items: [
+					"서울 국제 마라톤대회 자원봉사",
+					"서울 국제 휠체어마라톤대회 자원봉사",
+					"서울 Terry Fox Run 자원봉사",
+					"한국여성재단 ‘엄마에게 희망을’ 모금봉사",
+					"JA Korea 경제교육봉사단",
+					"캄보디아 해외봉사",
+					"서울 G-20 정상회담 자원봉사",
+				],
+			},
+		],
 	},
 ];
 
@@ -493,29 +546,6 @@ export const REVIEWS: Review[] = [
 	},
 ];
 
-export const CREDENTIALS = [
-	{
-		icon: "award",
-		title: "시험 출신 행정사",
-		desc: "행정사 자격시험을 거쳐 자격을 취득한 행정사가 직접 업무를 수행합니다.",
-	},
-	{
-		icon: "building-2",
-		title: "출입국민원 대행기관",
-		desc: "법무부에 등록된 출입국민원 대행기관입니다. (등록번호 19-SB-RG-016)",
-	},
-	{
-		icon: "badge-check",
-		title: "행정사 등록",
-		desc: "관할 행정청에 정식 등록된 행정사 사무소입니다. (등록번호 18102025537)",
-	},
-	{
-		icon: "globe-2",
-		title: "한·영·中 상담",
-		desc: "한국어·English 상담과 위챗(WeChat)을 통한 中文 상담을 지원합니다.",
-	},
-];
-
 export const FAQ = [
 	{
 		q: "‘행정사’는 어떤 일을 하는 사람인가요?",
@@ -552,8 +582,6 @@ export const routePath = (route: string, param?: string | null): string => {
 			return "/greeting";
 		case "profile":
 			return "/members";
-		case "credentials":
-			return "/credentials";
 		case "location":
 			return "/location";
 		case "services":
