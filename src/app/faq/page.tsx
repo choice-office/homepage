@@ -11,7 +11,6 @@ export default function FaqPage() {
 	return (
 		<>
 			<PageHero
-				eyebrow="FAQ"
 				title="자주 묻는 질문"
 				sub="상담 전 자주 묻는 질문을 모았습니다. 더 궁금한 점은 편하게 문의해 주세요."
 				crumbs={[{ label: "홈", route: "home" }, { label: "자주 묻는 질문" }]}

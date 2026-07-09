@@ -4,11 +4,12 @@ import {
 	CTABand,
 	Hero,
 	LangRemoteBand,
+	LocationSection,
 	ReviewsPreview,
 	ServicesGrid,
 	Stats,
+	StrengthsCarousel,
 	StrengthsRow,
-	TrustBand,
 	VideoSection,
 } from "@/components/site/sections";
 import { getPublishedPosts } from "@/lib/blog";
@@ -22,16 +23,17 @@ export default async function Home() {
 	return (
 		<>
 			<Hero />
-			<TrustBand />
-			<LangRemoteBand />
-			<StrengthsRow />
-			<ServicesGrid />
+			<StrengthsCarousel />
 			<Stats />
+			<LangRemoteBand />
+			<ServicesGrid />
+			<StrengthsRow />
 			<ReviewsPreview reviews={reviews} />
+			<Affiliations />
 			<VideoSection />
 			<BlogPreview posts={latestPosts} />
+			<LocationSection />
 			<CTABand />
-			<Affiliations />
 		</>
 	);
 }

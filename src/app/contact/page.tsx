@@ -16,7 +16,6 @@ export default function ContactPage() {
 	return (
 		<>
 			<PageHero
-				eyebrow="Contact"
 				title="문의하기"
 				sub="상담은 무료입니다. 행정사가 직접 연락드립니다. (한국어 · English · 中文)"
 				crumbs={[{ label: "홈", route: "home" }, { label: "문의하기" }]}

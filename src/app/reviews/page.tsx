@@ -16,7 +16,6 @@ export default async function ReviewsPage() {
 	return (
 		<>
 			<PageHero
-				eyebrow="Client Reviews"
 				title="의뢰인 후기"
 				sub="절차를 마친 의뢰인들이 남겨주신 실제 후기입니다."
 				crumbs={[{ label: "홈", route: "home" }, { label: "의뢰인 후기" }]}

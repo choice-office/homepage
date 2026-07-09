@@ -94,7 +94,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 	return (
 		<>
 			<PageHero
-				eyebrow={`Service · ${s.code}`}
+				eyebrow={`업무분야 · ${s.code}`}
 				title={s.title}
 				sub={s.summary}
 				crumbs={[

@@ -16,7 +16,6 @@ export default function CredentialsPage() {
 	return (
 		<>
 			<PageHero
-				eyebrow="Credentials"
 				title="자격 · 인증"
 				sub="자격과 등록을 갖춘 행정사가, 적법한 절차로 직접 진행합니다."
 				crumbs={[{ label: "홈", route: "home" }, ABOUT_CRUMB, { label: "자격 · 인증" }]}

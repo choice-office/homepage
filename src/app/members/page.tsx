@@ -131,7 +131,6 @@ export default function MembersPage() {
 	return (
 		<>
 			<PageHero
-				eyebrow="Members"
 				title="구성원"
 				sub="상담부터 접수까지 직접 책임지는 행정사를 소개합니다."
 				crumbs={[{ label: "홈", route: "home" }, ABOUT_CRUMB, { label: "구성원" }]}

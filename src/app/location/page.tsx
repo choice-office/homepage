@@ -13,7 +13,6 @@ export default function LocationPage() {
 	return (
 		<>
 			<PageHero
-				eyebrow="Location"
 				title="오시는 길"
 				sub="외부 출장이 많아 내방 상담은 반드시 사전 연락 부탁드립니다."
 				crumbs={[{ label: "홈", route: "home" }, ABOUT_CRUMB, { label: "오시는 길" }]}

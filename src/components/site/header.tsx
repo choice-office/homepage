@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { CONTACT, NAV, type NavItem, SERVICES } from "@/lib/site-data";
@@ -109,8 +110,20 @@ export const SiteHeader = () => {
 		<>
 			<header className={cn("site-header", atTop && "at-top", openMega && "mega-open")}>
 				<div className="site-header-bar container">
-					<button type="button" className="lk site-logo" onClick={() => go("home")}>
-						초이스 행정사 사무소
+					<button
+						type="button"
+						className="lk site-logo"
+						onClick={() => go("home")}
+						aria-label="초이스 행정사 사무소 홈"
+					>
+						<Image
+							src="/header-logo.png"
+							alt="초이스 행정사 사무소"
+							width={1525}
+							height={203}
+							priority
+							className="site-logo-img"
+						/>
 					</button>
 
 					<nav

@@ -16,7 +16,6 @@ export default function GreetingPage() {
 	return (
 		<>
 			<PageHero
-				eyebrow="Greetings"
 				title="인사말"
 				sub="초이스 행정사 사무소가 의뢰인께 드리는 말씀입니다."
 				crumbs={[{ label: "홈", route: "home" }, ABOUT_CRUMB, { label: "인사말" }]}

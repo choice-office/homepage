@@ -82,7 +82,6 @@ export default async function BlogPage({
 	return (
 		<>
 			<PageHero
-				eyebrow="Blog"
 				title="출입국·비자 칼럼"
 				sub="자주 묻는 절차와 요건을, 사례 중심으로 알기 쉽게 정리합니다."
 				crumbs={[{ label: "홈", route: "home" }, { label: "블로그" }]}

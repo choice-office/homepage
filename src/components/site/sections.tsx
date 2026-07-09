@@ -18,19 +18,19 @@ import {
 	FAQ,
 	HERO_IMG,
 	NAV,
-	NAVER_BLOG,
 	PROCESS,
 	REVIEWS,
 	type Review,
 	SERVICES,
 	STATS,
-	STRENGTHS,
+	STRENGTH_SLIDES,
 	VIDEOS,
 	YOUTUBE_CHANNEL,
 } from "@/lib/site-data";
 import { BlogCard } from "./blog-card";
 import { Badge, Button, Card, CardBody, CardTitle, Input, Label, Textarea } from "./ds";
 import { Icon } from "./icon";
+import { smoothScrollTo } from "./smooth-scroll";
 import { useGo } from "./use-go";
 
 const HERO_OVERLAY = 0.86;
@@ -38,13 +38,11 @@ const HERO_OVERLAY = 0.86;
 type Crumb = { label: string; route?: string; param?: string };
 
 export const SectionHead = ({
-	eyebrow,
 	title,
 	sub,
 	align = "center",
 	light = false,
 }: {
-	eyebrow: string;
 	title: string;
 	sub?: string;
 	align?: "center" | "left";
@@ -54,25 +52,16 @@ export const SectionHead = ({
 		data-reveal="blur"
 		style={{
 			textAlign: align,
-			maxWidth: align === "center" ? "660px" : "none",
+			maxWidth: align === "center" ? "700px" : "none",
 			margin: align === "center" ? "0 auto" : 0,
 		}}
 	>
-		<span
-			style={{
-				fontSize: 13,
-				fontWeight: 700,
-				letterSpacing: ".12em",
-				textTransform: "uppercase",
-				color: light ? "var(--color-accent-soft)" : "var(--color-accent)",
-			}}
-		>
-			{eyebrow}
-		</span>
 		<h2
 			style={{
-				fontSize: "clamp(28px, 4vw, 36px)",
-				marginTop: 14,
+				fontSize: "clamp(28px, 4vw, 42px)",
+				fontWeight: 800,
+				letterSpacing: "-0.01em",
+				lineHeight: 1.25,
 				color: light ? "#fff" : "var(--text-heading)",
 			}}
 		>
@@ -83,7 +72,7 @@ export const SectionHead = ({
 				style={{
 					fontSize: 17,
 					color: light ? "rgba(255,255,255,.78)" : "var(--text-muted)",
-					marginTop: 14,
+					marginTop: 16,
 					lineHeight: 1.7,
 				}}
 			>
@@ -352,25 +341,113 @@ export const Hero = () => {
 	);
 };
 
-/* 히어로 바로 아래 — 비자 종류별 빠른 이동 메뉴(클릭 시 해당 업무분야로) */
-export const TrustBand = () => {
+/* 히어로 바로 아래 — 초이스만의 강점(파운더스식 탭형 캐러셀) */
+export const StrengthsCarousel = () => {
 	const go = useGo();
+	const [active, setActive] = useState(0);
+	const [paused, setPaused] = useState(false);
+	const total = STRENGTH_SLIDES.length;
+
+	// 자동 전환(6초). 마우스 오버 시 정지, prefers-reduced-motion 시 미동작.
+	useEffect(() => {
+		if (paused) return;
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		const timer = setInterval(() => setActive((i) => (i + 1) % total), 6000);
+		return () => clearInterval(timer);
+	}, [paused]);
+
+	const move = (delta: number) => setActive((i) => (i + delta + total) % total);
+	const slide = STRENGTH_SLIDES[active];
+
 	return (
-		<section style={{ background: "var(--surface-subtle)", padding: "28px 0" }}>
+		<section className="section soft-bg" style={{ background: "var(--surface-subtle)" }}>
 			<div className="container">
-				<div className="quicknav-grid" data-reveal>
-					{SERVICES.map((s) => (
+				<h2 className="str-title" data-reveal>
+					초이스의 강점
+				</h2>
+
+				<div
+					className="str-stage"
+					data-reveal
+					data-paused={paused}
+					role="group"
+					aria-roledescription="carousel"
+					aria-label="초이스만의 강점"
+					onMouseEnter={() => setPaused(true)}
+					onMouseLeave={() => setPaused(false)}
+				>
+					<button
+						type="button"
+						className="str-arrow"
+						aria-label="이전 강점"
+						onClick={() => move(-1)}
+					>
+						<Icon
+							n="chevron-right"
+							style={{ width: 22, height: 22, transform: "rotate(180deg)" }}
+						/>
+					</button>
+
+					<div className="str-panel">
+						{/* 좌: 임시 무료 이미지(Unsplash) — 오프셋 액센트 블록으로 에디토리얼 깊이 */}
+						<div className="str-figure">
+							<span className="str-figure-accent" aria-hidden="true" />
+							<div className="str-visual">
+								<Image
+									src={slide.img}
+									alt=""
+									fill
+									sizes="(max-width: 900px) 100vw, 45vw"
+									style={{ objectFit: "cover" }}
+								/>
+							</div>
+						</div>
+
+						{/* 우: 텍스트 (active 변경 시 key로 재마운트하여 진입 애니메이션 재생) */}
+						<div className="str-text" key={active}>
+							<span className="str-no">
+								{slide.no}
+								<span className="str-no-total"> / 0{total}</span>
+							</span>
+							<h3 className="str-headline">{slide.title}</h3>
+							<p className="str-copy">
+								{slide.lines.map((line, i) => (
+									<Fragment key={line}>
+										{i === slide.highlightIndex ? <span className="str-hl">{line}</span> : line}
+										{i < slide.lines.length - 1 && <br />}
+									</Fragment>
+								))}
+							</p>
+							<button type="button" className="str-cta" onClick={() => go(slide.cta.route)}>
+								{slide.cta.label}
+								<Icon n="arrow-right" style={{ width: 18, height: 18 }} />
+							</button>
+						</div>
+					</div>
+
+					<button
+						type="button"
+						className="str-arrow"
+						aria-label="다음 강점"
+						onClick={() => move(1)}
+					>
+						<Icon n="chevron-right" style={{ width: 22, height: 22 }} />
+					</button>
+				</div>
+
+				{/* 하단 탭 */}
+				<div className="str-tabs" data-reveal>
+					{STRENGTH_SLIDES.map((s, i) => (
 						<button
 							type="button"
-							key={s.id}
-							className="quicknav-tile"
-							onClick={() => go("service", s.id)}
+							key={s.no}
+							className="str-tab"
+							data-active={i === active}
+							onClick={() => setActive(i)}
 						>
-							<span className="quicknav-ico" aria-hidden="true">
-								<Icon n={s.icon} style={{ width: 23, height: 23 }} />
-							</span>
-							<span className="quicknav-label">{s.title}</span>
-							<span className="quicknav-code">{s.code}</span>
+							<span className="str-tab-no">{s.no}</span>
+							<span className="str-tab-label">{s.tab}</span>
+							{i === active && <span className="str-tab-bar" key={active} aria-hidden="true" />}
 						</button>
 					))}
 				</div>
@@ -380,45 +457,29 @@ export const TrustBand = () => {
 };
 
 export const StrengthsRow = () => (
-	<section className="section" style={{ background: "var(--surface-page)" }}>
+	<section className="section soft-bg" style={{ background: "var(--surface-page)" }}>
 		<div className="container">
 			<SectionHead
-				eyebrow="Why Choice"
-				title="초이스 행정사를 선택하는 이유"
-				sub="실력에 책임감을 더한, 출입국·비자 전문 행정사 사무소입니다."
+				title="상담부터 접수까지, 행정사가 직접"
+				sub="직원이 아닌 행정사가 상담·검토·서류 작성·접수·결과 안내까지 직접 진행합니다."
 			/>
-
-			{/* 핵심 차별점: 행정사가 직접 진행 (상담→서류 작성→접수) */}
-			<div className="strength-feature" data-reveal>
-				<div className="strength-feature-icon">
-					<Icon n="user-check" style={{ width: 30, height: 30 }} />
-				</div>
-				<div className="strength-feature-body">
-					<h3 className="strength-feature-title">행정사가 직접 관리하는 사무소</h3>
-					<p className="strength-feature-desc">
-						상담부터 서류 작성, 접수까지 — 직원이 아닌 행정사가 직접 진행합니다. 중간 과정 없이
-						빠르고 확실하게 진행됩니다.
-					</p>
-					<div className="strength-flow" aria-hidden="true">
-						<span className="strength-flow-step">상담</span>
-						<Icon n="chevron-right" style={{ width: 16, height: 16 }} />
-						<span className="strength-flow-step">서류 작성</span>
-						<Icon n="chevron-right" style={{ width: 16, height: 16 }} />
-						<span className="strength-flow-step">접수</span>
-					</div>
-				</div>
-			</div>
-
-			<div data-stagger="scale" className="grid-3" style={{ marginTop: 24 }}>
-				{STRENGTHS.map((s) => (
-					<Card key={s.title} className="strength-card">
-						<div className="strength-card-icon">
-							<Icon n={s.icon} style={{ width: 26, height: 26 }} />
-						</div>
-						<CardTitle>{s.title}</CardTitle>
-						<CardBody>{s.desc}</CardBody>
-					</Card>
-				))}
+			<div className="proc-timeline" data-reveal>
+				<span className="proc-track" aria-hidden="true">
+					<span className="proc-track-fill" />
+					<span className="proc-track-beam" />
+				</span>
+				<ol className="proc-steps" data-stagger>
+					{PROCESS.map((p, i) => (
+						<li className="proc-step" key={p.title}>
+							<span className="proc-node">{`0${i + 1}`}</span>
+							<span className="proc-step-icon" aria-hidden="true">
+								<Icon n={p.icon} style={{ width: 24, height: 24 }} />
+							</span>
+							<h3 className="proc-step-title">{p.title}</h3>
+							<p className="proc-step-desc">{p.desc}</p>
+						</li>
+					))}
+				</ol>
 			</div>
 		</div>
 	</section>
@@ -430,17 +491,36 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 		<section className="section" style={{ background: "var(--surface-subtle)" }}>
 			<div className="container">
 				{heading && (
-					<SectionHead
-						eyebrow="Services"
-						title="업무분야"
-						sub="출입국·비자 전 분야를 시험 출신 행정사가 직접 다룹니다. 분야를 선택하면 자세히 안내해 드립니다."
-					/>
+					<div data-reveal="blur" style={{ maxWidth: 780, margin: "0 auto", textAlign: "center" }}>
+						<span
+							style={{
+								display: "inline-block",
+								fontSize: 13,
+								fontWeight: 700,
+								letterSpacing: ".14em",
+								color: "var(--color-accent)",
+							}}
+						>
+							업무분야
+						</span>
+						<h2
+							style={{
+								marginTop: 16,
+								fontSize: "clamp(25px, 3.2vw, 38px)",
+								lineHeight: 1.42,
+								color: "var(--text-heading)",
+							}}
+						>
+							출입국·비자 전 분야를 <span className="svc-hl">시험 출신 행정사</span>가 상담부터 직접
+							책임집니다.
+						</h2>
+					</div>
 				)}
-				<div data-stagger className="grid-4 svc-grid" style={{ marginTop: heading ? 48 : 0 }}>
+				<div data-stagger className="grid-4 svc-grid" style={{ marginTop: heading ? 56 : 0 }}>
 					{SERVICES.map((s) => (
 						<Card
 							key={s.id}
-							padding="24px"
+							padding="28px"
 							style={{ cursor: "pointer", display: "flex", flexDirection: "column" }}
 							onClick={() => go("service", s.id)}
 						>
@@ -448,30 +528,33 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 								style={{
 									display: "flex",
 									justifyContent: "space-between",
-									alignItems: "flex-start",
-									marginBottom: 16,
+									alignItems: "center",
+									marginBottom: 22,
 								}}
 							>
 								<span className="svc-icon" aria-hidden="true">
-									<Icon n={s.icon} style={{ width: 23, height: 23 }} />
+									<Icon n={s.icon} style={{ width: 26, height: 26 }} />
 								</span>
 								<Badge>{s.code}</Badge>
 							</div>
-							<CardTitle style={{ fontSize: 18 }}>{s.title}</CardTitle>
-							<CardBody style={{ fontSize: 15, flex: 1 }}>{s.summary}</CardBody>
+							<CardTitle style={{ fontSize: 22 }}>{s.title}</CardTitle>
+							<CardBody style={{ fontSize: 16, lineHeight: 1.7, flex: 1 }}>
+								{/* 비자 코드(E-7, F-4 등)가 하이픈에서 줄바꿈되지 않도록 비분리 하이픈으로 치환 */}
+								{s.summary.replace(/([A-Z])-(\d)/g, "$1‑$2")}
+							</CardBody>
 							<span
 								className="svc-more"
 								style={{
 									display: "inline-flex",
 									alignItems: "center",
 									gap: 6,
-									marginTop: 16,
-									fontSize: 14,
+									marginTop: 22,
+									fontSize: 15,
 									fontWeight: 600,
 									color: "var(--color-primary)",
 								}}
 							>
-								자세히 보기 <Icon n="arrow-right" style={{ width: 15, height: 15 }} />
+								자세히 보기 <Icon n="arrow-right" style={{ width: 16, height: 16 }} />
 							</span>
 						</Card>
 					))}
@@ -485,7 +568,6 @@ export const Process = () => (
 	<section className="section" style={{ background: "var(--surface-page)" }}>
 		<div className="container">
 			<SectionHead
-				eyebrow="Process"
 				title="진행 절차"
 				sub="상담부터 결과 안내까지, 모든 과정을 행정사가 직접 챙깁니다."
 			/>
@@ -614,7 +696,6 @@ export const VideoSection = () => (
 				}}
 			>
 				<SectionHead
-					eyebrow="Video"
 					title="영상으로 보는 비자 정보"
 					sub="유튜브 ‘Korea Visa Master’에서 비자·체류 정보를 알기 쉽게 안내합니다."
 					align="left"
@@ -718,7 +799,6 @@ export const BlogPreview = ({ posts }: { posts: BlogPost[] }) => (
 				}}
 			>
 				<SectionHead
-					eyebrow="Blog"
 					title="비자 정보 · 소식"
 					sub="절차·요건을 사례 중심으로 알기 쉽게 정리해 전해드립니다."
 					align="left"
@@ -826,7 +906,6 @@ export const ReviewsPreview = ({ reviews = REVIEWS }: { reviews?: Review[] }) =>
 					}}
 				>
 					<SectionHead
-						eyebrow="Client Reviews"
 						title="의뢰인이 직접 전한 후기"
 						sub="절차를 마친 의뢰인들이 남겨주신 실제 후기입니다."
 						align="left"
@@ -1218,14 +1297,13 @@ export const LocationDetail = () => (
 				<div>
 					<div
 						style={{
-							fontSize: 12,
-							fontWeight: 600,
-							letterSpacing: ".14em",
-							textTransform: "uppercase",
+							fontSize: 13,
+							fontWeight: 700,
+							letterSpacing: ".02em",
 							color: "var(--text-muted)",
 						}}
 					>
-						Address
+						주소
 					</div>
 					<p
 						style={{
@@ -1320,6 +1398,22 @@ export const LocationDetail = () => (
 	</div>
 );
 
+/* 홈 하단 — 오시는 길(주소 + 지도). 로어스 CONTACT US 대응 */
+export const LocationSection = () => (
+	<section className="section soft-bg" style={{ background: "var(--surface-page)" }}>
+		<div className="container">
+			<SectionHead
+				align="left"
+				title="오시는 길"
+				sub="서울 광화문, 서울파이낸스센터에서 상담부터 접수까지 직접 진행합니다."
+			/>
+		</div>
+		<div style={{ marginTop: "clamp(36px, 4vw, 52px)" }}>
+			<LocationDetail />
+		</div>
+	</section>
+);
+
 export const FAQ_ = ({
 	banded = true,
 	showHead = true,
@@ -1334,7 +1428,7 @@ export const FAQ_ = ({
 			style={{ background: banded ? "var(--surface-subtle)" : "var(--surface-page)" }}
 		>
 			<div className="container" style={{ maxWidth: 820 }}>
-				{showHead && <SectionHead eyebrow="FAQ" title="자주 묻는 질문" />}
+				{showHead && <SectionHead title="자주 묻는 질문" />}
 				<div
 					style={{
 						marginTop: showHead ? 40 : 0,
@@ -1602,21 +1696,8 @@ export const FloatRail = () => {
 					</span>
 				</a>
 				<a className="float-rail-cell" href={kakao} target="_blank" rel="noopener noreferrer">
-					<Image src="/icons/kakao.svg" alt="" width={27} height={27} unoptimized />
+					<Image src="/icons/kakao.svg" alt="" width={26} height={26} unoptimized />
 					<span>카톡</span>
-				</a>
-				<a
-					className="float-rail-cell"
-					href={YOUTUBE_CHANNEL}
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image src="/icons/youtube.svg" alt="" width={28} height={28} unoptimized />
-					<span>유튜브</span>
-				</a>
-				<a className="float-rail-cell" href={NAVER_BLOG} target="_blank" rel="noopener noreferrer">
-					<Image src="/icons/blog.svg" alt="" width={27} height={27} unoptimized />
-					<span>블로그</span>
 				</a>
 				<button
 					type="button"
@@ -1624,7 +1705,7 @@ export const FloatRail = () => {
 					onClick={() => setShowWechat((v) => !v)}
 					aria-expanded={showWechat}
 				>
-					<Image src="/icons/wechat.svg" alt="" width={28} height={28} unoptimized />
+					<Image src="/icons/wechat.svg" alt="" width={26} height={26} unoptimized />
 					<span>위챗</span>
 				</button>
 				<button type="button" className="float-rail-cell" onClick={() => go("location")}>
@@ -1633,11 +1714,7 @@ export const FloatRail = () => {
 					</span>
 					<span>오시는 길</span>
 				</button>
-				<button
-					type="button"
-					className="float-rail-cell"
-					onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-				>
+				<button type="button" className="float-rail-cell" onClick={() => smoothScrollTo(0)}>
 					<Icon n="arrow-up" style={{ width: 22, height: 22 }} />
 					<span>TOP</span>
 				</button>
@@ -1649,11 +1726,33 @@ export const FloatRail = () => {
 /* 공식 등록·소속 밴드 — 메인 하단 신뢰 지표.
  * 현재는 emblem 아이콘 자리표시. 협회 공식 로고 SVG 를 받으면 public/badges/ 에 넣고
  * .affiliation-emblem 자리를 <Image>(또는 인라인 svg)로 교체하면 된다. (docs 안내 참고) */
-type Affiliation = { name: string; note?: string; icon: string };
+/* 법무부는 문양(crest)만 제공 → 문양+명칭 표기, 협회 2곳은 공식 로고 락업(가로형)을 그대로 노출 */
+type Affiliation =
+	| { kind: "emblem"; emblem: string; name: string; note: string }
+	| { kind: "logo"; logo: string; alt: string; w: number; h: number; note: string };
 const AFFILIATIONS: Affiliation[] = [
-	{ name: "법무부 등록 출입국민원 대행기관", note: "등록번호 19-SB-RG-016", icon: "stamp" },
-	{ name: "대한행정사회", note: "행정사 법정단체 소속", icon: "shield-check" },
-	{ name: "한국행정사회", note: "시험 출신 행정사", icon: "badge-check" },
+	{
+		kind: "emblem",
+		emblem: "/moj-logo.png",
+		name: "법무부 등록 출입국민원 대행기관",
+		note: "등록번호 19-SB-RG-016",
+	},
+	{
+		kind: "logo",
+		logo: "/daehan-lockup.png",
+		alt: "대한행정사회",
+		w: 191,
+		h: 50,
+		note: "행정사 법정단체 소속",
+	},
+	{
+		kind: "logo",
+		logo: "/siheom-lockup.png",
+		alt: "한국시험행정사회",
+		w: 800,
+		h: 200,
+		note: "시험 출신 행정사",
+	},
 ];
 
 export const Affiliations = () => (
@@ -1662,14 +1761,32 @@ export const Affiliations = () => (
 			<p className="affiliations-label">공식 등록 · 소속</p>
 			<ul className="affiliations-row">
 				{AFFILIATIONS.map((a) => (
-					<li className="affiliation" key={a.name}>
-						<span className="affiliation-emblem" aria-hidden="true">
-							<Icon n={a.icon} style={{ width: 24, height: 24 }} />
+					<li className="affiliation" key={a.note}>
+						<span className="affiliation-mark">
+							{a.kind === "emblem" ? (
+								<>
+									<span className="affiliation-emblem" aria-hidden="true">
+										<Image
+											src={a.emblem}
+											alt=""
+											width={34}
+											height={34}
+											style={{ width: 34, height: 34, objectFit: "contain" }}
+										/>
+									</span>
+									<span className="affiliation-name">{a.name}</span>
+								</>
+							) : (
+								<Image
+									className="affiliation-lockup"
+									src={a.logo}
+									alt={a.alt}
+									width={a.w}
+									height={a.h}
+								/>
+							)}
 						</span>
-						<span className="affiliation-text">
-							<span className="affiliation-name">{a.name}</span>
-							{a.note && <span className="affiliation-note">{a.note}</span>}
-						</span>
+						<span className="affiliation-note">{a.note}</span>
 					</li>
 				))}
 			</ul>
@@ -1687,7 +1804,7 @@ export const Footer = () => {
 				paddingBottom: 88,
 			}}
 		>
-			<div className="container" style={{ padding: "56px 24px 0" }}>
+			<div className="container" style={{ padding: "56px 24px 32px" }}>
 				<div
 					style={{
 						display: "flex",
@@ -1703,17 +1820,16 @@ export const Footer = () => {
 						type="button"
 						className="lk"
 						onClick={() => go("home")}
-						style={{
-							background: "none",
-							border: "none",
-							padding: 0,
-							color: "#fff",
-							fontWeight: 700,
-							fontSize: 20,
-							letterSpacing: "-0.02em",
-						}}
+						aria-label="초이스 행정사 사무소 홈"
+						style={{ background: "none", border: "none", padding: 0 }}
 					>
-						초이스 행정사 사무소
+						<Image
+							src="/header-logo.png"
+							alt="초이스 행정사 사무소"
+							width={1525}
+							height={203}
+							className="footer-logo-img"
+						/>
 					</button>
 					<nav style={{ display: "flex", gap: 22, fontSize: 14, flexWrap: "wrap" }}>
 						{NAV.map((n) => (

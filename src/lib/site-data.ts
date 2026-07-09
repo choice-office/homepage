@@ -28,21 +28,63 @@ export const NAV: NavItem[] = [
 	{ label: "문의하기", route: "contact" },
 ];
 
-export const STRENGTHS = [
+/* 히어로 하단 강점 캐러셀(파운더스식 탭형 슬라이더). 슬라이드별 감성 카피 + 하이라이트 1줄. */
+export type StrengthSlide = {
+	no: string;
+	tab: string;
+	icon: string;
+	img: string;
+	title: string;
+	lines: string[];
+	highlightIndex: number;
+	cta: { label: string; route: string };
+};
+
+export const STRENGTH_SLIDES: StrengthSlide[] = [
 	{
-		icon: "stamp",
-		title: "법무부 등록 대행기관",
-		desc: "출입국민원 대행기관으로 정식 등록된 사무소입니다. 사증·체류·국적 민원을 적법한 절차에 따라 접수하고 대행합니다.",
-	},
-	{
+		no: "01",
+		tab: "출입국·비자 집중",
 		icon: "globe-2",
-		title: "출입국·비자 분야 집중",
-		desc: "여러 행정업무를 두루 다루지 않고, 거소증·영주권·결혼비자·국적 등 출입국·비자 업무에 집중하는 사무소입니다.",
+		img: "/strengths/strength-1.jpg",
+		title: "출입국·비자, 오직 한 분야",
+		lines: [
+			"여러 행정업무를 두루 다루지 않습니다.",
+			"거소증·영주권·결혼비자·국적까지",
+			"출입국·비자 한 분야에만 집중합니다.",
+			"그래서 더 깊고, 더 정확하게 봅니다.",
+		],
+		highlightIndex: 2,
+		cta: { label: "업무분야 보기", route: "services" },
 	},
 	{
-		icon: "clock",
-		title: "현실적인 기간 안내",
-		desc: "비자가 승인될 수 있는 현실적인 예상 기간과 승인 가능성을 솔직하게 안내해 드립니다.",
+		no: "02",
+		tab: "시험 출신 행정사",
+		icon: "badge-check",
+		img: "/strengths/strength-2.jpg",
+		title: "시험 출신 행정사가 직접",
+		lines: [
+			"담당이 중간에 바뀌지 않습니다.",
+			"행정사 자격시험에 합격한 행정사가",
+			"상담부터 접수까지 직접 맡아",
+			"처음 그대로 끝까지 책임집니다.",
+		],
+		highlightIndex: 1,
+		cta: { label: "행정사 소개", route: "profile" },
+	},
+	{
+		no: "03",
+		tab: "상담부터 직접 책임",
+		icon: "message-circle",
+		img: "/strengths/strength-3.jpg",
+		title: "솔직하게, 끝까지",
+		lines: [
+			"무조건 된다고 말하지 않습니다.",
+			"가능성과 보완할 점을 먼저 솔직하게 말씀드리고",
+			"현실적인 기간과 절차를 안내합니다.",
+			"믿고 맡기실 수 있도록.",
+		],
+		highlightIndex: 1,
+		cta: { label: "무료 상담 신청", route: "contact" },
 	},
 ];
 

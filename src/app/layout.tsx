@@ -7,6 +7,7 @@ import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site/header";
 import { ScrollReveal } from "@/components/site/scroll-reveal";
 import { ConsultBar, FloatRail, Footer } from "@/components/site/sections";
+import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { siteConfig } from "@/config/site";
 import { CONTACT } from "@/lib/site-data";
 import "./globals.css";
@@ -100,6 +101,7 @@ export default function RootLayout({
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 				/>
 				<Providers>
+					<SmoothScroll />
 					<ScrollReveal />
 					<SiteHeader />
 					<main id="main-content" className="flex-1">
