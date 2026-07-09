@@ -110,9 +110,6 @@ export default function GreetingPage() {
 								<div style={{ fontSize: 20, fontWeight: 700, marginTop: 6 }}>
 									서울 중구 · 광화문 인근
 								</div>
-								<div style={{ fontSize: 14, color: "rgba(255,255,255,.8)", marginTop: 4 }}>
-									한국어 · English · 中文 상담
-								</div>
 							</div>
 						</div>
 					</div>
