@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { CONTACT, NAV, type NavItem, SERVICES } from "@/lib/site-data";
+import { CONTACT, NAV, type NavItem, routePath, SERVICES } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 import { Button } from "./ds";
 import { Icon } from "./icon";
@@ -180,18 +180,22 @@ export const SiteHeader = () => {
 								<div className="mega-inner container">
 									<div className="mega-eyebrow">{activeNav.label}</div>
 									<div className="mega-row">
-										{activeChildren.map((c) => (
-											<button
-												key={c.label}
-												type="button"
-												className="lk mega-link"
-												onClick={(e) => navigate(c.route, c.param, e.currentTarget)}
-												onMouseEnter={() => prefetch(c.route, c.param)}
-											>
-												<span>{c.label}</span>
-												{c.code && <span className="mega-code">{c.code}</span>}
-											</button>
-										))}
+										{activeChildren.map((c) => {
+											const isActive = routePath(c.route, c.param) === pathname;
+											return (
+												<button
+													key={c.label}
+													type="button"
+													className={cn("lk mega-link", isActive && "is-active")}
+													aria-current={isActive ? "page" : undefined}
+													onClick={(e) => navigate(c.route, c.param, e.currentTarget)}
+													onMouseEnter={() => prefetch(c.route, c.param)}
+												>
+													<span>{c.label}</span>
+													{c.code && <span className="mega-code">{c.code}</span>}
+												</button>
+											);
+										})}
 									</div>
 								</div>
 							)}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CTABand, PageHero, ReviewCard } from "@/components/site/sections";
+import { CTABand, PageHero, ReviewsList } from "@/components/site/sections";
 import { getPublishedReviews } from "@/lib/reviews";
 
 export const metadata: Metadata = {
@@ -22,11 +22,7 @@ export default async function ReviewsPage() {
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
-					<div data-stagger="tilt" className="grid-3">
-						{reviews.map((r) => (
-							<ReviewCard key={r.title} r={r} />
-						))}
-					</div>
+					<ReviewsList reviews={reviews} />
 					<p
 						style={{ textAlign: "center", marginTop: 32, fontSize: 13, color: "var(--text-muted)" }}
 					>

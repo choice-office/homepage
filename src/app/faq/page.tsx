@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CTABand, FAQ_, PageHero } from "@/components/site/sections";
+import { FAQ } from "@/lib/site-data";
 
 export const metadata: Metadata = {
 	title: "자주 묻는 질문",
@@ -7,9 +8,25 @@ export const metadata: Metadata = {
 		"상담 전 자주 묻는 질문을 모았습니다. 비용·기간·절차, 영어 상담 가능 여부 등을 안내합니다.",
 };
 
+// FAQPage 구조화 데이터 — 구글 리치결과·AI 답변(AEO) 노출용
+const faqJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	mainEntity: FAQ.map((f) => ({
+		"@type": "Question",
+		name: f.q,
+		acceptedAnswer: { "@type": "Answer", text: f.a },
+	})),
+};
+
 export default function FaqPage() {
 	return (
 		<>
+			<script
+				type="application/ld+json"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+			/>
 			<PageHero
 				title="자주 묻는 질문"
 				sub="상담 전 자주 묻는 질문을 모았습니다. 더 궁금한 점은 편하게 문의해 주세요."

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { type FormEvent, Fragment, type ReactNode, useEffect, useState } from "react";
+import { type FormEvent, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { submitContact } from "@/app/actions/contact";
 import {
 	Select,
@@ -23,9 +23,9 @@ import {
 	REVIEWS,
 	type Review,
 	SERVICES,
+	SHORTS,
 	STATS,
 	STRENGTH_SLIDES,
-	VIDEOS,
 	YOUTUBE_CHANNEL,
 } from "@/lib/site-data";
 import { BlogCard } from "./blog-card";
@@ -59,9 +59,9 @@ export const SectionHead = ({
 	>
 		<h2
 			style={{
-				fontSize: "clamp(28px, 4vw, 42px)",
+				fontSize: "clamp(24px, 3.2vw, 34px)",
 				fontWeight: 800,
-				letterSpacing: "-0.01em",
+				letterSpacing: "-0.015em",
 				lineHeight: 1.25,
 				color: light ? "#fff" : "var(--text-heading)",
 			}}
@@ -71,7 +71,7 @@ export const SectionHead = ({
 		{sub && (
 			<p
 				style={{
-					fontSize: 17,
+					fontSize: 16,
 					color: light ? "rgba(255,255,255,.78)" : "var(--text-muted)",
 					marginTop: 16,
 					lineHeight: 1.7,
@@ -179,7 +179,7 @@ export const PageHero = ({
 				)}
 				<h1
 					style={{
-						fontSize: "clamp(34px, 5.5vw, 52px)",
+						fontSize: "clamp(29px, 4.6vw, 44px)",
 						fontWeight: 800,
 						letterSpacing: "-0.02em",
 						lineHeight: 1.14,
@@ -202,7 +202,7 @@ export const PageHero = ({
 				{sub && (
 					<p
 						style={{
-							fontSize: "clamp(16px, 2vw, 19px)",
+							fontSize: "clamp(15px, 1.7vw, 17px)",
 							color: "rgba(255,255,255,.82)",
 							marginTop: 22,
 							maxWidth: 640,
@@ -262,7 +262,7 @@ export const Hero = () => {
 					<h1
 						style={{
 							marginTop: 24,
-							fontSize: "clamp(38px, 6vw, 60px)",
+							fontSize: "clamp(31px, 5vw, 50px)",
 							lineHeight: 1.18,
 							color: "#fff",
 						}}
@@ -274,7 +274,7 @@ export const Hero = () => {
 					<p
 						style={{
 							marginTop: 24,
-							fontSize: "clamp(17px, 2.4vw, 20px)",
+							fontSize: "clamp(16px, 2vw, 18px)",
 							lineHeight: 1.7,
 							color: "rgba(255,255,255,0.86)",
 						}}
@@ -340,17 +340,24 @@ export const StrengthsCarousel = () => {
 	const go = useGo();
 	const [active, setActive] = useState(0);
 	const [paused, setPaused] = useState(false);
+	const [dir, setDir] = useState(1); // 전환 방향(1: 다음, -1: 이전) — 패널 슬라이드 방향 결정
 	const total = STRENGTH_SLIDES.length;
 
 	// 자동 전환(6초). 마우스 오버 시 정지, prefers-reduced-motion 시 미동작.
 	useEffect(() => {
 		if (paused) return;
 		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-		const timer = setInterval(() => setActive((i) => (i + 1) % total), 6000);
+		const timer = setInterval(() => {
+			setDir(1);
+			setActive((i) => (i + 1) % total);
+		}, 6000);
 		return () => clearInterval(timer);
 	}, [paused]);
 
-	const move = (delta: number) => setActive((i) => (i + delta + total) % total);
+	const move = (delta: number) => {
+		setDir(delta > 0 ? 1 : -1);
+		setActive((i) => (i + delta + total) % total);
+	};
 	const slide = STRENGTH_SLIDES[active];
 
 	return (
@@ -382,23 +389,9 @@ export const StrengthsCarousel = () => {
 						/>
 					</button>
 
-					<div className="str-panel">
-						{/* 좌: 임시 무료 이미지(Unsplash) — 오프셋 액센트 블록으로 에디토리얼 깊이 */}
-						<div className="str-figure">
-							<span className="str-figure-accent" aria-hidden="true" />
-							<div className="str-visual">
-								<Image
-									src={slide.img}
-									alt=""
-									fill
-									sizes="(max-width: 900px) 100vw, 45vw"
-									style={{ objectFit: "cover" }}
-								/>
-							</div>
-						</div>
-
-						{/* 우: 텍스트 (active 변경 시 key로 재마운트하여 진입 애니메이션 재생) */}
-						<div className="str-text" key={active}>
+					{/* 패널 전체(번호·제목·글·CTA·이미지)를 한 덩어리로 방향성 슬라이드+페이드 전환 */}
+					<div className="str-panel" key={active} data-dir={dir}>
+						<div className="str-text">
 							<span className="str-no">
 								{slide.no}
 								<span className="str-no-total"> / 0{total}</span>
@@ -416,6 +409,20 @@ export const StrengthsCarousel = () => {
 								{slide.cta.label}
 								<Icon n="arrow-right" style={{ width: 18, height: 18 }} />
 							</button>
+						</div>
+
+						{/* 우: 이미지 — 오프셋 액센트 블록으로 에디토리얼 깊이 */}
+						<div className="str-figure">
+							<span className="str-figure-accent" aria-hidden="true" />
+							<div className="str-visual">
+								<Image
+									src={slide.img}
+									alt=""
+									fill
+									sizes="(max-width: 900px) 100vw, 45vw"
+									style={{ objectFit: "cover" }}
+								/>
+							</div>
 						</div>
 					</div>
 
@@ -437,7 +444,10 @@ export const StrengthsCarousel = () => {
 							key={s.no}
 							className="str-tab"
 							data-active={i === active}
-							onClick={() => setActive(i)}
+							onClick={() => {
+								setDir(i >= active ? 1 : -1);
+								setActive(i);
+							}}
 						>
 							<span className="str-tab-no">{s.no}</span>
 							<span className="str-tab-label">{s.tab}</span>
@@ -500,7 +510,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 						<h2
 							style={{
 								marginTop: 16,
-								fontSize: "clamp(25px, 3.2vw, 38px)",
+								fontSize: "clamp(22px, 2.8vw, 32px)",
 								lineHeight: 1.42,
 								color: "var(--text-heading)",
 							}}
@@ -531,7 +541,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 								</span>
 								<Badge>{s.code}</Badge>
 							</div>
-							<CardTitle style={{ fontSize: 22 }}>{s.title}</CardTitle>
+							<CardTitle style={{ fontSize: 20 }}>{s.title}</CardTitle>
 							<CardBody style={{ fontSize: 16, lineHeight: 1.7, flex: 1 }}>
 								{/* 비자 코드(E-7, F-4 등)가 하이픈에서 줄바꿈되지 않도록 비분리 하이픈으로 치환 */}
 								{s.summary.replace(/([A-Z])-(\d)/g, "$1‑$2")}
@@ -598,11 +608,15 @@ export const Process = () => (
 
 export const Stats = () => (
 	<section style={{ background: "var(--color-primary)", padding: "72px 0" }}>
-		<div data-stagger="scale" className="grid-3 container" style={{ gap: 24 }}>
+		<div data-stagger="scale" className="grid-4 container" style={{ gap: 24 }}>
 			{STATS.map((s) => (
 				<div key={s.l} style={{ textAlign: "center", color: "#fff" }}>
 					<div
-						style={{ fontSize: "clamp(34px,5vw,44px)", fontWeight: 700, letterSpacing: "-0.02em" }}
+						style={{
+							fontSize: "clamp(29px,4.2vw,38px)",
+							fontWeight: 700,
+							letterSpacing: "-0.02em",
+						}}
 					>
 						{s.v}
 					</div>
@@ -648,69 +662,18 @@ export const VideoSection = () => (
 					채널 바로가기 <Icon n="external-link" style={{ width: 16, height: 16 }} />
 				</a>
 			</div>
-			<div data-stagger="blur" className="grid-3" style={{ marginTop: 48 }}>
-				{VIDEOS.map((v) => (
-					<a
-						key={v.title}
-						className="lk"
-						href={YOUTUBE_CHANNEL}
-						target="_blank"
-						rel="noopener noreferrer"
-						style={{ display: "block" }}
-					>
-						<Card
-							padding="0"
-							style={{ overflow: "hidden", display: "flex", flexDirection: "column" }}
-						>
-							<div
-								style={{
-									position: "relative",
-									height: 168,
-									background:
-										"linear-gradient(150deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)",
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-								}}
-							>
-								<span
-									style={{
-										width: 56,
-										height: 56,
-										borderRadius: "50%",
-										background: "rgba(255,255,255,0.92)",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-									}}
-								>
-									<Icon
-										n="play"
-										style={{ width: 24, height: 24, color: "var(--color-primary-dark)" }}
-									/>
-								</span>
-								<span
-									style={{
-										position: "absolute",
-										bottom: 12,
-										right: 12,
-										background: "rgba(20,16,13,.7)",
-										color: "#fff",
-										fontSize: 12,
-										fontWeight: 600,
-										padding: "3px 8px",
-										borderRadius: 0,
-									}}
-								>
-									{v.dur}
-								</span>
-							</div>
-							<div style={{ padding: 20 }}>
-								<Badge>{v.tag}</Badge>
-								<h3 style={{ fontSize: 17, lineHeight: 1.5, marginTop: 12 }}>{v.title}</h3>
-							</div>
-						</Card>
-					</a>
+			<div data-stagger="blur" className="shorts-grid" style={{ marginTop: 48 }}>
+				{SHORTS.map((id) => (
+					<div className="short-embed" key={id}>
+						<iframe
+							src={`https://www.youtube.com/embed/${id}`}
+							title="Korea Visa Master 쇼츠"
+							loading="lazy"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+							referrerPolicy="strict-origin-when-cross-origin"
+							allowFullScreen
+						/>
+					</div>
 				))}
 			</div>
 		</div>
@@ -822,6 +785,70 @@ export const ReviewCard = ({ r }: { r: Review }) => (
 	</Card>
 );
 
+/* 후기 목록 — 9개씩 페이지네이션(1페이지여도 항상 표시) */
+const REVIEWS_PER_PAGE = 9;
+
+export const ReviewsList = ({ reviews }: { reviews: Review[] }) => {
+	const [page, setPage] = useState(1);
+	const topRef = useRef<HTMLDivElement>(null);
+	const totalPages = Math.max(1, Math.ceil(reviews.length / REVIEWS_PER_PAGE));
+	const current = Math.min(page, totalPages);
+	const start = (current - 1) * REVIEWS_PER_PAGE;
+	const pageItems = reviews.slice(start, start + REVIEWS_PER_PAGE);
+
+	const goTo = (p: number) => {
+		if (p < 1 || p > totalPages || p === current) return;
+		setPage(p);
+		const el = topRef.current;
+		if (el) {
+			const top = el.getBoundingClientRect().top + window.scrollY - 110;
+			window.scrollTo({ top, behavior: "smooth" });
+		}
+	};
+
+	return (
+		<div ref={topRef}>
+			<div data-stagger="tilt" className="grid-3">
+				{pageItems.map((r) => (
+					<ReviewCard key={`${current}-${r.title}`} r={r} />
+				))}
+			</div>
+			<nav className="pager" aria-label="후기 페이지 이동">
+				<button
+					type="button"
+					className="pager-arrow"
+					onClick={() => goTo(current - 1)}
+					disabled={current === 1}
+					aria-label="이전 페이지"
+				>
+					<Icon n="chevron-right" style={{ width: 18, height: 18, transform: "rotate(180deg)" }} />
+				</button>
+				{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+					<button
+						type="button"
+						key={p}
+						className="pager-num"
+						data-active={p === current}
+						aria-current={p === current ? "page" : undefined}
+						onClick={() => goTo(p)}
+					>
+						{p}
+					</button>
+				))}
+				<button
+					type="button"
+					className="pager-arrow"
+					onClick={() => goTo(current + 1)}
+					disabled={current === totalPages}
+					aria-label="다음 페이지"
+				>
+					<Icon n="chevron-right" style={{ width: 18, height: 18 }} />
+				</button>
+			</nav>
+		</div>
+	);
+};
+
 export const ReviewsPreview = ({ reviews = REVIEWS }: { reviews?: Review[] }) => {
 	const go = useGo();
 	return (
@@ -886,10 +913,10 @@ export const CTABand = () => {
 			}}
 		>
 			<div data-reveal="scale" className="container" style={{ textAlign: "center", color: "#fff" }}>
-				<h2 style={{ fontSize: "clamp(26px,4vw,36px)", color: "#fff" }}>
+				<h2 style={{ fontSize: "clamp(23px,3.4vw,32px)", color: "#fff" }}>
 					혼자 고민하지 마세요. 방향부터 함께 잡아드립니다.
 				</h2>
-				<p style={{ fontSize: 18, color: "rgba(255,255,255,.82)", marginTop: 16, lineHeight: 1.7 }}>
+				<p style={{ fontSize: 17, color: "rgba(255,255,255,.82)", marginTop: 16, lineHeight: 1.7 }}>
 					상담은 무료입니다. 한국어 · English 상담 가능 · 시험 출신 행정사 직접 응대.
 				</p>
 				<div
@@ -1509,7 +1536,7 @@ export const ConsultBar = () => {
 								fontFamily: "var(--font-sans)",
 								fontSize: 15,
 								color: "var(--text-body)",
-								flex: "1 1 140px",
+								flex: "1 1 auto",
 								minWidth: 0,
 							}}
 						/>

@@ -457,7 +457,7 @@
 }
 
 .container {
-	max-width: 1152px;
+	max-width: 1600px;
 	margin: 0 auto;
 	padding: 0 24px;
 }
@@ -514,7 +514,7 @@
 		box-shadow 0.3s ease;
 }
 .site-header-bar {
-	max-width: 1400px;
+	max-width: 1600px;
 	height: 88px;
 	display: flex;
 	align-items: center;
@@ -652,7 +652,7 @@
 }
 /* 시트 내용 — eyebrow 라벨 + 4열 그리드(이전 디자인) */
 .mega-inner {
-	max-width: 1320px;
+	max-width: 1600px;
 	padding: 32px 24px 40px;
 }
 .mega-eyebrow {
@@ -688,6 +688,16 @@
 }
 .mega-link:hover {
 	background: var(--surface-subtle);
+	color: var(--color-primary);
+}
+/* 현재 페이지에 해당하는 하위메뉴 — 브랜드 컬러 + 좌측 액센트 바 */
+.mega-link.is-active {
+	color: var(--color-primary);
+	font-weight: 700;
+	background: var(--surface-subtle);
+	box-shadow: inset 2px 0 0 var(--color-accent);
+}
+:where(.mega-link.is-active) .mega-code {
 	color: var(--color-primary);
 }
 .mega-code {
@@ -974,13 +984,16 @@
 .consult-bar-inner {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	gap: 28px;
 }
 .consult-form {
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	flex: 1;
+	/* flex-basis를 명시해 form에 확정 폭 부여 → 자식 input의 flex-basis가 정상 적용됨
+	 * (basis 없이 auto면 중첩 flex intrinsic-sizing이 input을 최소폭으로 줄임) */
+	flex: 0 1 760px;
 }
 .consult-desktop {
 	display: block;
@@ -1373,17 +1386,17 @@
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 	gap: 40px;
 	align-items: stretch;
-	max-width: 1280px;
+	max-width: 1600px;
 }
 .contact-mapwrap {
-	max-width: 1280px;
+	max-width: 1600px;
 }
 .contact-col {
 	display: flex;
 	flex-direction: column;
 }
 .contact-col-title {
-	font-size: 24px;
+	font-size: 21px;
 	font-weight: 800;
 	letter-spacing: -0.01em;
 	color: var(--text-heading);
@@ -1545,8 +1558,8 @@ button.ds-card {
 	position: relative;
 	margin-top: clamp(44px, 5vw, 64px);
 	/* 컨테이너보다 넓게 브레이크아웃(뷰포트 중앙 정렬) — 설명 2줄 통일 */
-	width: min(100vw - 48px, 1280px);
-	margin-left: calc(50% - min(100vw - 48px, 1280px) / 2);
+	width: min(100vw - 48px, 1600px);
+	margin-left: calc(50% - min(100vw - 48px, 1600px) / 2);
 }
 .proc-steps {
 	list-style: none;
@@ -1584,7 +1597,7 @@ button.ds-card {
 }
 .proc-step-title {
 	margin-top: 14px;
-	font-size: clamp(17px, 1.7vw, 20px);
+	font-size: clamp(16px, 1.5vw, 18px);
 	font-weight: 700;
 	letter-spacing: -0.01em;
 	color: var(--text-heading);
@@ -1701,7 +1714,7 @@ button.ds-card {
 	list-style: none;
 	margin: 0 auto;
 	padding: 0;
-	max-width: 1040px;
+	max-width: 1200px;
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
@@ -1831,36 +1844,51 @@ button.ds-card {
 
 /* ── 초이스의 강점 캐러셀(히어로 하단, 탭형 슬라이더) ──────────────── */
 .str-title {
-	font-size: clamp(26px, 3.4vw, 38px);
+	position: relative;
+	padding-inline: clamp(56px, 4.5vw, 88px);
+	font-size: clamp(23px, 2.9vw, 32px);
 	font-weight: 800;
 	letter-spacing: -0.01em;
 	color: var(--text-heading);
 	margin-bottom: clamp(28px, 4vw, 44px);
 }
-.str-dot {
-	color: var(--color-primary);
+/* 제목 좌측 골드 세로 액센트 바 — 텍스트는 본문과 정렬, 바는 왼쪽 여백에 걸침 */
+.str-title::before {
+	content: "";
+	position: absolute;
+	left: calc(clamp(56px, 4.5vw, 88px) - 22px);
+	top: 50%;
+	transform: translateY(-50%);
+	width: 5px;
+	height: 1.05em;
+	background: var(--color-accent);
 }
+.str-dot {
+	color: var(--color-accent);
+	margin-left: 2px;
+}
+/* 참고 사이트처럼 모듈 폭을 캡(넓은 컨테이너에서도 텍스트가 흩어지지 않게).
+ * 화살표는 아래에서 absolute로 빼내 패널이 제목·탭과 동일한 좌우선에 정렬되게 한다. */
 .str-stage {
 	position: relative;
-	display: flex;
-	align-items: center;
-	gap: 12px;
+	padding-inline: clamp(56px, 4.5vw, 88px);
 }
+/* 텍스트(좌)는 카피 폭에 맞춰 좁게, 이미지(우)가 나머지를 크게 채운다 */
 .str-panel {
-	flex: 1;
 	min-width: 0;
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: clamp(32px, 5vw, 72px);
+	/* 전체 폭 사용: 좌(텍스트)·우(이미지)가 폭을 균형 있게 나눠 갖는다 */
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: clamp(32px, 5vw, 64px);
 	align-items: center;
-	min-height: 400px;
+	min-height: 0;
 }
 .str-figure {
 	position: relative;
 }
 .str-figure-accent {
 	position: absolute;
-	right: -18px;
+	left: -18px;
 	bottom: -18px;
 	width: 58%;
 	height: 62%;
@@ -1890,7 +1918,7 @@ button.ds-card {
 }
 .str-no {
 	display: block;
-	font-size: clamp(38px, 5vw, 58px);
+	font-size: clamp(32px, 4.2vw, 48px);
 	font-weight: 800;
 	line-height: 1;
 	letter-spacing: -0.02em;
@@ -1905,7 +1933,7 @@ button.ds-card {
 	letter-spacing: 0;
 }
 .str-headline {
-	font-size: clamp(26px, 3.2vw, 40px);
+	font-size: clamp(23px, 2.8vw, 34px);
 	font-weight: 800;
 	line-height: 1.3;
 	letter-spacing: -0.01em;
@@ -1913,8 +1941,8 @@ button.ds-card {
 	margin-bottom: 22px;
 }
 .str-copy {
-	font-size: clamp(17px, 1.5vw, 20px);
-	line-height: 1.95;
+	font-size: clamp(16px, 1.3vw, 18px);
+	line-height: 1.9;
 	color: var(--text-body);
 	margin-bottom: 30px;
 }
@@ -1954,8 +1982,12 @@ button.ds-card {
 .str-cta:hover svg {
 	transform: translateX(3px);
 }
+/* 화살표는 스테이지 좌우 끝(패딩 영역)에 absolute — 패널 폭을 차지하지 않는다 */
 .str-arrow {
-	flex: 0 0 auto;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 3;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -1970,15 +2002,44 @@ button.ds-card {
 		color 0.2s ease,
 		background 0.2s ease;
 }
+.str-arrow:first-of-type {
+	left: 0;
+}
+.str-arrow:last-of-type {
+	right: 0;
+}
 .str-arrow:hover {
 	color: var(--color-primary);
-	background: var(--surface-card);
+}
+/* 마우스 클릭/드래그 시 포커스 링(동그라미) 제거 — 키보드 탐색(:focus-visible)은 유지 */
+.str-arrow:focus {
+	outline: none;
+}
+.str-arrow:focus:not(:focus-visible) {
+	outline: none;
+	box-shadow: none;
+}
+.str-arrow:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
 }
 .str-tabs {
+	position: relative;
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	margin-top: clamp(32px, 4vw, 48px);
-	border-top: 1px solid var(--border-default);
+	/* 스테이지(str-stage)와 동일한 좌우 인셋으로 정렬 */
+	padding-inline: clamp(56px, 4.5vw, 88px);
+}
+/* 상단 구분선은 탭 콘텐츠 영역에만 — 좌우 패딩 밖으로 튀어나오지 않게 */
+.str-tabs::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: clamp(56px, 4.5vw, 88px);
+	right: clamp(56px, 4.5vw, 88px);
+	height: 1px;
+	background: var(--border-default);
 }
 .str-tab {
 	position: relative;
@@ -2042,19 +2103,34 @@ button.ds-card {
 		width: 100%;
 	}
 }
+/* 슬라이드 전환: 패널 전체(글+이미지)를 한 덩어리로 방향성 슬라이드+페이드.
+ * key 재마운트 시 data-dir(1=다음/-1=이전)에 맞춰 좌우에서 흘러 들어온다. */
 @media (prefers-reduced-motion: no-preference) {
-	.str-text {
-		animation: strIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+	.str-panel {
+		animation: strEnterNext 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+	}
+	.str-panel[data-dir="-1"] {
+		animation-name: strEnterPrev;
 	}
 }
-@keyframes strIn {
+@keyframes strEnterNext {
 	from {
 		opacity: 0;
-		transform: translateY(14px);
+		transform: translateX(36px);
 	}
 	to {
 		opacity: 1;
-		transform: translateY(0);
+		transform: translateX(0);
+	}
+}
+@keyframes strEnterPrev {
+	from {
+		opacity: 0;
+		transform: translateX(-36px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
 	}
 }
 @media (max-width: 900px) {
@@ -2069,9 +2145,20 @@ button.ds-card {
 	.str-arrow {
 		display: none;
 	}
+	/* 모바일: 화살표가 없으니 좌우 인셋을 줄인다 */
+	.str-title,
+	.str-stage,
+	.str-tabs {
+		padding-inline: clamp(16px, 4vw, 32px);
+	}
+	.str-title::before {
+		left: calc(clamp(16px, 4vw, 32px) - 18px);
+	}
 	.str-tabs {
 		grid-template-columns: 1fr;
-		border-top: none;
+	}
+	.str-tabs::before {
+		display: none;
 	}
 	.str-tab-bar {
 		display: none;
@@ -2088,6 +2175,88 @@ button.ds-card {
 		border-left-color: var(--color-primary);
 		background: var(--surface-card);
 	}
+}
+
+/* ── 페이지네이션(후기 등) ─────────────────────────────────────── */
+.pager {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 48px;
+}
+.pager-num,
+.pager-arrow {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 42px;
+	height: 42px;
+	padding: 0 12px;
+	font-family: var(--font-sans);
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--text-body);
+	background: var(--surface-card);
+	border: 1px solid var(--border-default);
+	border-radius: 0;
+	cursor: pointer;
+	transition:
+		background 0.15s ease,
+		color 0.15s ease,
+		border-color 0.15s ease;
+}
+.pager-num:hover:not([data-active="true"]),
+.pager-arrow:hover:not(:disabled) {
+	border-color: var(--color-primary);
+	color: var(--color-primary);
+}
+.pager-num[data-active="true"] {
+	background: var(--color-primary);
+	border-color: var(--color-primary);
+	color: #fff;
+	cursor: default;
+}
+.pager-arrow:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
+/* ── 유튜브 쇼츠 임베드(세로 9:16) ─────────────────────────────── */
+/* 데스크탑 4열 → 태블릿·모바일 2열(모바일에서도 한 줄에 2개) */
+.shorts-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 20px;
+}
+@media (max-width: 960px) {
+	.shorts-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+@media (max-width: 560px) {
+	.shorts-grid {
+		gap: 12px;
+	}
+}
+.short-embed {
+	position: relative;
+	width: 100%;
+	max-width: 340px;
+	margin: 0 auto;
+	aspect-ratio: 9 / 16;
+	overflow: hidden;
+	background: #000;
+	border: 1px solid var(--border-default);
+	box-shadow: 0 20px 44px -28px rgba(34, 28, 22, 0.5);
+}
+.short-embed iframe {
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	border: 0;
 }
 
 /* ── 후기 카드 입체감 ─────────────────────────────────────────── */
@@ -2169,68 +2338,126 @@ button.ds-card {
 	}
 }
 
-/* ── 구성원(대표 행정사) 프로필 — 사진 없는 프리미엄 레이아웃 ────────────────── */
+/* ── 구성원 프로필 — 사진 없이도 의도된 프리미엄 레이아웃(1인 → N인 확장) ────────── */
+/* 구성원이 2명 이상이면 블록 사이 하프라인으로 구분 */
+.member-block + .member-block {
+	margin-top: 80px;
+	padding-top: 80px;
+	border-top: 1px solid var(--border-default);
+}
 .profile-card {
 	display: grid;
-	grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+	grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
 	border: 1px solid var(--border-default);
 	background: var(--surface-card);
 	overflow: hidden;
 	box-shadow: 0 32px 64px -46px rgba(34, 28, 22, 0.4);
 }
+/* 짝수 블록은 다크 플레이트를 우측으로 뒤집어 좌우 리듬을 준다.
+ * :where()로 특이도를 기본 규칙과 동일하게 맞춰 소스 순서 규칙(descending specificity) 회피. */
+:where(.profile-card[data-flip="true"]) .profile-aside {
+	order: 2;
+}
+:where(.profile-card[data-flip="true"]) .profile-main {
+	order: 1;
+}
 .profile-aside {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-end;
-	padding: 44px 40px;
-	min-height: 400px;
+	justify-content: space-between;
+	gap: 40px;
+	padding: 48px 44px;
+	min-height: 460px;
+	overflow: hidden;
 	color: #fff;
 	background:
 		radial-gradient(130% 120% at 100% 0%, rgba(124, 99, 70, 0.5) 0%, transparent 55%),
-		linear-gradient(155deg, var(--color-primary) 0%, #362d22 100%);
+		linear-gradient(155deg, var(--color-primary) 0%, #2f271e 100%);
 }
-.profile-emblem {
+/* 대형 나비 문양을 낮은 투명도 워터마크로 — 빈 사진칸이 아니라 의도된 브랜드 면 */
+.profile-monogram {
 	position: absolute;
-	top: 52px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 128px;
+	right: -34px;
+	bottom: -28px;
+	width: 208px;
 	height: auto;
+	opacity: 0.09;
+	filter: brightness(0) invert(1);
+	pointer-events: none;
+	user-select: none;
 }
-.profile-role {
-	align-self: flex-start;
-	padding: 5px 12px;
-	font-size: 13px;
-	font-weight: 600;
-	background: rgba(255, 255, 255, 0.16);
-	color: #fff;
+.profile-identity {
+	position: relative;
+	z-index: 1;
+}
+.profile-eyebrow {
+	display: block;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--color-accent-soft);
 }
 .profile-name {
-	margin-top: 14px;
-	font-size: clamp(30px, 3.6vw, 40px);
+	margin-top: 12px;
+	font-size: clamp(28px, 3.2vw, 36px);
 	font-weight: 800;
-	letter-spacing: -0.01em;
-	line-height: 1.1;
+	letter-spacing: -0.02em;
+	line-height: 1.08;
+	color: #fff;
 }
 .profile-tagline {
-	margin-top: 10px;
-	font-size: 14.5px;
-	line-height: 1.6;
-	color: rgba(255, 255, 255, 0.82);
+	margin-top: 12px;
+	font-size: 14px;
+	line-height: 1.65;
+	color: rgba(255, 255, 255, 0.8);
+	max-width: 32ch;
+}
+/* 대표 인삿말(서명형) — 다크 플레이트 하단을 채우는 프리미엄 메시지 */
+.profile-quote {
+	position: relative;
+	z-index: 1;
+	margin: 0;
+	padding-top: 26px;
+	border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+.profile-quote p {
+	margin: 12px 0 0;
+	font-size: 16px;
+	line-height: 1.7;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.94);
+	word-break: keep-all;
+}
+.profile-quote cite {
+	display: block;
+	margin-top: 16px;
+	font-size: 13px;
+	font-style: normal;
+	letter-spacing: 0.02em;
+	color: rgba(255, 255, 255, 0.6);
 }
 .profile-main {
 	display: flex;
 	flex-direction: column;
-	padding: 44px;
+	padding: 48px 44px;
+}
+.profile-section-label {
+	font-size: 11.5px;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--color-primary-light);
 }
 .profile-tags {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
+	margin-top: 14px;
 }
 .profile-highlights {
-	margin-top: 24px;
+	margin-top: 14px;
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
@@ -2315,16 +2542,47 @@ button.ds-card {
 	.profile-card {
 		grid-template-columns: 1fr;
 	}
+	/* 세로 스택에서는 flip과 무관하게 아이덴티티(다크)를 항상 먼저 */
+	:where(.profile-card[data-flip="true"]) .profile-aside,
+	:where(.profile-card[data-flip="true"]) .profile-main {
+		order: 0;
+	}
 	.profile-aside {
-		min-height: 320px;
-		padding: 34px 26px;
+		min-height: 0;
+		gap: 32px;
+		padding: 36px 26px;
 	}
 	.profile-main {
-		padding: 30px 26px;
+		padding: 32px 26px;
+	}
+	.profile-monogram {
+		width: 150px;
+	}
+	.member-block + .member-block {
+		margin-top: 56px;
+		padding-top: 56px;
 	}
 	.profile-bio-row {
 		grid-template-columns: 1fr;
 		gap: 12px;
 		padding: 22px 4px;
+	}
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * 우측 플로팅 레일과 콘텐츠 충돌 방지 (반응형)
+ * - 레일은 뷰포트 오른쪽 끝에 고정(90px). 넓힌 1600 컨테이너가 그 아래로 들어가
+ *   콘텐츠(이미지 등)를 덮는 문제 → 콘텐츠 최대폭에서 좌우 여백을 예약해 회피.
+ * - ≤1024(태블릿·소형 노트북)에서는 레일을 숨기고 하단 상담바가 CTA를 대체.
+ * ════════════════════════════════════════════════════════════════════════ */
+@media (min-width: 1025px) {
+	.container {
+		max-width: min(1600px, 100vw - 220px);
+	}
+}
+@media (max-width: 1024px) {
+	.float-rail,
+	.float-wechat-pop {
+		display: none;
 	}
 }

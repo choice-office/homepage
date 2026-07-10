@@ -42,47 +42,50 @@ export type StrengthSlide = {
 export const STRENGTH_SLIDES: StrengthSlide[] = [
 	{
 		no: "01",
-		tab: "출입국·비자 집중",
+		tab: "2019년부터 출입국·비자",
 		icon: "globe-2",
 		img: "/strengths/strength-1.jpg",
-		title: "출입국·비자, 오직 한 분야",
+		title: "출입국·비자 전문, 2019년부터",
 		lines: [
-			"여러 행정업무를 두루 다루지 않습니다.",
-			"거소증·영주권·결혼비자·국적까지",
-			"출입국·비자 한 분야에만 집중합니다.",
-			"그래서 더 깊고, 더 정확하게 봅니다.",
+			"2019년 사무소를 연 이후로,",
+			"줄곧 출입국과 비자 한 분야만 붙잡아 왔습니다.",
+			"거소증, 영주권, 결혼비자, 국적회복까지",
+			"겉은 비슷해 보여도 사안마다 풀어가는 길이 다릅니다.",
+			"그 차이를 읽어내는 것이 저희가 해 온 일입니다.",
 		],
-		highlightIndex: 2,
+		highlightIndex: 1,
 		cta: { label: "업무분야 보기", route: "services" },
 	},
 	{
 		no: "02",
-		tab: "시험 출신 행정사",
+		tab: "시험 출신 · 직접 수행",
 		icon: "badge-check",
 		img: "/strengths/strength-2.jpg",
-		title: "시험 출신 행정사가 직접",
+		title: "상담부터 접수까지, 직접",
 		lines: [
-			"담당이 중간에 바뀌지 않습니다.",
-			"행정사 자격시험에 합격한 행정사가",
-			"상담부터 접수까지 직접 맡아",
-			"처음 그대로 끝까지 책임집니다.",
+			"전화를 받는 사람, 서류를 준비하는 사람,",
+			"결과를 안내하는 사람이 모두 같습니다.",
+			"시험을 거쳐 자격을 딴 행정사가",
+			"처음부터 끝까지 직접 맡습니다.",
+			"중간에 담당이 바뀌는 일은 없습니다.",
 		],
-		highlightIndex: 1,
+		highlightIndex: 3,
 		cta: { label: "행정사 소개", route: "profile" },
 	},
 	{
 		no: "03",
-		tab: "상담부터 직접 책임",
+		tab: "현실적인 방향 제시",
 		icon: "message-circle",
 		img: "/strengths/strength-3.jpg",
-		title: "솔직하게, 끝까지",
+		title: "상황에 맞는 현실적 방향",
 		lines: [
-			"무조건 된다고 말하지 않습니다.",
-			"가능성과 보완할 점을 먼저 솔직하게 말씀드리고",
-			"현실적인 기간과 절차를 안내합니다.",
-			"믿고 맡기실 수 있도록.",
+			"무리해서 된다고 말하지 않습니다.",
+			"지금 가능한지, 무엇이 부족한지",
+			"먼저 솔직하게 말씀드립니다.",
+			"기간도 절차도 있는 그대로 안내하고,",
+			"확실하지 않은 건 확실하지 않다고 합니다.",
 		],
-		highlightIndex: 1,
+		highlightIndex: 2,
 		cta: { label: "무료 상담 신청", route: "contact" },
 	},
 ];
@@ -177,8 +180,8 @@ export const CONTACT = {
 	wechat: { handle: "koreavisa8" },
 	email: "choice@kvisa1345.com",
 	address: "서울특별시 중구 세종대로 136, 서울파이낸스센터 3층",
-	addressNote: "지하철 5호선 광화문역 인근",
-	hours: "평일 09:00 – 18:00",
+	addressNote: "5호선 광화문역 5번 출구 · 1호선 시청역 프레스센터 출구(4번 출구 방향)",
+	hours: "평일 10:00 – 18:00",
 } as const;
 
 export const CHANNELS = [
@@ -219,12 +222,8 @@ export const CHANNELS = [
 	},
 ];
 
-/* 영상 — 유튜브 'Korea Visa Master' */
-export const VIDEOS = [
-	{ tag: "거소증 · F-4", title: "재외동포(F-4)와 거소증, 5분 정리", dur: "6:12" },
-	{ tag: "결혼비자 · F-6", title: "결혼비자(F-6) 준비, 관계 입증은 어떻게", dur: "8:40" },
-	{ tag: "영주권 · F-5", title: "영주권(F-5) 요건, 지금 신청 가능할까", dur: "7:05" },
-];
+/* 유튜브 쇼츠(세로 9:16) — 'Korea Visa Master' 채널. 값은 쇼츠 URL 뒤 영상 ID. */
+export const SHORTS = ["bDbzEqjUZ8c", "R0b8ByqZybI", "RsoaBz7t1DM", "GoUMPDmAML0"];
 export const YOUTUBE_CHANNEL = "https://www.youtube.com/@kvisa1345";
 export const NAVER_BLOG = "https://blog.naver.com/k-visa1345";
 
@@ -309,10 +308,10 @@ export const SERVICES: Service[] = [
 		steps: [
 			"활동 내용·자격 요건 상담",
 			"계약·일정 서류 검토",
-			"공연추천서 등 사전 절차 안내",
+			"영상물등급위원회 공연추천서 등 사전 절차 안내",
 			"사증발급인정서 신청·접수 및 결과 안내",
 		],
-		period: "약 2 ~ 3개월 (문화체육관광부 추천·심사 절차에 따라 상이)",
+		period: "약 2 ~ 3개월 (영상물등급위원회 공연추천·심사 절차에 따라 상이)",
 	},
 	{
 		id: "e7",
@@ -349,10 +348,10 @@ export const SERVICES: Service[] = [
 			"F-4 자격으로 국내 거소신고가 필요한 재외동포",
 		],
 		docs: [
-			"동포 입증 서류(가족관계·제적등본 등)",
-			"외국 국적 취득 증빙",
-			"여권 및 사진",
-			"거소신고용 국내 주소 증빙",
+			"동포 입증 서류(기본증명서·제적등본, 직계관계 증빙 등)",
+			"외국 범죄경력증명서 + 아포스티유(또는 영사확인, 해당 시)",
+			"시민권증서 등 외국국적 취득 증빙",
+			"여권·사진, 한국어능력 입증(TOPIK 등, 해당 시)",
 		],
 		steps: [
 			"동포 자격 입증 가능성 검토",
@@ -415,13 +414,13 @@ export const SERVICES: Service[] = [
 		summary: "과거 대한민국 국적을 보유했던 분의 국적회복 허가 신청 대행.",
 		target: [
 			"과거 대한민국 국적을 보유했다가 상실·이탈한 외국국적자",
-			"국적회복을 통해 국내 정착을 준비하는 동포",
+			"만 65세 이상 재외동포 — 외국국적불행사 서약으로 복수국적 신청 가능",
 		],
 		docs: [
-			"과거 국적 보유 입증 서류(제적등본 등)",
-			"외국 국적 취득 경위 서류",
-			"범죄경력 증명 및 신원 서류",
-			"생계·품행 관련 증빙",
+			"기본증명서 또는 제적등본(과거 국적 보유 입증)",
+			"시민권증서 등 외국국적 취득 관련 서류",
+			"국적회복 진술서·신원진술서, 가족관계통보서",
+			"여권·사진(성명 변경 시 관련 서류 포함)",
 		],
 		steps: [
 			"국적회복 가능성·결격 사유 검토",
@@ -459,6 +458,7 @@ export const PROCESS = [
 export const STATS = [
 	{ v: "2019", l: "사무소 개소", d: "출입국·비자 전문" },
 	{ v: "8개+", l: "전문 취급 분야", d: "E·F 비자 및 국적 업무" },
+	{ v: "법무부 등록", l: "출입국민원 대행기관", d: "19-SB-RG-016" },
 	{ v: "1:1", l: "사건별 전담 상담", d: "한 사건을 끝까지" },
 ];
 

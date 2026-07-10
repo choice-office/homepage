@@ -78,8 +78,8 @@ const jsonLd = {
 		addressLocality: "서울",
 		addressCountry: "KR",
 	},
-	areaServed: "KR",
-	openingHours: "Mo-Fr 09:00-18:00",
+	areaServed: ["KR", "US"],
+	openingHours: "Mo-Fr 10:00-18:00",
 	knowsLanguage: ["ko", "en", "zh"],
 };
 
