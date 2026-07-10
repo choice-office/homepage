@@ -110,7 +110,7 @@ export const TEAM: Member[] = [
 		summary: "상담부터 접수까지 직접 책임지는 시험 출신 행정사",
 		tags: ["거소증·영주권", "결혼비자", "연예인·전문직 비자", "국적회복"],
 		career: [
-			{ icon: "graduation-cap", text: "미국 어학연수 — 영어 상담 가능" },
+			{ icon: "graduation-cap", text: "미국 어학연수 과정 수료" },
 			{ icon: "award", text: "행정사 자격시험 합격 · 행정사 자격 취득" },
 			{ icon: "heart-handshake", text: "다문화심리상담사 자격 보유" },
 			{ icon: "building-2", text: "법무부 등록 출입국민원 대행기관 운영" },
@@ -211,7 +211,7 @@ export const CHANNELS = [
 		label: "위챗 (WeChat)",
 		value: CONTACT.wechat.handle,
 		href: null as string | null,
-		note: "中文 상담",
+		note: null as string | null,
 	},
 	{
 		icon: "mail",
@@ -436,7 +436,7 @@ export const PROCESS = [
 	{
 		icon: "message-square",
 		title: "상담 신청",
-		desc: "전화 또는 온라인으로 무료 초기 상담을 신청합니다. 한국어·영어 상담 가능합니다.",
+		desc: "전화 또는 온라인으로 무료 초기 상담을 신청합니다.",
 	},
 	{
 		icon: "clipboard-list",

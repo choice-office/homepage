@@ -80,7 +80,7 @@ const jsonLd = {
 	},
 	areaServed: ["KR", "US"],
 	openingHours: "Mo-Fr 10:00-18:00",
-	knowsLanguage: ["ko", "en", "zh"],
+	knowsLanguage: ["ko"],
 };
 
 export default function RootLayout({

@@ -307,7 +307,7 @@ export const Hero = () => {
 						</Button>
 					</div>
 					<p style={{ marginTop: 32, fontSize: 14, color: "rgba(255,255,255,0.72)" }}>
-						법무부 등록 출입국민원 대행기관 · 한국어 · English 문의 가능
+						법무부 등록 출입국민원 대행기관
 					</p>
 				</div>
 			</div>
@@ -917,7 +917,7 @@ export const CTABand = () => {
 					혼자 고민하지 마세요. 방향부터 함께 잡아드립니다.
 				</h2>
 				<p style={{ fontSize: 17, color: "rgba(255,255,255,.82)", marginTop: 16, lineHeight: 1.7 }}>
-					상담은 무료입니다. 한국어 · English 상담 가능 · 시험 출신 행정사 직접 응대.
+					상담은 무료입니다. 시험 출신 행정사가 처음부터 끝까지 직접 응대합니다.
 				</p>
 				<div
 					style={{
@@ -1048,7 +1048,7 @@ export const ContactForm = () => {
 						</div>
 						<div>
 							<Label htmlFor="cnat">국적</Label>
-							<Input id="cnat" name="nationality" placeholder="예: 미국 · 中国" required />
+							<Input id="cnat" name="nationality" placeholder="예: 미국, 중국" required />
 						</div>
 						<div>
 							<Label htmlFor="cv">현재 체류자격</Label>
@@ -1330,8 +1330,6 @@ export const LocationDetail = () => (
 
 			<p style={{ marginTop: 18, fontSize: 13, lineHeight: 1.7, color: "var(--text-muted)" }}>
 				외부 출장이 많아 내방 상담은 반드시 사전 연락 부탁드립니다.
-				<br />
-				상담 언어 한국어 · English · 中文(WeChat)
 			</p>
 		</div>
 		<MapBlock height={520} />

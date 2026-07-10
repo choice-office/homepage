@@ -4,8 +4,7 @@ import { FAQ } from "@/lib/site-data";
 
 export const metadata: Metadata = {
 	title: "자주 묻는 질문",
-	description:
-		"상담 전 자주 묻는 질문을 모았습니다. 비용·기간·절차, 영어 상담 가능 여부 등을 안내합니다.",
+	description: "상담 전 자주 묻는 질문을 모았습니다. 비용·기간·절차 등을 안내합니다.",
 };
 
 // FAQPage 구조화 데이터 — 구글 리치결과·AI 답변(AEO) 노출용
