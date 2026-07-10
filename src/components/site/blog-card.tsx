@@ -26,7 +26,7 @@ export const BlogCard = ({ post }: { post: BlogPost }) => (
 			<div
 				style={{
 					position: "relative",
-					height: 180,
+					aspectRatio: "4 / 3",
 					background: "linear-gradient(150deg, var(--color-surface-alt), var(--color-accent-soft))",
 				}}
 			>
