@@ -88,7 +88,7 @@ export default async function BlogPage({
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
-					<div data-stagger className="grid-3">
+					<div data-stagger className="grid-3" style={{ maxWidth: 1200, marginInline: "auto" }}>
 						{posts.map((p) => (
 							<BlogCard key={p.slug} post={p} />
 						))}
