@@ -2576,7 +2576,8 @@ button.ds-card {
  * - ≤1024(태블릿·소형 노트북)에서는 레일을 숨기고 하단 상담바가 CTA를 대체.
  * ════════════════════════════════════════════════════════════════════════ */
 @media (min-width: 1025px) {
-	.container {
+	/* 블로그 본문(.blog-prose)은 읽기 폭(760px 중앙)을 유지 — gutter 대상에서 제외 */
+	.container:not(.blog-prose) {
 		max-width: min(1600px, 100vw - 220px);
 	}
 }
