@@ -7,6 +7,7 @@ import { CONTACT, NAV, type NavItem, routePath, SERVICES } from "@/lib/site-data
 import { cn } from "@/lib/utils";
 import { Button } from "./ds";
 import { Icon } from "./icon";
+import { smoothScrollTo } from "./smooth-scroll";
 import { pathToRoute, useGo, usePrefetch } from "./use-go";
 
 const SVC_SHORT: Record<string, string> = {
@@ -113,7 +114,11 @@ export const SiteHeader = () => {
 					<button
 						type="button"
 						className="lk site-logo"
-						onClick={() => go("home")}
+						onClick={() => {
+							// 홈에 있으면 최상단으로 스무스 스크롤, 다른 페이지면 홈으로 이동
+							if (route === "home") smoothScrollTo(0);
+							else go("home");
+						}}
 						aria-label="초이스 행정사 사무소 홈"
 					>
 						<Image
