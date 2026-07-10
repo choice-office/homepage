@@ -29,7 +29,7 @@ export const SmoothScroll = () => {
 	useEffect(() => {
 		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-		const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+		const lenis = new Lenis({ lerp: 0.13, smoothWheel: true });
 		lenisInstance = lenis;
 
 		let rafId = 0;
