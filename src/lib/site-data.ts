@@ -608,8 +608,11 @@ export const routePath = (route: string, param?: string | null): string => {
 };
 
 // ── 의뢰인 후기 이미지(카카오톡·이메일 캡처) — 매트 프레임 갤러리에서 노출 ──
-// 원본은 public/review/ 에 있고, 공개용은 개인정보 마스킹 후 review-NN.jpg 로 정리한다.
+// 원본(후기N.*)은 public/review/ 에 있고, 공개용은 개인정보 마스킹 후 review-NN 으로 정리한다.
+// 모든 캡처는 성함·연락처·날짜·이메일 등을 가린 마스킹본이다.
 // w/h 는 라이트박스에서 원본 비율을 정확히 보여주기 위한 실제 해상도.
+// 나중에 admin(choice-admin)에서 등록하면 Supabase에서 읽어오고, 이 배열은 폴백/시드로 둔다
+// (텍스트 후기 lib/reviews.ts 패턴과 동일).
 export type ReviewImage = {
 	src: string;
 	w: number;
@@ -637,6 +640,22 @@ export const REVIEW_IMAGES: ReviewImage[] = [
 		meta: "재방문 의뢰인",
 	},
 	{
+		src: "/review/review-11.jpg",
+		w: 972,
+		h: 1469,
+		tag: "체류 연장 · 우편 처리",
+		quote: "늘 민첩하고 정확하게 일해 주셔서 고맙습니다.",
+		meta: "체류 연장 의뢰인",
+	},
+	{
+		src: "/review/review-06.jpg",
+		w: 3524,
+		h: 1252,
+		tag: "비자 · 거소증 접수",
+		quote: "처음부터 끝까지 정확한 정보와 빠른 일 처리에 감탄했습니다.",
+		meta: "비자·거소증 의뢰인 (이메일)",
+	},
+	{
 		src: "/review/review-02.jpg",
 		w: 864,
 		h: 1412,
@@ -645,11 +664,51 @@ export const REVIEW_IMAGES: ReviewImage[] = [
 		meta: "거소증 의뢰인",
 	},
 	{
+		src: "/review/review-08.jpg",
+		w: 648,
+		h: 617,
+		tag: "거소증 · 지인 추천",
+		quote: "깔끔하게 잘 해주셔서 친구들에게 소개했어요.",
+		meta: "재방문·추천 의뢰인",
+	},
+	{
+		src: "/review/review-09.jpg",
+		w: 3428,
+		h: 1785,
+		tag: "거소증 신청 · 추천",
+		quote: "복잡한 절차를 편하게 마쳤습니다. 주저 없이 소개하겠습니다.",
+		meta: "거소증 의뢰인 (이메일)",
+	},
+	{
+		src: "/review/review-05.jpg",
+		w: 1019,
+		h: 1369,
+		tag: "거소증 발급 · 신속 처리",
+		quote: "와, 엄청 빨리 잘 됐네요. 감사합니다!",
+		meta: "거소증 발급 의뢰인",
+	},
+	{
 		src: "/review/review-03.jpg",
 		w: 1080,
 		h: 555,
 		tag: "재방문 · 감사 인사",
 		quote: "늘 일 처리 잘해 주셔서 대단히 감사합니다.",
 		meta: "재방문 의뢰인",
+	},
+	{
+		src: "/review/review-07.png",
+		w: 1360,
+		h: 1157,
+		tag: "거소증 · 서류 대행",
+		quote: "모든 서류 과정을 문제없이 준비하고 배려해 주셨습니다.",
+		meta: "거소증 의뢰인 (이메일)",
+	},
+	{
+		src: "/review/review-10.jpg",
+		w: 4400,
+		h: 1271,
+		tag: "고난도 건 · 해결",
+		quote: "남들은 다 안 된다던 일을 끝까지 만들어 내셨습니다.",
+		meta: "소개 의뢰인 (이메일)",
 	},
 ];

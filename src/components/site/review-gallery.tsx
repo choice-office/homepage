@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { REVIEW_IMAGES, type ReviewImage } from "@/lib/site-data";
 import { Icon } from "./icon";
+
+// 그리드(/reviews)는 페이지당 6개씩 페이지네이션 — 1페이지여도 항상 페이저 표시
+const REVIEWS_PER_PAGE = 6;
 
 /**
  * 의뢰인 후기 이미지 갤러리 — 매트 프레임 카드(균일 4:5 크롭 + 하단 페이드) + 라이트박스.
@@ -18,6 +21,23 @@ type ReviewImageGalleryProps = { variant?: "grid" | "marquee" };
 export const ReviewImageGallery = ({ variant = "grid" }: ReviewImageGalleryProps) => {
 	const items = REVIEW_IMAGES;
 	const [open, setOpen] = useState<number | null>(null);
+	const [page, setPage] = useState(1);
+	const topRef = useRef<HTMLDivElement>(null);
+
+	const totalPages = Math.max(1, Math.ceil(items.length / REVIEWS_PER_PAGE));
+	const current = Math.min(page, totalPages);
+	const start = (current - 1) * REVIEWS_PER_PAGE;
+	const pageItems = items.slice(start, start + REVIEWS_PER_PAGE);
+
+	const goTo = (p: number) => {
+		if (p < 1 || p > totalPages || p === current) return;
+		setPage(p);
+		const el = topRef.current;
+		if (el) {
+			const top = el.getBoundingClientRect().top + window.scrollY - 110;
+			window.scrollTo({ top, behavior: "smooth" });
+		}
+	};
 
 	const close = useCallback(() => setOpen(null), []);
 	// REVIEW_IMAGES는 모듈 상수(불변)라 length가 안정적 → 의존성 불필요
@@ -92,8 +112,45 @@ export const ReviewImageGallery = ({ variant = "grid" }: ReviewImageGalleryProps
 					</div>
 				</div>
 			) : (
-				<div className="review-gallery" data-stagger>
-					{items.map((r, i) => card(r, r.src, i))}
+				<div ref={topRef}>
+					<div className="review-gallery" data-stagger>
+						{pageItems.map((r, i) => card(r, r.src, start + i))}
+					</div>
+					<nav className="pager" aria-label="후기 페이지 이동">
+						<button
+							type="button"
+							className="pager-arrow"
+							onClick={() => goTo(current - 1)}
+							disabled={current === 1}
+							aria-label="이전 페이지"
+						>
+							<Icon
+								n="chevron-right"
+								style={{ width: 18, height: 18, transform: "rotate(180deg)" }}
+							/>
+						</button>
+						{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+							<button
+								type="button"
+								key={p}
+								className="pager-num"
+								data-active={p === current}
+								aria-current={p === current ? "page" : undefined}
+								onClick={() => goTo(p)}
+							>
+								{p}
+							</button>
+						))}
+						<button
+							type="button"
+							className="pager-arrow"
+							onClick={() => goTo(current + 1)}
+							disabled={current === totalPages}
+							aria-label="다음 페이지"
+						>
+							<Icon n="chevron-right" style={{ width: 18, height: 18 }} />
+						</button>
+					</nav>
 				</div>
 			)}
 

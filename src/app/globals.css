@@ -2593,12 +2593,12 @@ button.ds-card {
 .review-gallery {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 30px;
+	gap: 24px;
 }
 @media (max-width: 900px) {
 	.review-gallery {
 		grid-template-columns: repeat(2, 1fr);
-		gap: 22px;
+		gap: 18px;
 	}
 }
 @media (max-width: 560px) {
@@ -2751,6 +2751,25 @@ button.ds-card {
 		opacity: 1;
 		transform: none;
 	}
+}
+
+/* /reviews 그리드 카드 — 홈 마퀴보다 조밀하게(카드 크기 축소). 기본 .rv-* 규칙 뒤에 두어 specificity 오름차순 유지 */
+.review-gallery .rv-card {
+	padding: 16px 16px 14px;
+}
+.review-gallery .rv-window {
+	aspect-ratio: 4 / 3.4;
+}
+.review-gallery .rv-tag {
+	margin-bottom: 10px;
+	font-size: 12px;
+}
+.review-gallery .rv-quote {
+	margin-top: 12px;
+	font-size: 14.5px;
+}
+.review-gallery .rv-foot {
+	margin-top: 12px;
 }
 
 /* 라이트박스 — 따뜻한 다크 스크림 + 흰 매트 액자 */
