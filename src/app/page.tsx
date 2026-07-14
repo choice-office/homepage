@@ -12,12 +12,16 @@ import {
 	VideoSection,
 } from "@/components/site/sections";
 import { getPublishedPosts } from "@/lib/blog";
+import { getPublishedReviewImages } from "@/lib/review-images";
 
-// 홈의 블로그 미리보기를 위해 최신 데이터를 ISR로 가져온다(후기는 이미지 갤러리 — 정적)
+// 홈의 블로그 미리보기·후기 이미지를 ISR로 가져온다(DB 미설정/빈 경우 로컬 폴백)
 export const revalidate = 60;
 
 export default async function Home() {
-	const latestPosts = await getPublishedPosts();
+	const [latestPosts, reviewImages] = await Promise.all([
+		getPublishedPosts(),
+		getPublishedReviewImages(),
+	]);
 	return (
 		<>
 			<Hero />
@@ -25,7 +29,7 @@ export default async function Home() {
 			<Stats />
 			<ServicesGrid />
 			<StrengthsRow />
-			<ReviewsPreview />
+			<ReviewsPreview images={reviewImages} />
 			<Affiliations />
 			<VideoSection />
 			<BlogPreview posts={latestPosts} />

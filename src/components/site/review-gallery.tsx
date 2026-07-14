@@ -16,10 +16,16 @@ const REVIEWS_PER_PAGE = 6;
  * - variant="marquee": 무한 수평 흐름(홈 프리뷰용). hover 시 정지, 클릭 시 라이트박스.
  * 라이트박스는 body로 포털 렌더 → 조상 stacking context/플로팅 레일 위에 확실히 표시.
  */
-type ReviewImageGalleryProps = { variant?: "grid" | "marquee" };
+type ReviewImageGalleryProps = {
+	variant?: "grid" | "marquee";
+	images?: ReviewImage[];
+};
 
-export const ReviewImageGallery = ({ variant = "grid" }: ReviewImageGalleryProps) => {
-	const items = REVIEW_IMAGES;
+export const ReviewImageGallery = ({
+	variant = "grid",
+	images = REVIEW_IMAGES,
+}: ReviewImageGalleryProps) => {
+	const items = images;
 	const [open, setOpen] = useState<number | null>(null);
 	const [page, setPage] = useState(1);
 	const topRef = useRef<HTMLDivElement>(null);
@@ -40,11 +46,11 @@ export const ReviewImageGallery = ({ variant = "grid" }: ReviewImageGalleryProps
 	};
 
 	const close = useCallback(() => setOpen(null), []);
-	// REVIEW_IMAGES는 모듈 상수(불변)라 length가 안정적 → 의존성 불필요
+	// items는 prop이라 길이가 바뀔 수 있어 length를 의존성에 포함(라이트박스 순환 범위)
+	const total = items.length;
 	const step = useCallback(
-		(dir: number) =>
-			setOpen((cur) => (cur === null ? cur : (cur + dir + items.length) % items.length)),
-		[],
+		(dir: number) => setOpen((cur) => (cur === null ? cur : (cur + dir + total) % total)),
+		[total],
 	);
 
 	useEffect(() => {

@@ -21,6 +21,7 @@ import {
 	NAV,
 	NAVER_BLOG,
 	PROCESS,
+	type ReviewImage,
 	SERVICES,
 	SHORTS,
 	STATS,
@@ -728,7 +729,7 @@ export const BlogPreview = ({ posts }: { posts: BlogPost[] }) => (
 	</section>
 );
 
-export const ReviewsPreview = () => {
+export const ReviewsPreview = ({ images }: { images: ReviewImage[] }) => {
 	const go = useGo();
 	return (
 		<section className="section" style={{ background: "var(--surface-page)" }}>
@@ -770,7 +771,7 @@ export const ReviewsPreview = () => {
 			</div>
 			{/* 마퀴는 전체 폭으로 흐르게(컨테이너 밖) — 좌우 마스크 페이드로 자연스럽게 사라짐 */}
 			<div style={{ marginTop: 44 }}>
-				<ReviewImageGallery variant="marquee" />
+				<ReviewImageGallery variant="marquee" images={images} />
 			</div>
 			<div className="container">
 				<p style={{ textAlign: "center", marginTop: 28, fontSize: 13, color: "var(--text-muted)" }}>

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { ReviewImageGallery } from "@/components/site/review-gallery";
 import { CTABand, PageHero } from "@/components/site/sections";
+import { getPublishedReviewImages } from "@/lib/review-images";
+
+// 후기 이미지를 ISR로 가져온다(DB 미설정/빈 경우 로컬 폴백)
+export const revalidate = 60;
 
 export const metadata: Metadata = {
 	title: "의뢰인 후기",
@@ -8,7 +12,8 @@ export const metadata: Metadata = {
 		"절차를 마친 의뢰인들이 직접 남겨주신 실제 후기입니다. 개인정보 보호를 위해 일부를 가려 게재합니다.",
 };
 
-export default function ReviewsPage() {
+export default async function ReviewsPage() {
+	const images = await getPublishedReviewImages();
 	return (
 		<>
 			<PageHero
@@ -18,7 +23,7 @@ export default function ReviewsPage() {
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
-					<ReviewImageGallery />
+					<ReviewImageGallery images={images} />
 					<p
 						style={{ textAlign: "center", marginTop: 36, fontSize: 13, color: "var(--text-muted)" }}
 					>

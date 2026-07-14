@@ -18,6 +18,7 @@
 - **[docs/BLOG.md](docs/BLOG.md)** — 블로그 데이터 모델(HTML 본문)과 **관리자+Supabase 연동 로드맵**
 - **[docs/BLOG-SEO.md](docs/BLOG-SEO.md)** — 블로그 SEO/AEO: 데이터 모델·JSON-LD·공개 렌더(구현됨)
 - **[docs/BLOG-AUTHORING.md](docs/BLOG-AUTHORING.md)** — 어드민 작성 포맷·UX 설계(미구현, **AI 없이 + 극단적 단순함** 원칙)
+- **[docs/REVIEWS.md](docs/REVIEWS.md)** — 후기 이미지 데이터 모델·공개 렌더(구현됨)·Supabase(review_images) 스키마·관리자 로드맵
 - **[docs/DECISIONS.md](docs/DECISIONS.md)** — 의도적 설계 결정 & 보류 항목(되돌리지 말 것 / 재분석하지 말 것)
 
 코드를 바꾼 뒤 위 문서의 사실이 달라지면 해당 문서도 함께 갱신한다.
