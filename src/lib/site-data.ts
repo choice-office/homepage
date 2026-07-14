@@ -3,6 +3,12 @@
 export const HERO_IMG =
 	"https://images.unsplash.com/photo-1723174391641-59eab110dd4f?w=1920&q=80&auto=format&fit=crop";
 
+/* 홈 히어로 전용 이미지(서브페이지 PageHero와 분리) */
+export const HOME_HERO_IMG = "/home-hero.jpeg";
+
+/* 인사말 사무소 전경 이미지 */
+export const OFFICE_IMG = "/office.png";
+
 export type NavItem = {
 	label: string;
 	route: string;
@@ -44,7 +50,7 @@ export const STRENGTH_SLIDES: StrengthSlide[] = [
 		no: "01",
 		tab: "2019년부터 출입국·비자",
 		icon: "globe-2",
-		img: "/strengths/strength-1.jpg",
+		img: "/home-1.png",
 		title: "출입국·비자 전문, 2019년부터",
 		lines: [
 			"2019년 사무소를 연 이후로,",
@@ -60,7 +66,7 @@ export const STRENGTH_SLIDES: StrengthSlide[] = [
 		no: "02",
 		tab: "시험 출신 · 직접 수행",
 		icon: "badge-check",
-		img: "/strengths/strength-2.jpg",
+		img: "/home-2.png",
 		title: "상담부터 접수까지, 직접",
 		lines: [
 			"전화를 받는 사람, 서류를 준비하는 사람,",
@@ -76,7 +82,7 @@ export const STRENGTH_SLIDES: StrengthSlide[] = [
 		no: "03",
 		tab: "현실적인 방향 제시",
 		icon: "message-circle",
-		img: "/strengths/strength-3.jpg",
+		img: "/home-3.png",
 		title: "상황에 맞는 현실적 방향",
 		lines: [
 			"무리해서 된다고 말하지 않습니다.",
@@ -104,7 +110,7 @@ export type Member = {
 /* 구성원 — 인원이 늘어도 자연스러운 구조(1명 → 2~3명 확장) */
 export const TEAM: Member[] = [
 	{
-		name: "최서연",
+		name: "대표 행정사",
 		title: "대표 행정사",
 		lead: true,
 		summary: "상담부터 접수까지 직접 책임지는 시험 출신 행정사",
@@ -600,3 +606,50 @@ export const routePath = (route: string, param?: string | null): string => {
 			return "/";
 	}
 };
+
+// ── 의뢰인 후기 이미지(카카오톡·이메일 캡처) — 매트 프레임 갤러리에서 노출 ──
+// 원본은 public/review/ 에 있고, 공개용은 개인정보 마스킹 후 review-NN.jpg 로 정리한다.
+// w/h 는 라이트박스에서 원본 비율을 정확히 보여주기 위한 실제 해상도.
+export type ReviewImage = {
+	src: string;
+	w: number;
+	h: number;
+	tag: string; // 사건 유형
+	quote: string; // 발췌 인용(각색 가능)
+	meta: string; // 익명 속성
+};
+
+export const REVIEW_IMAGES: ReviewImage[] = [
+	{
+		src: "/review/review-04.jpg",
+		w: 967,
+		h: 1450,
+		tag: "재외동포 · 거소증 갱신",
+		quote: "진심으로 감사드립니다. 고맙습니다.",
+		meta: "해외 거주 재외동포",
+	},
+	{
+		src: "/review/review-01.jpg",
+		w: 972,
+		h: 1401,
+		tag: "체류 연장 · 재방문",
+		quote: "매번 문제 없이 바로 처리해 주셔서 감사합니다.",
+		meta: "재방문 의뢰인",
+	},
+	{
+		src: "/review/review-02.jpg",
+		w: 864,
+		h: 1412,
+		tag: "거소증 · 상담",
+		quote: "공적인 걸 떠나 마음 편히 이야기할 수 있어 감사했어요.",
+		meta: "거소증 의뢰인",
+	},
+	{
+		src: "/review/review-03.jpg",
+		w: 1080,
+		h: 555,
+		tag: "재방문 · 감사 인사",
+		quote: "늘 일 처리 잘해 주셔서 대단히 감사합니다.",
+		meta: "재방문 의뢰인",
+	},
+];

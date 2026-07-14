@@ -530,42 +530,43 @@
 	border: none;
 	padding: 0;
 }
-.site-logo-mark,
-.site-logo-word {
+.site-logo-img {
 	display: block;
-	height: 40px;
+	height: 58px;
 	width: auto;
-	transition: filter 0.2s ease;
 }
-/* 나비는 항상 골드, 글자만: 밝은 헤더=원본(검정), 히어로 위 투명 헤더=흰색 반전 */
-.site-header.at-top .site-logo-word {
-	filter: brightness(0) invert(1);
+/* 기본(솔리드/흰 배경): 원본(금색 나비+짙은 글자), 어두운용 숨김 */
+.site-logo-dark {
+	display: none;
 }
-.site-header.at-top.mega-open .site-logo-word {
-	filter: none;
+/* 투명 히어로(어두운 배경): 어두운용(금색 나비 유지 + 글자만 밝게)으로 교체 */
+.site-header.at-top .site-logo-light {
+	display: none;
+}
+.site-header.at-top .site-logo-dark {
+	display: block;
+}
+/* 히어로에서 메뉴가 열려 헤더가 솔리드로 바뀌면 다시 원본 */
+.site-header.at-top.mega-open .site-logo-light {
+	display: block;
+}
+.site-header.at-top.mega-open .site-logo-dark {
+	display: none;
 }
 @media (max-width: 640px) {
-	.site-logo-mark,
-	.site-logo-word {
-		height: 30px;
+	.site-logo-img {
+		height: 42px;
 	}
 }
-/* 푸터(어두운 배경) 로고 — 나비는 골드 원본, 글자만 흰색 반전 */
+/* 푸터(어두운 배경) 로고 — logo-dark(금색 나비 + 밝은 글자) 그대로 사용 */
 .footer-logo {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
 }
-.footer-logo-mark {
+.footer-logo-img {
 	display: block;
-	height: 40px;
+	height: 48px;
 	width: auto;
-}
-.footer-logo-word {
-	display: block;
-	height: 40px;
-	width: auto;
-	filter: brightness(0) invert(1);
 }
 
 /* 가운데 내비 — 각 항목 동일 너비 */
@@ -2586,4 +2587,317 @@ button.ds-card {
 	.float-wechat-pop {
 		display: none;
 	}
+}
+
+/* ── 의뢰인 후기 이미지 갤러리(매트 프레임) ──────────────────────── */
+.review-gallery {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 30px;
+}
+@media (max-width: 900px) {
+	.review-gallery {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 22px;
+	}
+}
+@media (max-width: 560px) {
+	.review-gallery {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* 무한 마퀴(홈 프리뷰) — 아이템 2벌 렌더 후 -50% 이동으로 끊김 없이 순환 */
+.rv-marquee {
+	overflow: hidden;
+	-webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+	mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+.rv-marquee-track {
+	display: flex;
+	width: max-content;
+	padding: 6px 0 14px;
+	animation: rvMarquee 60s linear infinite;
+}
+.rv-marquee:hover .rv-marquee-track {
+	animation-play-state: paused;
+}
+@keyframes rvMarquee {
+	to {
+		transform: translateX(-50%);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.rv-marquee {
+		overflow-x: auto;
+	}
+	.rv-marquee-track {
+		animation: none;
+	}
+}
+
+/* 카드 = 크림 매트 액자(각진). 카톡 파랑을 크림으로 완충 + 골드 상단선으로 큐레이션 */
+.rv-card {
+	display: flex;
+	flex-direction: column;
+	text-align: left;
+	background: #fbfaf7;
+	border: 1px solid var(--border-default);
+	border-top: 2px solid var(--color-accent);
+	padding: 22px 22px 18px;
+	cursor: pointer;
+	box-shadow: 0 1px 2px rgba(60, 50, 40, 0.05);
+	transition:
+		transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+		box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+		border-color 0.5s ease;
+}
+.rv-card:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 24px 46px -24px rgba(60, 45, 30, 0.38);
+	border-color: var(--color-accent);
+}
+.rv-card:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 3px;
+}
+.rv-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 12.5px;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	color: var(--color-accent);
+	margin-bottom: 14px;
+}
+.rv-quotemark {
+	font-size: 15px;
+	opacity: 0.85;
+}
+.rv-window {
+	position: relative;
+	display: block;
+	aspect-ratio: 4 / 5;
+	overflow: hidden;
+	background: #e9edf1; /* 카톡 배경 톤 근처 중립 — 로딩/여백 대비 */
+	border: 1px solid var(--border-default);
+}
+.rv-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: top center;
+	display: block;
+	transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rv-card:hover .rv-img {
+	transform: scale(1.03);
+}
+/* 하단 페이드 — 카드 배경색으로 사라지며 "더 있다"를 암시 */
+.rv-fade {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 44%;
+	background: linear-gradient(to bottom, rgba(251, 250, 247, 0) 0%, rgba(251, 250, 247, 0.94) 90%);
+	pointer-events: none;
+	transition: opacity 0.5s ease;
+}
+.rv-card:hover .rv-fade {
+	opacity: 0.8;
+}
+.rv-quote {
+	display: block;
+	margin-top: 16px;
+	font-size: 15.5px;
+	line-height: 1.55;
+	font-weight: 600;
+	color: var(--text-heading);
+	word-break: keep-all;
+}
+.rv-foot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-top: 14px;
+}
+.rv-meta {
+	font-size: 12.5px;
+	color: var(--text-muted);
+}
+.rv-more {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 12.5px;
+	font-weight: 600;
+	color: var(--color-primary);
+	white-space: nowrap;
+	opacity: 0;
+	transform: translateX(-4px);
+	transition:
+		opacity 0.4s ease,
+		transform 0.4s ease;
+}
+.rv-card:hover .rv-more {
+	opacity: 1;
+	transform: none;
+}
+@media (hover: none) {
+	.rv-more {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* 라이트박스 — 따뜻한 다크 스크림 + 흰 매트 액자 */
+.rv-lightbox {
+	position: fixed;
+	inset: 0;
+	z-index: 300;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 44px 20px;
+	animation: rvFade 0.28s ease;
+}
+@keyframes rvFade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+.rv-lb-scrim {
+	position: absolute;
+	inset: 0;
+	border: none;
+	padding: 0;
+	background: rgba(34, 30, 26, 0.82);
+	backdrop-filter: blur(3px);
+	cursor: zoom-out;
+}
+.rv-lb-figure {
+	position: relative;
+	z-index: 1;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	max-height: 100%;
+}
+.rv-lb-tag {
+	font-size: 12.5px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: var(--color-accent-soft);
+	margin-bottom: 12px;
+	text-align: center;
+}
+.rv-lb-img {
+	width: auto;
+	height: auto;
+	max-width: min(88vw, 440px);
+	max-height: 72vh;
+	object-fit: contain;
+	background: #fff;
+	padding: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+	animation: rvZoom 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes rvZoom {
+	from {
+		transform: scale(0.96);
+		opacity: 0.5;
+	}
+	to {
+		transform: none;
+		opacity: 1;
+	}
+}
+.rv-lb-cap {
+	margin-top: 16px;
+	max-width: 440px;
+	text-align: center;
+	font-size: 14px;
+	line-height: 1.6;
+	font-weight: 500;
+	color: #f2ece2;
+	word-break: keep-all;
+}
+.rv-lb-cap span {
+	display: block;
+	margin-top: 6px;
+	font-size: 12.5px;
+	color: var(--color-accent-soft);
+}
+.rv-lb-close {
+	position: absolute;
+	top: 22px;
+	right: 24px;
+	z-index: 2;
+	background: none;
+	border: none;
+	color: #fff;
+	cursor: pointer;
+	padding: 6px;
+	opacity: 0.85;
+	transition: opacity 0.2s ease;
+}
+.rv-lb-close:hover {
+	opacity: 1;
+}
+.rv-lb-nav {
+	position: absolute;
+	z-index: 2;
+	top: 50%;
+	transform: translateY(-50%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 52px;
+	height: 52px;
+	background: rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	color: #fff;
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+.rv-lb-nav:hover {
+	background: rgba(255, 255, 255, 0.22);
+}
+.rv-lb-prev {
+	left: 20px;
+}
+.rv-lb-next {
+	right: 20px;
+}
+@media (max-width: 640px) {
+	.rv-lb-nav {
+		width: 42px;
+		height: 42px;
+	}
+	.rv-lb-prev {
+		left: 8px;
+	}
+	.rv-lb-next {
+		right: 8px;
+	}
+	.rv-lb-img {
+		max-width: 92vw;
+		max-height: 66vh;
+	}
+}
+
+/* 마퀴 카드 폭 고정 — .rv-card 기본 규칙 뒤에 두어 specificity 순서 유지.
+   gap 대신 margin-right(마지막 카드에도 적용) → 두 벌의 주기가 균일해 -50% 순환이 매끄러움 */
+.rv-marquee .rv-card {
+	flex: 0 0 300px;
+	width: 300px;
+	margin-right: 24px;
 }

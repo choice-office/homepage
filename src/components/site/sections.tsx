@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { type FormEvent, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
+import { type FormEvent, Fragment, type ReactNode, useEffect, useState } from "react";
 import { submitContact } from "@/app/actions/contact";
 import {
 	Select,
@@ -17,11 +17,10 @@ import {
 	CONTACT,
 	FAQ,
 	HERO_IMG,
+	HOME_HERO_IMG,
 	NAV,
 	NAVER_BLOG,
 	PROCESS,
-	REVIEWS,
-	type Review,
 	SERVICES,
 	SHORTS,
 	STATS,
@@ -31,6 +30,7 @@ import {
 import { BlogCard } from "./blog-card";
 import { Badge, Button, Card, CardBody, CardTitle, Input, Label, Textarea } from "./ds";
 import { Icon } from "./icon";
+import { ReviewImageGallery } from "./review-gallery";
 import { smoothScrollTo } from "./smooth-scroll";
 import { useGo } from "./use-go";
 
@@ -232,7 +232,14 @@ export const Hero = () => {
 				background: "#1a1612",
 			}}
 		>
-			<Image src={HERO_IMG} alt="" fill priority sizes="100vw" style={{ objectFit: "cover" }} />
+			<Image
+				src={HOME_HERO_IMG}
+				alt=""
+				fill
+				priority
+				sizes="100vw"
+				style={{ objectFit: "cover" }}
+			/>
 			<div
 				style={{
 					position: "absolute",
@@ -721,135 +728,7 @@ export const BlogPreview = ({ posts }: { posts: BlogPost[] }) => (
 	</section>
 );
 
-export const ReviewCard = ({ r }: { r: Review }) => (
-	<Card
-		hover
-		className="review-card"
-		padding="28px"
-		style={{ display: "flex", flexDirection: "column", height: "100%" }}
-	>
-		<div
-			style={{
-				display: "flex",
-				justifyContent: "space-between",
-				alignItems: "center",
-				marginBottom: 18,
-			}}
-		>
-			<Badge>{r.tag}</Badge>
-			<span style={{ fontSize: 13, color: "var(--text-muted)" }}>
-				{r.flag} {r.country}
-			</span>
-		</div>
-		<span className="review-quote" aria-hidden="true">
-			<Icon n="quote" style={{ width: 22, height: 22 }} />
-		</span>
-		<h3 style={{ fontSize: 18, lineHeight: 1.5, marginTop: 16 }}>{r.title}</h3>
-		<p
-			style={{ fontSize: 15, color: "var(--text-body)", lineHeight: 1.75, marginTop: 12, flex: 1 }}
-		>
-			{r.body}
-		</p>
-		<div
-			style={{
-				display: "flex",
-				alignItems: "center",
-				gap: 12,
-				marginTop: 22,
-				paddingTop: 18,
-				borderTop: "1px solid var(--border-default)",
-			}}
-		>
-			<span
-				style={{
-					width: 40,
-					height: 40,
-					borderRadius: "50%",
-					background: "var(--color-accent-soft)",
-					color: "var(--color-primary-dark)",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					fontWeight: 700,
-				}}
-			>
-				{r.initial}
-			</span>
-			<div>
-				<div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-heading)" }}>
-					{r.initial}님 · {r.tag}
-				</div>
-				<div style={{ fontSize: 13, color: "var(--text-muted)" }}>{r.country} 거주 의뢰인</div>
-			</div>
-		</div>
-	</Card>
-);
-
-/* 후기 목록 — 9개씩 페이지네이션(1페이지여도 항상 표시) */
-const REVIEWS_PER_PAGE = 9;
-
-export const ReviewsList = ({ reviews }: { reviews: Review[] }) => {
-	const [page, setPage] = useState(1);
-	const topRef = useRef<HTMLDivElement>(null);
-	const totalPages = Math.max(1, Math.ceil(reviews.length / REVIEWS_PER_PAGE));
-	const current = Math.min(page, totalPages);
-	const start = (current - 1) * REVIEWS_PER_PAGE;
-	const pageItems = reviews.slice(start, start + REVIEWS_PER_PAGE);
-
-	const goTo = (p: number) => {
-		if (p < 1 || p > totalPages || p === current) return;
-		setPage(p);
-		const el = topRef.current;
-		if (el) {
-			const top = el.getBoundingClientRect().top + window.scrollY - 110;
-			window.scrollTo({ top, behavior: "smooth" });
-		}
-	};
-
-	return (
-		<div ref={topRef}>
-			<div data-stagger="tilt" className="grid-3">
-				{pageItems.map((r) => (
-					<ReviewCard key={`${current}-${r.title}`} r={r} />
-				))}
-			</div>
-			<nav className="pager" aria-label="후기 페이지 이동">
-				<button
-					type="button"
-					className="pager-arrow"
-					onClick={() => goTo(current - 1)}
-					disabled={current === 1}
-					aria-label="이전 페이지"
-				>
-					<Icon n="chevron-right" style={{ width: 18, height: 18, transform: "rotate(180deg)" }} />
-				</button>
-				{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-					<button
-						type="button"
-						key={p}
-						className="pager-num"
-						data-active={p === current}
-						aria-current={p === current ? "page" : undefined}
-						onClick={() => goTo(p)}
-					>
-						{p}
-					</button>
-				))}
-				<button
-					type="button"
-					className="pager-arrow"
-					onClick={() => goTo(current + 1)}
-					disabled={current === totalPages}
-					aria-label="다음 페이지"
-				>
-					<Icon n="chevron-right" style={{ width: 18, height: 18 }} />
-				</button>
-			</nav>
-		</div>
-	);
-};
-
-export const ReviewsPreview = ({ reviews = REVIEWS }: { reviews?: Review[] }) => {
+export const ReviewsPreview = () => {
 	const go = useGo();
 	return (
 		<section className="section" style={{ background: "var(--surface-page)" }}>
@@ -865,7 +744,7 @@ export const ReviewsPreview = ({ reviews = REVIEWS }: { reviews?: Review[] }) =>
 				>
 					<SectionHead
 						title="의뢰인이 직접 전한 후기"
-						sub="절차를 마친 의뢰인들이 남겨주신 실제 후기입니다."
+						sub="절차를 마친 의뢰인들이 직접 남겨주신 실제 대화입니다."
 						align="left"
 					/>
 					<button
@@ -888,14 +767,15 @@ export const ReviewsPreview = ({ reviews = REVIEWS }: { reviews?: Review[] }) =>
 						후기 전체보기 <Icon n="arrow-right" style={{ width: 16, height: 16 }} />
 					</button>
 				</div>
-				<div data-stagger="tilt" className="grid-3" style={{ marginTop: 48 }}>
-					{reviews.slice(0, 3).map((r) => (
-						<ReviewCard key={r.title} r={r} />
-					))}
-				</div>
+			</div>
+			{/* 마퀴는 전체 폭으로 흐르게(컨테이너 밖) — 좌우 마스크 페이드로 자연스럽게 사라짐 */}
+			<div style={{ marginTop: 44 }}>
+				<ReviewImageGallery variant="marquee" />
+			</div>
+			<div className="container">
 				<p style={{ textAlign: "center", marginTop: 28, fontSize: 13, color: "var(--text-muted)" }}>
-					※ 후기는 의뢰인의 동의를 받아 게시하며, 개인정보 보호를 위해 일부 내용을 각색했습니다.
-					결과는 사안에 따라 다를 수 있습니다.
+					※ 후기는 의뢰인의 동의를 받아 게시하며, 개인정보 보호를 위해 성함·연락처·날짜 등 일부를
+					가렸습니다. 결과는 사안에 따라 다를 수 있습니다.
 				</p>
 			</div>
 		</section>
@@ -1778,18 +1658,11 @@ export const Footer = () => {
 					>
 						<span className="footer-logo">
 							<Image
-								src="/logo-mark.png"
-								alt=""
-								width={246}
-								height={203}
-								className="footer-logo-mark"
-							/>
-							<Image
-								src="/logo-word.png"
+								src="/logo-dark.png"
 								alt="초이스 행정사 사무소"
-								width={1259}
-								height={203}
-								className="footer-logo-word"
+								width={531}
+								height={127}
+								className="footer-logo-img"
 							/>
 						</span>
 					</button>
@@ -1816,7 +1689,7 @@ export const Footer = () => {
 				<div style={{ marginTop: 28, fontSize: 14, lineHeight: 1.9 }}>
 					<p>주소 {CONTACT.address}</p>
 					<p>
-						대표 행정사 최서연 · 전화 {CONTACT.phone.display} · 이메일 {CONTACT.email}
+						대표 행정사 · 전화 {CONTACT.phone.display} · 이메일 {CONTACT.email}
 					</p>
 					<p style={{ color: "rgba(255,255,255,0.5)" }}>
 						사업자등록번호 464-11-00966 · 행정사 등록번호 18102025537 · 출입국민원 대행기관

@@ -94,7 +94,10 @@ export default function RootLayout({
 			className={`${fontSans.variable} h-full antialiased`}
 			suppressHydrationWarning
 		>
-			<body className="flex min-h-full flex-col">
+			{/* suppressHydrationWarning: 일부 브라우저 확장프로그램이 <body>에 overscroll-behavior 등
+			    인라인 스타일을 주입해 발생하는 하이드레이션 경고를 억제(해당 엘리먼트 속성에만 적용,
+			    하위 컴포넌트의 실제 불일치는 그대로 노출됨). */}
+			<body className="flex min-h-full flex-col" suppressHydrationWarning>
 				<script
 					type="application/ld+json"
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data

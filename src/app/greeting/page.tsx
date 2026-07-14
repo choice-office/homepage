@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Icon } from "@/components/site/icon";
 import { CTABand, PageHero } from "@/components/site/sections";
-import { HERO_IMG } from "@/lib/site-data";
+import { OFFICE_IMG } from "@/lib/site-data";
 
 export const metadata: Metadata = {
 	title: "인사말",
@@ -87,7 +87,7 @@ export default function GreetingPage() {
 							}}
 						>
 							<Image
-								src={HERO_IMG}
+								src={OFFICE_IMG}
 								alt="사무소 전경"
 								fill
 								sizes="(max-width: 960px) 100vw, 50vw"

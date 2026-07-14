@@ -30,7 +30,7 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 					aria-hidden="true"
 				/>
 				<div className="profile-identity">
-					<span className="profile-eyebrow">CHOICE · {m.title}</span>
+					<span className="profile-eyebrow">초이스 행정사 사무소</span>
 					<h2 className="profile-name">{m.name}</h2>
 					<p className="profile-tagline">{m.summary}</p>
 				</div>
@@ -41,9 +41,7 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 							style={{ width: 26, height: 26, color: "var(--color-accent-soft)", opacity: 0.9 }}
 						/>
 						<p>{LEAD_MESSAGE}</p>
-						<cite>
-							— {m.title} {m.name}
-						</cite>
+						<cite>— {m.name}</cite>
 					</blockquote>
 				)}
 			</div>

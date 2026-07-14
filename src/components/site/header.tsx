@@ -121,21 +121,24 @@ export const SiteHeader = () => {
 						}}
 						aria-label="초이스 행정사 사무소 홈"
 					>
+						{/* 솔리드(흰 배경)용 원본 — 금색 나비 + 짙은 글자 */}
 						<Image
-							src="/logo-mark.png"
-							alt=""
-							width={246}
-							height={203}
-							priority
-							className="site-logo-mark"
-						/>
-						<Image
-							src="/logo-word.png"
+							src="/logo.png"
 							alt="초이스 행정사 사무소"
-							width={1259}
-							height={203}
+							width={531}
+							height={127}
 							priority
-							className="site-logo-word"
+							className="site-logo-img site-logo-light"
+						/>
+						{/* 투명 히어로(어두운 배경)용 — 금색 나비 유지 + 글자만 밝게 */}
+						<Image
+							src="/logo-dark.png"
+							alt=""
+							aria-hidden="true"
+							width={531}
+							height={127}
+							priority
+							className="site-logo-img site-logo-dark"
 						/>
 					</button>
 
