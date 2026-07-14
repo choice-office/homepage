@@ -41,16 +41,17 @@ app/reviews/page.tsx (async) → <ReviewImageGallery images={...} />  → /revie
 - **admin 도입 후**: **Supabase Storage 버킷**(예: `reviews`)에 관리자가 마스킹본 업로드 → `src`에 public URL 저장. `next.config.ts`의 `images.remotePatterns`가 해당 호스트를 허용해야 한다(현재 `**`).
 - 업로드 시 `w`/`h`는 이미지 실제 해상도를 넣는다(비율 유지). 가로형(이메일)도 그대로.
 
-## 적용 방법 (DB 생성)
+## 적용 상태 (DB — 적용 완료)
 
-Supabase MCP 또는 대시보드 SQL Editor에서 순서대로 실행:
+프로젝트 `pohfmrzgtoxdbwdsrckt`에 **적용 완료**. 현재 `review_images` 11건(전부 published)을 DB에서 읽는다.
 
-1. `supabase/migrations/0001_review_images.sql` — 테이블·인덱스·트리거·RLS
-2. `supabase/seed.sql` — 현재 11장 시드(`on conflict (src) do nothing` — 재실행 안전)
+- `supabase/migrations/0001_review_images.sql` — 테이블·인덱스·트리거·RLS(공개 published 읽기 + authenticated CRUD)
+- `supabase/migrations/0002_reviews_storage.sql` — `reviews` 스토리지 버킷(공개 읽기 + authenticated 쓰기)
+- `supabase/seed.sql` — 현재 11장 시드(`on conflict (src) do nothing` — 재실행 안전)
 
-실행 전까지는 테이블이 없어 조회가 실패하고, 코드가 자동으로 **로컬 `REVIEW_IMAGES`로 폴백**하므로 사이트는 그대로 동작한다.
+RLS 쓰기는 `reviews`/`blog_posts`와 동일하게 **authenticated 롤**(admin 로그인 세션)에 부여 — admin은 anon 키 + Supabase Auth 세션으로 쓴다. 미설정/오류 시 코드가 로컬 `REVIEW_IMAGES`로 폴백.
 
-env: `SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` (공개 읽기). 관리자 쓰기는 `SUPABASE_SERVICE_ROLE_KEY`.
+env: `SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` (공개 읽기).
 
 ## 관리자(choice-admin) 로드맵
 

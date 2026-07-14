@@ -36,12 +36,32 @@ create trigger set_review_images_updated_at
   before update on public.review_images
   for each row execute function public.set_current_timestamp_updated_at();
 
--- RLS: 공개(anon/authenticated)는 노출본만 SELECT. service_role은 RLS를 우회하므로 관리자 쓰기에 별도 정책 불필요.
+-- RLS: 공개(anon)는 노출본만 SELECT. 관리자(로그인=authenticated 롤, admin은 anon 키+세션으로 접근)는 전체 읽기+쓰기.
+-- 기존 reviews/blog_posts 정책과 동일 패턴.
 alter table public.review_images enable row level security;
 
-drop policy if exists "review_images public read" on public.review_images;
-create policy "review_images public read"
-  on public.review_images
-  for select
-  to anon, authenticated
+drop policy if exists "review_images public read published" on public.review_images;
+create policy "review_images public read published"
+  on public.review_images for select
+  to anon
   using (is_published = true);
+
+drop policy if exists "review_images authenticated read all" on public.review_images;
+create policy "review_images authenticated read all"
+  on public.review_images for select
+  to authenticated using (true);
+
+drop policy if exists "review_images authenticated insert" on public.review_images;
+create policy "review_images authenticated insert"
+  on public.review_images for insert
+  to authenticated with check (true);
+
+drop policy if exists "review_images authenticated update" on public.review_images;
+create policy "review_images authenticated update"
+  on public.review_images for update
+  to authenticated using (true) with check (true);
+
+drop policy if exists "review_images authenticated delete" on public.review_images;
+create policy "review_images authenticated delete"
+  on public.review_images for delete
+  to authenticated using (true);
