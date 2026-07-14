@@ -1,6 +1,6 @@
 # 의뢰인 후기 이미지 (review_images)
 
-카카오톡·이메일 캡처(개인정보 **마스킹본**)를 매트 프레임 갤러리로 노출한다. 텍스트 후기(`reviews`)와 별개의 이미지 전용 데이터다.
+카카오톡·이메일 캡처(개인정보 **마스킹본**)를 매트 프레임 갤러리로 노출한다. 후기는 텍스트가 아닌 **이미지 전용** 데이터다(과거 텍스트 후기 카드는 이미지 갤러리로 대체·제거됨).
 
 ## 렌더 흐름
 
@@ -54,7 +54,7 @@ env: `SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` (공개 읽기). 관리자
 
 ## 관리자(choice-admin) 로드맵
 
-`reviews`·`blog_posts`와 동일하게 별도 어드민에서 처리:
+`blog_posts`와 동일하게 별도 어드민에서 처리:
 
 - 마스킹본 업로드(Storage) → 행 생성(src/w/h/tag/quote/meta)
 - `is_published` 토글, `sort_order` 드래그 정렬

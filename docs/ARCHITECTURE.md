@@ -46,7 +46,7 @@ src/
 
 ## 데이터 모델 (단일 출처)
 콘텐츠는 컴포넌트가 아니라 **`lib/`의 데이터 배열**에서 온다. UI는 데이터를 map 한다.
-- `lib/site-data.ts`: `NAV`, `SERVICES`, `CONTACT`(★ 전화·휴대폰·카카오·위챗·이메일·주소·영업시간 단일 출처), `CHANNELS`(CONTACT 파생), `STATS`, `STRENGTHS`, `PROCESS`, `REVIEWS`, `FAQ`, `VIDEOS`, `TEAM`, `CREDENTIALS`, `NAVER_BLOG`, `YOUTUBE_CHANNEL`, `routePath()`.
+- `lib/site-data.ts`: `NAV`, `SERVICES`, `CONTACT`(★ 전화·휴대폰·카카오·위챗·이메일·주소·영업시간 단일 출처), `CHANNELS`(CONTACT 파생), `STATS`, `STRENGTHS`, `PROCESS`, `REVIEW_IMAGES`, `FAQ`, `VIDEOS`, `TEAM`, `CREDENTIALS`, `NAVER_BLOG`, `YOUTUBE_CHANNEL`, `routePath()`.
 - `lib/blog-data.ts`: `BlogPost` 타입, `BLOG_POSTS`, `BLOG_PAGE_SIZE`, `getBlogPost(slug)`, `formatBlogDate()`.
 - `config/site.ts`: `siteConfig`(name/description/url/ogImage/locale).
 - **전화·주소·이메일을 새로 쓸 일이 있으면 반드시 `CONTACT`를 참조**한다(하드코딩 금지). docs/PATTERNS.md 참고.

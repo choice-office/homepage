@@ -468,90 +468,6 @@ export const STATS = [
 	{ v: "1:1", l: "사건별 전담 상담", d: "한 사건을 끝까지" },
 ];
 
-export type Review = {
-	tag: string;
-	country: string;
-	initial: string;
-	flag: string;
-	title: string;
-	body: string;
-};
-
-export const REVIEWS: Review[] = [
-	{
-		tag: "거소증 F-4",
-		country: "미국",
-		initial: "J",
-		flag: "🇺🇸",
-		title: "막막했던 거소증 발급, 처음부터 끝까지 안심하고 맡겼어요",
-		body: "필요한 서류와 절차를 처음부터 차근차근 설명해 주셨습니다. 행정사님이 직접 챙겨주셔서 막막했던 과정을 안심하고 맡길 수 있었습니다.",
-	},
-	{
-		tag: "결혼비자 F-6",
-		country: "중국",
-		initial: "L",
-		flag: "🇨🇳",
-		title: "제 상황에 맞춰 현실적으로 방향을 잡아주셨습니다",
-		body: "처음 상담부터 접수까지 행정사님이 직접 챙겨 주셨습니다. 무리한 약속 대신 제 상황을 솔직하게 봐주셔서 더 믿음이 갔어요.",
-	},
-	{
-		tag: "국적회복",
-		country: "미국",
-		initial: "K",
-		flag: "🇺🇸",
-		title: "오래 걸리는 절차, 예상 기간을 솔직하게 알려주셔서 신뢰가 갔어요",
-		body: "오래 걸리는 절차라 걱정이 많았는데, 예상 기간과 준비물을 솔직하게 안내해 주셨습니다. 진행 상황도 그때그때 알려주셨습니다.",
-	},
-	{
-		tag: "전문직 비자 E-7",
-		country: "미국",
-		initial: "M",
-		flag: "🇺🇸",
-		title: "자격 요건 검토부터 꼼꼼하게, 직접 응대해 주셨습니다",
-		body: "E-7 자격이 될지 막연했는데 요건을 하나하나 검토해 주셨습니다. 담당이 바뀌지 않고 한 분이 끝까지 봐주셔서 편했습니다.",
-	},
-	{
-		tag: "연예인 비자 E-6",
-		country: "중국",
-		initial: "W",
-		flag: "🇨🇳",
-		title: "활동 일정에 맞춰 사증 발급까지 빈틈없이 챙겨주셨어요",
-		body: "예술흥행 비자는 서류가 까다로웠는데 필요한 자료를 정확히 짚어주셨습니다. 일정에 차질 없이 진행되어 감사했습니다.",
-	},
-	{
-		tag: "영주권 F-5",
-		country: "미국",
-		initial: "S",
-		flag: "🇺🇸",
-		title: "요건을 미리 점검해 주셔서 준비 기간을 줄일 수 있었습니다",
-		body: "지금 신청이 가능한지부터 솔직하게 봐주셨습니다. 부족한 요건을 먼저 알려주셔서 헛걸음 없이 준비할 수 있었습니다.",
-	},
-	{
-		tag: "단기초청 C-3",
-		country: "중국",
-		initial: "H",
-		flag: "🇨🇳",
-		title: "초청 서류가 복잡했는데 사유별로 정리해 주셨어요",
-		body: "어떤 서류가 필요한지 막막했는데 초청 사유에 맞춰 목록을 정리해 주셨습니다. 덕분에 한 번에 준비할 수 있었습니다.",
-	},
-	{
-		tag: "주재원 D-7",
-		country: "미국",
-		initial: "R",
-		flag: "🇺🇸",
-		title: "회사 서류까지 함께 챙겨주셔서 파견 일정에 차질이 없었습니다",
-		body: "개인 서류뿐 아니라 회사 측 준비 서류까지 안내해 주셨습니다. 부임 일정에 맞춰 처리되어 감사했습니다.",
-	},
-	{
-		tag: "전문직 비자 E-7",
-		country: "중국",
-		initial: "C",
-		flag: "🇨🇳",
-		title: "변경 가능성을 솔직하게 짚어주셔서 결정에 도움이 됐어요",
-		body: "무조건 된다고 하지 않고, 가능성과 보완할 점을 솔직하게 말씀해 주셨습니다. 그래서 더 신뢰가 갔습니다.",
-	},
-];
-
 export const FAQ = [
 	{
 		q: "‘행정사’는 어떤 일을 하는 사람인가요?",
@@ -608,11 +524,10 @@ export const routePath = (route: string, param?: string | null): string => {
 };
 
 // ── 의뢰인 후기 이미지(카카오톡·이메일 캡처) — 매트 프레임 갤러리에서 노출 ──
-// 원본(후기N.*)은 public/review/ 에 있고, 공개용은 개인정보 마스킹 후 review-NN 으로 정리한다.
-// 모든 캡처는 성함·연락처·날짜·이메일 등을 가린 마스킹본이다.
+// public/review/review-NN.* 이 공개본이며, 모든 캡처는 성함·연락처·날짜·이메일 등을 가린 마스킹본이다.
 // w/h 는 라이트박스에서 원본 비율을 정확히 보여주기 위한 실제 해상도.
-// 나중에 admin(choice-admin)에서 등록하면 Supabase에서 읽어오고, 이 배열은 폴백/시드로 둔다
-// (텍스트 후기 lib/reviews.ts 패턴과 동일).
+// 나중에 admin(choice-admin)에서 등록하면 Supabase(review_images)에서 읽어오고, 이 배열은 폴백/시드로 둔다
+// (blog_posts 공개읽기 패턴과 동일 — lib/review-images.ts).
 export type ReviewImage = {
 	src: string;
 	w: number;
