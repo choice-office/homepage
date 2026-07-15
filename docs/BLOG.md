@@ -7,7 +7,7 @@
 ### 읽기 레이어 — `src/lib/blog.ts`
 ```ts
 type BlogPost = { slug; category; title; excerpt; author; date; content;
-                  cover?; coverAlt?; tldr?; faq?; sources?; dateModified?; metaTitle?; metaDescription? };
+                  cover?; coverAlt?; tldr?; faq?; sources?; dateModified?; metaTitle?; metaDescription?; tags? };
 // getPublishedPosts(): Promise<BlogPost[]>   (published만, 최신순, RLS)
 // getPostBySlug(slug): Promise<BlogPost|null>
 // getRelatedPosts(post, n): Promise<BlogPost[]>
@@ -36,6 +36,7 @@ blog_posts (
   category_id → blog_categories, author_id → blog_authors,
   status post_status default draft, published_at(정렬),
   meta_title, meta_description, canonical_url,
+  tags text[] default '{}',   -- 해시태그(칩 렌더 + BlogPosting.keywords). ★ 마이그레이션으로 추가(아래)
   created_at, updated_at(트리거 자동)
 )
 index: blog_posts(status, published_at desc), blog_posts(category_id)
@@ -44,6 +45,15 @@ storage bucket 'blog' (public read) — 본문·커버 이미지용. 업로드 �
 ```
 - **설계 의도**: 공유 엔티티(카테고리·작성자)는 정규화(FK), 글-종속 값객체(faq·sources)는 jsonb. `BlogPost`와 컬럼 1:1 매핑 → 렌더 코드 변경 최소.
 - `dateModified` = `updated_at`(시드 시 명시 입력, 이후 UPDATE 트리거 자동), `date` = `published_at`.
+
+### 마이그레이션 — `tags` 컬럼(해시태그) 추가
+`blog_posts`에 배열 컬럼을 추가한다(멱등). Supabase SQL 편집기에서 1회 실행:
+```sql
+alter table blog_posts add column if not exists tags text[] not null default '{}';
+```
+- 읽기(`lib/blog.ts`)는 **컬럼이 없어도 안전**하다: `tags` 포함 SELECT를 먼저 시도하고 실패하면 tags 없는 SELECT로 폴백 → 마이그레이션 전에도 블로그가 정상 동작, 적용 후 자동으로 태그가 흐른다.
+- 렌더: 상세 하단 `.post-tags` 칩 + `BlogPosting.keywords`. 값은 `#` 없이 단어만 저장(렌더 시 `#` 부착).
+- 입력 UI는 choice-admin(별도)에서. RLS 쓰기 정책은 기존과 동일(service_role/관리자).
 
 ## 시드 (`scripts/seed-blog.ts`, 1회용)
 - 초기 글 12편 + 카테고리 10 + 작성자 1을 service_role로 upsert. 데이터: `scripts/seed-data.ts`.

@@ -12,6 +12,8 @@
 - **연락처는 `CONTACT` 단일 출처**(site-data). 전화/주소/이메일 하드코딩 금지.
 - 동적 className은 **`cn(...)`** 으로(템플릿 리터럴 X) — biome `lint:fix --unsafe`가 조건부 템플릿 공백을 깨뜨린 적 있음.
 - 배포는 **git push(main)** 경로로. 커밋 author 이메일과 Vercel Git 계정 불일치 시 CLI `vercel deploy`는 BLOCKED 됨.
+- **canonical은 루트 `layout.tsx`에서 설정하지 않는다.** 루트에 `alternates.canonical`을 두면 하위 페이지가 이를 **상속**받아(Next 메타데이터는 자식이 미지정한 필드를 부모에서 상속) **전 페이지 canonical이 홈으로 고정**된다 → 구글이 서브페이지를 홈의 중복으로 간주해 색인에서 탈락. 실제 그 상태였고 빌드 산출물로 확인함. **각 페이지가 자기 canonical을 선언**한다(정적 페이지는 `metadata.alternates.canonical: "/경로"`, 서비스 상세는 `generateMetadata`, 블로그 상세는 절대 URL). privacy/terms는 `noindex`라 제외. **루트에 canonical을 되살리지 말 것.**
+- **JSON-LD는 `toJsonLd`(lib/json-ld.ts)로 직렬화**한다. `dangerouslySetInnerHTML`은 JSON-LD 주입의 표준·불가피 방식이지만, `<`를 유니코드 이스케이프해 `</script>` 조기 종료(XSS)를 막는다. 특히 블로그 JSON-LD는 DB 필드가 들어가므로 필수. `JSON.stringify` 직접 사용으로 되돌리지 말 것.
 
 ## 보류 항목 (검토 완료 — 가치는 있으나 현재 미적용, 사용자 합의로 보류)
 세계 최고 수준 코드리뷰(3개 에이전트)에서 도출. *"라이브 클라이언트 사이트 안정성 우선 + 가장 잘 맞도록"* 판단으로 아래는 의도적으로 보류했다. 착수 시 회귀 위험이 있으니 별도 합의 후 진행.
@@ -33,6 +35,7 @@
 - `next.config` 이미지 호스트 `**` → unsplash + `*.supabase.co` 로 제한(오픈 프록시 차단).
 - 헤더 인터랙션 정리(hover-intent, prefetch, ARIA `aria-controls`/`aria-current`, 포커스 박스 제거, 경계선 정리).
 - 블로그 목록 페이지네이션 + 상세 + `.prose` + sitemap.
+- **SEO/AEO 정비(2026-07)**: 페이지별 canonical 자기참조(위 '확정된 결정' 참조) · Organization `sameAs`(네이버블로그·유튜브) · 서비스 상세 `Service`+`BreadcrumbList` JSON-LD · 홈 `<title>` 키워드화("출입국·비자 전문 행정사 | 초이스 행정사 사무소") · JSON-LD `<` 이스케이프 하드닝(`toJsonLd`). 빌드 산출물로 canonical·구조화데이터 검증 완료.
 
 ## 검증 기준 (완료로 부르기 전)
 `pnpm check-types` · `pnpm lint` · `pnpm build` 통과 + (push 시) `knip` 통과. 가능하면 프로덕션 READY 확인.

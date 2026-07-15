@@ -9,7 +9,8 @@ import { ScrollReveal } from "@/components/site/scroll-reveal";
 import { ConsultBar, FloatRail, Footer } from "@/components/site/sections";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { siteConfig } from "@/config/site";
-import { CONTACT } from "@/lib/site-data";
+import { toJsonLd } from "@/lib/json-ld";
+import { CONTACT, NAVER_BLOG, YOUTUBE_CHANNEL } from "@/lib/site-data";
 import "./globals.css";
 
 // 폰트: Noto Sans KR (next/font 자체 호스팅 — CDN/CSP 불필요, 한/영 동시 지원).
@@ -37,9 +38,8 @@ export const metadata: Metadata = {
 		template: `%s | ${siteConfig.name}`,
 	},
 	description: siteConfig.description,
-	alternates: {
-		canonical: siteConfig.url,
-	},
+	// canonical은 루트에서 설정하지 않는다 — 여기서 지정하면 하위 페이지가 상속받아
+	// 모든 페이지의 canonical이 홈으로 고정된다(중복 취급). 각 페이지가 자기 canonical을 선언한다.
 	openGraph: {
 		title: siteConfig.name,
 		description: siteConfig.description,
@@ -70,6 +70,7 @@ const jsonLd = {
 	logo: siteConfig.ogImage,
 	image: siteConfig.ogImage,
 	description: siteConfig.description,
+	sameAs: [NAVER_BLOG, YOUTUBE_CHANNEL],
 	telephone: CONTACT.phone.display,
 	email: CONTACT.email,
 	address: {
@@ -100,8 +101,8 @@ export default function RootLayout({
 			<body className="flex min-h-full flex-col" suppressHydrationWarning>
 				<script
 					type="application/ld+json"
-					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data
-					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+					// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD 주입의 표준 방식(대안 없음). '<' 이스케이프로 하드닝 — toJsonLd
+					dangerouslySetInnerHTML={{ __html: toJsonLd(jsonLd) }}
 				/>
 				<Providers>
 					<SmoothScroll />

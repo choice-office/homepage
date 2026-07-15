@@ -1207,8 +1207,11 @@
 }
 .prose img {
 	display: block;
-	width: 100%;
+	/* 큰 사진은 본문 폭에 맞춰 축소하되, 작게 지정한 이미지(width 속성/인라인)는 그 크기를 유지한다.
+	   (기존 width:100% 는 모든 이미지를 강제로 전체폭으로 늘려 네이버식 다양한 크기를 무시했음) */
+	max-width: 100%;
 	height: auto;
+	margin-inline: auto; /* 작은 이미지는 가운데 정렬(네이버 기본 동작) */
 	border-radius: var(--radius);
 }
 .prose figcaption {
@@ -1300,6 +1303,56 @@
 	font-size: 13px;
 	line-height: 1.7;
 	color: var(--text-muted);
+}
+
+/* 해시태그 칩(= post.tags) — 본문 하단, 네이버식 태그 나열 */
+.post-tags {
+	list-style: none;
+	margin: 30px 0 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	padding: 6px 12px;
+	border-radius: 999px;
+	background: var(--surface-subtle);
+	color: var(--text-muted);
+	font-size: 13.5px;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+/* ── 하이브리드 보존용 본문 옵션(choice-admin 툴바가 클래스로 부여, 기존 글엔 무영향) ──
+   중앙 인용: 좌측 세로줄 박스 대신 가운데 큰따옴표 스타일(후기·감사글용). */
+.prose blockquote.quote-center {
+	margin: 1.8em 0;
+	padding: 8px 0;
+	border-left: none;
+	background: transparent;
+	border-radius: 0;
+	text-align: center;
+	color: var(--text-body);
+}
+.prose blockquote.quote-center::before {
+	content: "\201C";
+	display: block;
+	font-size: 40px;
+	line-height: 1;
+	color: var(--color-primary-light);
+	margin-bottom: 6px;
+}
+.prose blockquote.quote-center p {
+	margin: 0.4em 0;
+}
+/* 짧은 가운데 구분선(네이버식). 기본 hr 은 전체폭 유지. */
+.prose hr.soft {
+	width: 120px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 /* DS Button — hover를 JS state 대신 CSS로 처리(리렌더/객체할당 제거) */

@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 	title: "의뢰인 후기",
 	description:
 		"절차를 마친 의뢰인들이 직접 남겨주신 실제 후기입니다. 개인정보 보호를 위해 일부를 가려 게재합니다.",
+	alternates: { canonical: "/reviews" },
 };
 
 export default async function ReviewsPage() {

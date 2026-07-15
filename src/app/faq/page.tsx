@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { CTABand, FAQ_, PageHero } from "@/components/site/sections";
+import { toJsonLd } from "@/lib/json-ld";
 import { FAQ } from "@/lib/site-data";
 
 export const metadata: Metadata = {
 	title: "자주 묻는 질문",
 	description: "상담 전 자주 묻는 질문을 모았습니다. 비용·기간·절차 등을 안내합니다.",
+	alternates: { canonical: "/faq" },
 };
 
 // FAQPage 구조화 데이터 — 구글 리치결과·AI 답변(AEO) 노출용
@@ -23,8 +25,8 @@ export default function FaqPage() {
 		<>
 			<script
 				type="application/ld+json"
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD 주입의 표준 방식(대안 없음). '<' 이스케이프로 하드닝 — toJsonLd
+				dangerouslySetInnerHTML={{ __html: toJsonLd(faqJsonLd) }}
 			/>
 			<PageHero
 				title="자주 묻는 질문"

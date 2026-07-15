@@ -4,6 +4,7 @@ import { ContactForm, ContactInfo, MapBlock, PageHero } from "@/components/site/
 export const metadata: Metadata = {
 	title: "문의하기",
 	description: "복잡한 출입국·비자 절차, 담당 행정사가 직접 확인하고 연락드립니다.",
+	alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {

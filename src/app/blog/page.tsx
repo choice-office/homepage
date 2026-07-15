@@ -7,6 +7,7 @@ import { BLOG_PAGE_SIZE, getPublishedPosts } from "@/lib/blog";
 export const metadata: Metadata = {
 	title: "출입국·비자 칼럼",
 	description: "자주 묻는 절차와 요건을, 사례 중심으로 알기 쉽게 정리한 출입국·비자 칼럼입니다.",
+	alternates: { canonical: "/blog" },
 };
 
 // 글 등록(관리자) 시 반영되도록 ISR — 60초마다 재검증

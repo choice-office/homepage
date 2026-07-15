@@ -22,14 +22,17 @@ export type BlogPost = {
 	dateModified?: string; // yyyy-mm-dd (= updated_at)
 	metaTitle?: string;
 	metaDescription?: string;
+	tags?: string[]; // 해시태그(= blog_posts.tags text[]). 칩 렌더 + BlogPosting.keywords
 };
 
 export const BLOG_PAGE_SIZE = 9;
 
 export const formatBlogDate = (iso: string): string => iso.slice(0, 10).replaceAll("-", ".");
 
-const SELECT =
+// tags 컬럼은 마이그레이션 후에만 존재 → 선택 시도 후 없으면 base로 폴백(아래 runSelect).
+const SELECT_BASE =
 	"slug,title,excerpt,content,cover_url,cover_alt,tldr,faq,sources,published_at,updated_at,meta_title,meta_description,category:blog_categories(name),author:blog_authors(name)";
+const SELECT_WITH_TAGS = `${SELECT_BASE},tags`;
 
 type Embedded = { name: string } | { name: string }[] | null;
 const pickName = (e: Embedded): string => (Array.isArray(e) ? (e[0]?.name ?? "") : (e?.name ?? ""));
@@ -48,6 +51,7 @@ type Row = {
 	updated_at: string | null;
 	meta_title: string | null;
 	meta_description: string | null;
+	tags: string[] | null;
 	category: Embedded;
 	author: Embedded;
 };
@@ -68,6 +72,7 @@ const toPost = (r: Row): BlogPost => ({
 	dateModified: r.updated_at ? r.updated_at.slice(0, 10) : undefined,
 	metaTitle: r.meta_title ?? undefined,
 	metaDescription: r.meta_description ?? undefined,
+	tags: r.tags && r.tags.length > 0 ? r.tags : undefined,
 });
 
 const client = () => {
@@ -80,11 +85,15 @@ const client = () => {
 export const getPublishedPosts = async (): Promise<BlogPost[]> => {
 	const supabase = client();
 	if (!supabase) return [];
-	const { data, error } = await supabase
-		.from("blog_posts")
-		.select(SELECT)
-		.eq("status", "published")
-		.order("published_at", { ascending: false });
+	const run = (select: string) =>
+		supabase
+			.from("blog_posts")
+			.select(select)
+			.eq("status", "published")
+			.order("published_at", { ascending: false });
+	// tags 포함으로 먼저 시도 → 컬럼 미적용(마이그레이션 전) 환경이면 base로 폴백.
+	let { data, error } = await run(SELECT_WITH_TAGS);
+	if (error) ({ data, error } = await run(SELECT_BASE));
 	if (error || !data) return [];
 	return (data as unknown as Row[]).map(toPost);
 };
@@ -92,12 +101,15 @@ export const getPublishedPosts = async (): Promise<BlogPost[]> => {
 export const getPostBySlug = async (slug: string): Promise<BlogPost | null> => {
 	const supabase = client();
 	if (!supabase) return null;
-	const { data, error } = await supabase
-		.from("blog_posts")
-		.select(SELECT)
-		.eq("status", "published")
-		.eq("slug", slug)
-		.maybeSingle();
+	const run = (select: string) =>
+		supabase
+			.from("blog_posts")
+			.select(select)
+			.eq("status", "published")
+			.eq("slug", slug)
+			.maybeSingle();
+	let { data, error } = await run(SELECT_WITH_TAGS);
+	if (error) ({ data, error } = await run(SELECT_BASE));
 	if (error || !data) return null;
 	return toPost(data as unknown as Row);
 };

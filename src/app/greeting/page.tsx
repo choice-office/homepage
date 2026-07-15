@@ -8,6 +8,7 @@ export const metadata: Metadata = {
 	title: "인사말",
 	description:
 		"초이스 행정사 사무소가 의뢰인께 드리는 인사말입니다. 혼자 고민하지 마시고 편하게 문을 두드려 주세요.",
+	alternates: { canonical: "/greeting" },
 };
 
 const ABOUT_CRUMB = { label: "사무소 소개", route: "greeting" };

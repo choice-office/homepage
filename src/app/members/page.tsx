@@ -8,6 +8,7 @@ import { type Member, TEAM } from "@/lib/site-data";
 export const metadata: Metadata = {
 	title: "구성원",
 	description: "상담부터 접수까지 직접 책임지는 시험 출신 행정사를 소개합니다.",
+	alternates: { canonical: "/members" },
 };
 
 const ABOUT_CRUMB = { label: "사무소 소개", route: "greeting" };

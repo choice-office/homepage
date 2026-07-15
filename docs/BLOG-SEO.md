@@ -19,6 +19,7 @@
 | **tldr** | 옵션 | 안 보임 | 상단 "요점" 콜아웃(답-우선) |
 | **faq[] {q,a}** | 옵션 | 안 보임 | 가시 FAQ 블록 + **`FAQPage` JSON-LD** |
 | **sources[] {label,href}** | 옵션 | 안 보임 | "참고/근거" 링크(E-E-A-T·AEO) |
+| **tags[]** | 옵션 | 안 보임 | 하단 해시태그 칩 + `BlogPosting.keywords`(마이그레이션 `docs/BLOG.md`, `#` 없이 저장) |
 | dateModified | 자동 | = date | 수정일 · `dateModified` |
 | metaTitle | 옵션 | = title | `<title>` |
 | metaDescription | 옵션 | = excerpt | meta description · OG |

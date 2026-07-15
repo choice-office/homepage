@@ -13,6 +13,7 @@ import {
 	getPublishedPosts,
 	getRelatedPosts,
 } from "@/lib/blog";
+import { toJsonLd } from "@/lib/json-ld";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -68,6 +69,7 @@ const buildJsonLd = (post: BlogPost) => {
 			},
 			mainEntityOfPage: { "@type": "WebPage", "@id": url },
 			articleSection: post.category,
+			keywords: post.tags?.length ? post.tags.join(", ") : undefined,
 			inLanguage: "ko",
 		},
 		{
@@ -105,8 +107,8 @@ export default async function BlogDetailPage({ params }: Params) {
 		<>
 			<script
 				type="application/ld+json"
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: 구조화 데이터(JSON-LD)
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd(post)) }}
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD 주입의 표준 방식(대안 없음). DB 필드 포함 → '<' 이스케이프로 하드닝 — toJsonLd
+				dangerouslySetInnerHTML={{ __html: toJsonLd(buildJsonLd(post)) }}
 			/>
 			<header
 				className="section"
@@ -235,6 +237,16 @@ export default async function BlogDetailPage({ params }: Params) {
 								))}
 							</ul>
 						</section>
+					)}
+
+					{post.tags && post.tags.length > 0 && (
+						<ul className="post-tags" aria-label="태그">
+							{post.tags.map((t) => (
+								<li className="post-tag" key={t}>
+									#{t.replace(/^#/, "")}
+								</li>
+							))}
+						</ul>
 					)}
 
 					<p className="post-disclaimer">
