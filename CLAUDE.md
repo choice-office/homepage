@@ -20,8 +20,18 @@
 - **[docs/BLOG-AUTHORING.md](docs/BLOG-AUTHORING.md)** — 어드민 작성 포맷·UX 설계(미구현, **AI 없이 + 극단적 단순함** 원칙)
 - **[docs/REVIEWS.md](docs/REVIEWS.md)** — 후기 이미지 데이터 모델·공개 렌더(구현됨)·Supabase(review_images) 스키마·관리자 로드맵
 - **[docs/DECISIONS.md](docs/DECISIONS.md)** — 의도적 설계 결정 & 보류 항목(되돌리지 말 것 / 재분석하지 말 것)
+- **[docs/DEPLOY.md](docs/DEPLOY.md)** — 배포/커밋 규칙(커밋-only 기본, `git deploy`로만 배포)
 
 코드를 바꾼 뒤 위 문서의 사실이 달라지면 해당 문서도 함께 갱신한다.
+
+## 배포 / 커밋 규칙 (Claude Code — 반드시 준수)
+
+> 전체·배경은 [docs/DEPLOY.md](docs/DEPLOY.md). 온케팅 공통(`onketing/homepage`·`tool`과 동일 방식).
+
+- **기본: 커밋만 하고 `push` 하지 않는다** (push = Vercel 배포 트리거). 작업 커밋은 개인 author(`KKIMDoHyun <kdh5998@naver.com>`, repo git config 기본) → 개인 잔디.
+- **"배포해 / 푸시해"** → choice 소유자 author 배포 커밋을 얹고 push:
+  `git deploy` = `git commit --allow-empty --author="choice <lawforyou7@naver.com>" -m "chore: deploy" && git push`
+- git config·`git deploy` 별칭은 이 repo에만(repo-local) 적용 — 전역/다른 프로젝트 무영향.
 
 ## 자동 작업 모드 (중요 — 항상 적용)
 
