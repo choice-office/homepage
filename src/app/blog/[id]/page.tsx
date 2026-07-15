@@ -110,6 +110,12 @@ export default async function BlogDetailPage({ params }: Params) {
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD 주입의 표준 방식(대안 없음). DB 필드 포함 → '<' 이스케이프로 하드닝 — toJsonLd
 				dangerouslySetInnerHTML={{ __html: toJsonLd(buildJsonLd(post)) }}
 			/>
+			{/* 본문 글씨체(관리자 에디터에서 지정) 렌더용 웹폰트 — 블로그 상세에서만 로드 */}
+			<link
+				rel="stylesheet"
+				precedence="default"
+				href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap"
+			/>
 			<header
 				className="section"
 				style={{ paddingTop: 128, paddingBottom: 0, background: "var(--surface-page)" }}
