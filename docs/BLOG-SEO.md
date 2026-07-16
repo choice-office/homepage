@@ -9,7 +9,7 @@
 | 필드 | 필수 | 비우면 | 산출물 |
 |---|---|---|---|
 | title | ✅ | — | H1 · `BlogPosting.headline` |
-| slug(영문) | ✅ | 규칙 폴백(아래) | URL `/blog/{slug}` |
+| slug | ✅ | 제목 기반 자동 | URL `/blog/{slug}` |
 | category | ✅ | — | Breadcrumb · 카드 배지 · `articleSection` |
 | content(HTML) | ✅ | — | `.prose` 본문 |
 | excerpt | ✅ | — | 카드 요약 · 메타설명 기본값 |
@@ -25,7 +25,7 @@
 | metaDescription | 옵션 | = excerpt | meta description · OG |
 | canonical | 고급 | 자기 URL | **절대 네이버로 걸지 말 것** |
 
-- slug 폴백(AI 없음): 영문 입력칸 비면 `{categoryCode}-{shortId}`(예 `f6-3a8c`). 한글 slug보다 영문이 SEO·공유에 유리.
+- slug(AI 없음): 제목에서 자동 생성 — 한글/영문/숫자 kebab 유지(예 `시민권-취득-후-여권부정사용-...`). 하이픈 제외 실질 문자 3자 미만이면 `post-{8hex}` 폴백. 한국어 검색 타깃이라 URL에 한글 키워드가 그대로 노출되는 편이 유리(구글·네이버 모두 percent-encoded 한글 처리). 필요 시 영문 slug 수동 입력 가능. DB CHECK: `^[a-z0-9가-힣]+(?:-[a-z0-9가-힣]+)*$`.
 - author는 현재 문자열. 추후 E-E-A-T 강화 시 `AUTHORS`(이름·자격·등록번호·소개) 레지스트리로 확장해 `Person` 풍부화.
 
 ## 2. JSON-LD 전략 (상세 페이지 `/blog/[id]`)

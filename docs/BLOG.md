@@ -30,7 +30,7 @@ post_status enum: draft | published | archived
 blog_categories (id, slug uniq, name, sort_order, created_at)
 blog_authors    (id, slug uniq, name, role, credentials, bio, avatar_url, created_at)
 blog_posts (
-  id, slug uniq(소문자-kebab CHECK), title, excerpt, content(HTML),
+  id, slug uniq(kebab CHECK, 한글 허용 `^[a-z0-9가-힣]+(?:-[a-z0-9가-힣]+)*$`), title, excerpt, content(HTML),
   cover_url, cover_alt, tldr,
   faq jsonb [{q,a}], sources jsonb [{label,href}],
   category_id → blog_categories, author_id → blog_authors,
