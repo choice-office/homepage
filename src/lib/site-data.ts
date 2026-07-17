@@ -446,7 +446,7 @@ export const PROCESS = [
 	},
 	{
 		icon: "clipboard-list",
-		title: "검토 · 방향 진단",
+		title: "검토 · 방향 제시",
 		desc: "체류자격과 요건을 검토해 상황에 맞는 현실적인 방향을 제시합니다.",
 	},
 	{
@@ -457,7 +457,7 @@ export const PROCESS = [
 	{
 		icon: "stamp",
 		title: "접수 · 결과 안내",
-		desc: "대행기관으로 직접 접수하고, 진행 상황과 결과를 안내드립니다.",
+		desc: "관할 출입국·외국인관서에 직접 접수하고, 진행 상황과 결과를 안내드립니다.",
 	},
 ];
 

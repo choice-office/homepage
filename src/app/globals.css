@@ -1612,8 +1612,8 @@ button.ds-card {
 	position: relative;
 	margin-top: clamp(44px, 5vw, 64px);
 	/* 컨테이너보다 넓게 브레이크아웃(뷰포트 중앙 정렬) — 설명 2줄 통일 */
-	width: min(100vw - 48px, 1600px);
-	margin-left: calc(50% - min(100vw - 48px, 1600px) / 2);
+	width: min(100vw - 96px, 1400px);
+	margin-left: calc(50% - min(100vw - 96px, 1400px) / 2);
 }
 .proc-steps {
 	list-style: none;
@@ -1732,6 +1732,13 @@ button.ds-card {
 	100% {
 		transform: translateX(417%);
 		opacity: 0;
+	}
+}
+/* 애니메이션 비활성(Windows 성능모드 등 prefers-reduced-motion) 시,
+   진행 라인이 회색 기본선만 남지 않도록 채움을 즉시 전체 표시(.str-tab-bar 폴백과 동일 방식) */
+@media (prefers-reduced-motion: reduce) {
+	.proc-track-fill {
+		transform: scaleX(1);
 	}
 }
 @media (max-width: 760px) {
