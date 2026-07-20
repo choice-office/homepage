@@ -60,9 +60,10 @@ export const metadata: Metadata = {
 		follow: true,
 		googleBot: { index: true, follow: true, "max-image-preview": "large" },
 	},
-	// 네이버 서치어드바이저 사이트 소유확인(HTML 태그 방식) — 온케팅 계정
+	// 검색엔진 사이트 소유확인(HTML 태그) — 온케팅 계정 (네이버 서치어드바이저 / 구글 서치콘솔)
 	other: {
 		"naver-site-verification": "df5ad3375ff3b00260e4f87fea556bf9f88740de",
+		"google-site-verification": "MHfOubkV8UFb2eTD3-bUULny8YEwYzK_rsmOozCR6jk",
 	},
 };
 
