@@ -21,6 +21,8 @@ export default async function ReviewsPage() {
 				title="의뢰인 후기"
 				sub="절차를 마친 의뢰인들이 직접 남겨주신 실제 대화입니다."
 				crumbs={[{ label: "홈", route: "home" }, { label: "의뢰인 후기" }]}
+				image="/의뢰인후기-hero.png"
+				imagePosition="68% 55%"
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
@@ -28,8 +30,8 @@ export default async function ReviewsPage() {
 					<p
 						style={{ textAlign: "center", marginTop: 36, fontSize: 13, color: "var(--text-muted)" }}
 					>
-						※ 후기는 의뢰인의 동의를 받아 게시하며, 개인정보 보호를 위해 성함·연락처·날짜 등 일부를
-						가렸습니다. 결과는 사안에 따라 다를 수 있습니다.
+						※ 실제 의뢰인이 보내주신 내용이며, 개인정보 보호를 위해 일부 정보는 비공개
+						처리하였습니다.
 					</p>
 				</div>
 			</section>

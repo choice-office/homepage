@@ -14,7 +14,7 @@ const SVC_SHORT: Record<string, string> = {
 	short: "단기초청",
 	resident: "주재원·고위임원",
 	e6: "연예인 비자",
-	e7: "전문직 비자",
+	e7: "외국인 취업비자",
 	f4: "재외동포·거소증",
 	f5: "영주권",
 	f6: "결혼비자",
@@ -48,6 +48,8 @@ export const SiteHeader = () => {
 	const pathname = usePathname();
 	const route = pathToRoute(pathname);
 	const [scrolled, setScrolled] = useState(false);
+	// 홈은 항상 히어로가 있으므로 초기값 true(첫 페인트 깜빡임 방지). 그 외는 감지로 결정.
+	const [hasDarkHero, setHasDarkHero] = useState(route === "home");
 	const [drawer, setDrawer] = useState(false);
 	const [openMega, setOpenMega] = useState<string | null>(null);
 	const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -58,6 +60,18 @@ export const SiteHeader = () => {
 		on();
 		return () => window.removeEventListener("scroll", on);
 	}, []);
+
+	// 페이지 최상단에 어두운 히어로(홈 히어로/PageHero)가 있으면 투명 헤더 사용.
+	// 밝은 배경으로 시작하는 페이지(블로그 상세·약관 등)는 솔리드 유지.
+	// async 서버컴포넌트(블로그 목록 등)는 히어로가 스트리밍으로 늦게 도착하므로 MutationObserver로 재감지.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: 경로 변경 시 히어로 재감지 목적
+	useEffect(() => {
+		const detect = () => setHasDarkHero(!!document.querySelector("[data-hero-dark]"));
+		detect();
+		const mo = new MutationObserver(detect);
+		mo.observe(document.body, { childList: true, subtree: true });
+		return () => mo.disconnect();
+	}, [pathname]);
 
 	// Esc 로 닫기
 	useEffect(() => {
@@ -78,7 +92,7 @@ export const SiteHeader = () => {
 		[],
 	);
 
-	const atTop = route === "home" && !scrolled;
+	const atTop = hasDarkHero && !scrolled;
 
 	const clearCloseTimer = () => {
 		if (closeTimer.current) {
@@ -123,7 +137,7 @@ export const SiteHeader = () => {
 					>
 						{/* 솔리드(흰 배경)용 원본 — 금색 나비 + 짙은 글자 */}
 						<Image
-							src="/logo.png"
+							src="/brand/logo.png"
 							alt="초이스 행정사 사무소"
 							width={531}
 							height={127}
@@ -132,7 +146,7 @@ export const SiteHeader = () => {
 						/>
 						{/* 투명 히어로(어두운 배경)용 — 금색 나비 유지 + 글자만 밝게 */}
 						<Image
-							src="/logo-dark.png"
+							src="/brand/logo-dark.png"
 							alt=""
 							aria-hidden="true"
 							width={531}
@@ -337,7 +351,7 @@ function MobileDrawer({
 					style={{ width: "100%", marginTop: 22 }}
 					onClick={() => nav("contact")}
 				>
-					무료 상담 신청
+					상담 신청
 				</Button>
 				<Button
 					href={CONTACT.phone.href}

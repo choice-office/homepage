@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { REVIEW_IMAGES, type ReviewImage } from "@/lib/site-data";
+import type { ReviewImage } from "@/lib/site-data";
 import { Icon } from "./icon";
 
 // 그리드(/reviews)는 페이지당 6개씩 페이지네이션 — 1페이지여도 항상 페이저 표시
@@ -21,10 +21,7 @@ type ReviewImageGalleryProps = {
 	images?: ReviewImage[];
 };
 
-export const ReviewImageGallery = ({
-	variant = "grid",
-	images = REVIEW_IMAGES,
-}: ReviewImageGalleryProps) => {
+export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImageGalleryProps) => {
 	const items = images;
 	const [open, setOpen] = useState<number | null>(null);
 	const [page, setPage] = useState(1);
@@ -191,7 +188,7 @@ export const ReviewImageGallery = ({
 								width={active.w}
 								height={active.h}
 								className="rv-lb-img"
-								sizes="(max-width: 640px) 92vw, 460px"
+								sizes="(max-width: 640px) 94vw, 640px"
 							/>
 							<figcaption className="rv-lb-cap">
 								“{active.quote}”<span>— {active.meta}</span>

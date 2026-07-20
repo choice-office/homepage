@@ -7,11 +7,14 @@ import { Badge } from "@/components/site/ds";
 import { Icon } from "@/components/site/icon";
 import { siteConfig } from "@/config/site";
 import {
+	AUTHOR_PROFILE_PATH,
 	type BlogPost,
+	firstContentImage,
 	formatBlogDate,
 	getPostBySlug,
 	getPublishedPosts,
 	getRelatedPosts,
+	serviceForCategory,
 } from "@/lib/blog";
 import { toJsonLd } from "@/lib/json-ld";
 
@@ -34,6 +37,7 @@ export const generateMetadata = async ({ params }: Params): Promise<Metadata> =>
 	const url = postUrl(post.slug);
 	const title = post.metaTitle ?? post.title;
 	const description = post.metaDescription ?? post.excerpt;
+	const ogImage = post.cover ?? firstContentImage(post.content);
 	return {
 		title,
 		description,
@@ -45,7 +49,7 @@ export const generateMetadata = async ({ params }: Params): Promise<Metadata> =>
 			url,
 			publishedTime: post.date,
 			modifiedTime: post.dateModified ?? post.date,
-			images: post.cover ? [{ url: post.cover }] : undefined,
+			images: ogImage ? [{ url: ogImage }] : undefined,
 		},
 	};
 };
@@ -53,15 +57,22 @@ export const generateMetadata = async ({ params }: Params): Promise<Metadata> =>
 // JSON-LD: BlogPosting + BreadcrumbList(+ FAQPage는 faq 있을 때만). docs/BLOG-SEO.md
 const buildJsonLd = (post: BlogPost) => {
 	const url = postUrl(post.slug);
+	const image = post.cover ?? firstContentImage(post.content);
 	const graph: Record<string, unknown>[] = [
 		{
 			"@type": "BlogPosting",
 			headline: post.title,
 			description: post.metaDescription ?? post.excerpt,
-			image: post.cover ? [post.cover] : undefined,
+			image: image ? [image] : undefined,
 			datePublished: post.date,
 			dateModified: post.dateModified ?? post.date,
-			author: { "@type": "Person", name: post.author },
+			author: {
+				"@type": "Person",
+				name: post.author,
+				...(post.authorRole ? { jobTitle: post.authorRole } : {}),
+				url: `${siteConfig.url}${AUTHOR_PROFILE_PATH}`,
+				worksFor: { "@type": "Organization", name: siteConfig.name },
+			},
 			publisher: {
 				"@type": "Organization",
 				name: siteConfig.name,
@@ -101,7 +112,7 @@ export default async function BlogDetailPage({ params }: Params) {
 	if (!post) notFound();
 
 	const related = await getRelatedPosts(post, 3);
-	const modified = post.dateModified && post.dateModified !== post.date ? post.dateModified : null;
+	const service = serviceForCategory(post.categorySlug);
 
 	return (
 		<>
@@ -146,9 +157,10 @@ export default async function BlogDetailPage({ params }: Params) {
 
 					<Badge>{post.category}</Badge>
 					<h1
+						className="blog-h1"
 						style={{
-							fontSize: "clamp(28px, 4.4vw, 40px)",
-							lineHeight: 1.3,
+							fontSize: "clamp(23px, 3.2vw, 31px)",
+							lineHeight: 1.35,
 							marginTop: 16,
 							color: "var(--text-heading)",
 						}}
@@ -169,14 +181,11 @@ export default async function BlogDetailPage({ params }: Params) {
 						<span>{post.author}</span>
 						<span aria-hidden="true">·</span>
 						<time dateTime={post.date}>{formatBlogDate(post.date)}</time>
-						{modified && (
-							<>
-								<span aria-hidden="true">·</span>
-								<span>
-									수정 <time dateTime={modified}>{formatBlogDate(modified)}</time>
-								</span>
-							</>
-						)}
+						<span aria-hidden="true">·</span>
+						{/* E-E-A-T: 저자 전문성 근거로 구성원(자격·경력) 페이지 연결 (YMYL) */}
+						<Link className="lk post-author-cred" href={AUTHOR_PROFILE_PATH}>
+							자격·경력 보기
+						</Link>
 					</div>
 				</div>
 			</header>
@@ -208,7 +217,10 @@ export default async function BlogDetailPage({ params }: Params) {
 
 					{post.tldr && (
 						<aside className="post-tldr">
-							<span className="post-tldr-label">요점</span>
+							<span className="post-tldr-label">
+								<Icon n="badge-check" style={{ width: 13, height: 13 }} />
+								요점
+							</span>
 							<p>{post.tldr}</p>
 						</aside>
 					)}
@@ -227,6 +239,22 @@ export default async function BlogDetailPage({ params }: Params) {
 								</div>
 							))}
 						</section>
+					)}
+
+					{service && (
+						<Link className="post-service-cta lk" href={`/services/${service.id}`}>
+							<span className="post-service-cta-eyebrow">이 글과 관련된 업무분야</span>
+							<span className="post-service-cta-row">
+								<span className="post-service-cta-main">
+									<strong>{service.title}</strong>
+									<span className="post-service-cta-code">{service.code}</span>
+								</span>
+								<span className="post-service-cta-go">
+									자세히 보기
+									<Icon n="arrow-right" style={{ width: 16, height: 16 }} />
+								</span>
+							</span>
+						</Link>
 					)}
 
 					{post.sources && post.sources.length > 0 && (
@@ -256,9 +284,30 @@ export default async function BlogDetailPage({ params }: Params) {
 					)}
 
 					<p className="post-disclaimer">
-						본 글은 일반적인 정보 제공을 위한 것으로 법률 자문이 아니며, 개별 사안은 사실관계에 따라
-						결론이 달라질 수 있어 사전 상담을 권합니다.
+						본 글은 일반적인 정보 제공용이며 법률 자문이 아닙니다. 개별 사안은 사전 상담을 권합니다.
 					</p>
+
+					{post.sourceUrl && (
+						<p style={{ marginTop: 24, textAlign: "center" }}>
+							<a
+								href={post.sourceUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="lk"
+								style={{
+									display: "inline-flex",
+									alignItems: "center",
+									gap: 6,
+									fontSize: 14,
+									fontWeight: 600,
+									color: "var(--color-primary)",
+								}}
+							>
+								네이버 블로그 원문 보기
+								<Icon n="external-link" style={{ width: 14, height: 14 }} />
+							</a>
+						</p>
+					)}
 				</div>
 			</article>
 

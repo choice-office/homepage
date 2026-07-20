@@ -100,8 +100,8 @@
 	scrollbar-color: rgba(108, 93, 76, 0.42) transparent;
 }
 ::-webkit-scrollbar {
-	width: 10px;
-	height: 10px;
+	width: 7px;
+	height: 7px;
 }
 ::-webkit-scrollbar-track {
 	background: transparent;
@@ -109,7 +109,7 @@
 ::-webkit-scrollbar-thumb {
 	background-color: rgba(108, 93, 76, 0.38);
 	border-radius: 999px;
-	border: 3px solid transparent;
+	border: 2px solid transparent;
 	background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -1130,9 +1130,14 @@
 .blog-prose {
 	max-width: 760px;
 }
+/* 상세 제목 — 의미 단위로 균형 있게 줄바꿈(단어 중간 안 끊김) */
+.blog-h1 {
+	word-break: keep-all;
+	text-wrap: balance;
+}
 .prose {
-	font-size: 17px;
-	line-height: 1.8;
+	font-size: 15px;
+	line-height: 1.85;
 	color: var(--text-body);
 	word-break: keep-all;
 }
@@ -1148,6 +1153,120 @@
 	line-height: 1.35;
 	color: var(--text-heading);
 	margin: 1.9em 0 0.7em;
+}
+/* ── 네이버 원문 이식 — 본문/인용구/표/지도 충실 재현 ── */
+/* 본문: 가운데 정렬(네이버 기본), 줄 간격 유지 */
+.prose .se-t {
+	text-align: center;
+	line-height: 1.9;
+	margin: 1.5em 0;
+	color: var(--text-body);
+}
+/* 인용구 - 밑줄형(왼쪽, 여는 따옴표, 하단 구분선) */
+.prose .se-q {
+	color: var(--text-heading);
+}
+.prose .se-q-u {
+	margin: 2.6em 0 1.4em;
+	padding-bottom: 0.55em;
+	border-bottom: 1px solid var(--border-default);
+	font-size: 1.4em;
+	font-weight: 500;
+	line-height: 1.5;
+}
+.prose .se-q-u::before {
+	content: "\201C";
+	display: block;
+	font-family: Georgia, "Times New Roman", serif;
+	font-size: 1.7em;
+	line-height: 0.5;
+	color: #c4c4c4;
+	margin-bottom: 0.1em;
+}
+/* 인용구 - 기본형(가운데, 여는·닫는 따옴표) */
+.prose blockquote.se-q-c {
+	margin: 2.8em 0;
+	padding: 0;
+	border: none;
+	background: none;
+	border-radius: 0;
+	text-align: center;
+	font-size: 1.3em;
+	font-weight: 500;
+	line-height: 1.75;
+}
+.prose .se-q-c::before,
+.prose .se-q-c::after {
+	content: "\201C";
+	display: block;
+	font-family: Georgia, "Times New Roman", serif;
+	font-size: 1.9em;
+	line-height: 0.4;
+	color: #c4c4c4;
+}
+.prose .se-q-c::before {
+	margin-bottom: 0.35em;
+}
+.prose .se-q-c::after {
+	content: "\201D";
+	margin-top: 0.4em;
+}
+/* 표 - 왼쪽 라벨열 회색 + 테두리 (네이버 기본표) */
+.prose table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1.5em 0;
+	font-size: 0.88em;
+}
+.prose table th,
+.prose table td {
+	border: 1px solid var(--border-default);
+	padding: 8px 13px;
+	text-align: left;
+	vertical-align: middle;
+	line-height: 1.5;
+}
+.prose table th {
+	background: var(--surface-subtle);
+	font-weight: 700;
+	color: var(--text-heading);
+	width: 24%;
+	white-space: nowrap;
+}
+/* 지도 카드(네이버 장소 첨부) */
+.prose .se-map {
+	display: flex;
+	align-items: center;
+	gap: 11px;
+	width: fit-content;
+	max-width: 100%;
+	border: 1px solid var(--border-default);
+	border-radius: var(--radius);
+	padding: 10px 15px;
+	margin: 1.5em auto;
+	text-decoration: none;
+}
+.prose .se-map-pin {
+	flex: 0 0 auto;
+	display: inline-flex;
+}
+.prose .se-map-pin svg {
+	width: 17px;
+	height: 17px;
+}
+.prose .se-map-body {
+	display: flex;
+	flex-direction: column;
+}
+.prose .se-map-name {
+	font-size: 0.92em;
+	font-weight: 700;
+	color: var(--text-heading);
+}
+.prose .se-map-addr {
+	font-size: 0.8em;
+	color: var(--text-muted);
+	margin-top: 1px;
 }
 .prose h3 {
 	font-size: 1.25em;
@@ -1214,6 +1333,10 @@
 	margin-inline: auto; /* 작은 이미지는 가운데 정렬(네이버 기본 동작) */
 	border-radius: var(--radius);
 }
+/* 네이버 이식 본문 이미지: 살짝 축소 + 가운데 */
+.prose figure img {
+	max-width: 86%;
+}
 .prose figcaption {
 	margin-top: 10px;
 	text-align: center;
@@ -1222,11 +1345,12 @@
 }
 
 /* 블로그 상세 — 요점(TL;DR) / FAQ / 출처 / 면책 (SEO·AEO 구조 블록) */
+.post-author-cred {
+	color: var(--color-primary);
+	white-space: nowrap;
+}
 .post-tldr {
-	display: flex;
-	gap: 14px;
-	align-items: flex-start;
-	margin: 0 0 32px;
+	margin: 0 0 36px;
 	padding: 18px 20px;
 	background: var(--surface-subtle);
 	border: 1px solid var(--border-default);
@@ -1234,19 +1358,85 @@
 	border-radius: var(--radius);
 }
 .post-tldr-label {
-	flex: 0 0 auto;
-	font-size: 12px;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	margin-bottom: 10px;
+	padding: 3px 10px 3px 8px;
+	background: var(--color-primary);
+	color: #fff;
+	font-size: 11px;
 	font-weight: 700;
-	letter-spacing: 0.08em;
-	color: var(--color-primary);
-	padding-top: 2px;
+	letter-spacing: 0.06em;
 }
 .post-tldr p {
 	margin: 0;
-	font-size: 16px;
-	line-height: 1.7;
+	font-size: 14px;
+	line-height: 1.72;
 	color: var(--text-body);
 	font-weight: 500;
+	word-break: keep-all;
+	text-wrap: pretty;
+}
+/* 상세 하단 "관련 업무분야" 내부링크 카드 (전환 + 내부링크) */
+.post-service-cta {
+	display: block;
+	margin: 40px 0 0;
+	padding: 20px 24px;
+	background: var(--surface-subtle);
+	border: 1px solid var(--border-default);
+	border-radius: var(--radius);
+	text-decoration: none;
+	transition:
+		border-color 0.15s,
+		background 0.15s;
+}
+.post-service-cta:hover {
+	background: var(--surface-card);
+	border-color: var(--color-primary);
+}
+.post-service-cta-eyebrow {
+	display: block;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--text-muted);
+	margin-bottom: 12px;
+}
+.post-service-cta-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+.post-service-cta-main {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.post-service-cta-main strong {
+	font-size: 19px;
+	font-weight: 700;
+	line-height: 1.3;
+	color: var(--text-heading);
+}
+.post-service-cta-code {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--text-muted);
+}
+.post-service-cta-go {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+	padding: 9px 16px;
+	background: var(--color-primary);
+	color: #fff;
+	font-size: 14px;
+	font-weight: 600;
+	white-space: nowrap;
+	border-radius: var(--radius);
 }
 .post-faq {
 	margin-top: 48px;
@@ -1255,7 +1445,7 @@
 }
 .post-faq > h2,
 .post-sources > h2 {
-	font-size: 22px;
+	font-size: 18px;
 	font-weight: 700;
 	color: var(--text-heading);
 	margin-bottom: 20px;
@@ -1265,19 +1455,32 @@
 	border-bottom: 1px solid var(--border-default);
 }
 .post-faq-item h3 {
-	font-size: 17px;
+	font-size: 14px;
 	font-weight: 700;
 	color: var(--text-heading);
-	margin: 0 0 8px;
+	margin: 0 0 7px;
+	word-break: keep-all;
+	text-wrap: pretty;
 }
 .post-faq-item p {
 	margin: 0;
-	font-size: 16px;
+	font-size: 13.5px;
 	line-height: 1.7;
 	color: var(--text-body);
+	word-break: keep-all;
+	text-wrap: pretty;
 }
 .post-sources {
 	margin-top: 40px;
+	padding-top: 18px;
+	border-top: 1px solid var(--border-default);
+}
+.post-sources > h2 {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	color: var(--text-muted);
+	margin-bottom: 10px;
 }
 .post-sources ul {
 	margin: 0;
@@ -1285,16 +1488,24 @@
 	list-style: none;
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 5px;
 }
 .post-sources a {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	font-size: 15px;
+	gap: 5px;
+	font-size: 12.5px;
+	color: var(--text-muted);
+	text-decoration: none;
+}
+.post-sources a:hover {
 	color: var(--color-primary);
 	text-decoration: underline;
 	text-underline-offset: 2px;
+}
+.post-sources a svg {
+	flex-shrink: 0;
+	opacity: 0.55;
 }
 .post-disclaimer {
 	margin: 40px 0 0;
@@ -1318,12 +1529,94 @@
 	display: inline-flex;
 	align-items: center;
 	padding: 6px 12px;
-	border-radius: 999px;
+	border-radius: 0;
 	background: var(--surface-subtle);
 	color: var(--text-muted);
 	font-size: 13.5px;
 	font-weight: 500;
 	white-space: nowrap;
+}
+
+/* 블로그 목록 — 좌측 카테고리(고정) + 우측 카드 그리드(3열) */
+.blog-layout {
+	display: grid;
+	grid-template-columns: 200px 1fr;
+	gap: 44px;
+	align-items: start;
+	max-width: 1160px;
+	margin-inline: auto;
+}
+.blog-cats {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+.blog-cat {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 9px 12px;
+	font-size: 14px;
+	line-height: 1.35;
+	color: var(--text-muted);
+	text-decoration: none;
+	word-break: keep-all;
+	border-left: 2px solid transparent;
+	transition:
+		color 0.15s,
+		background 0.15s;
+}
+.blog-cat:hover {
+	color: var(--text-heading);
+	background: var(--surface-subtle);
+}
+.blog-cat[data-active="true"] {
+	color: var(--color-primary);
+	font-weight: 700;
+	background: var(--surface-subtle);
+	border-left-color: var(--color-primary);
+}
+.blog-cat-n {
+	flex-shrink: 0;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--text-muted);
+	opacity: 0.7;
+}
+.blog-cat[data-active="true"] .blog-cat-n {
+	color: var(--color-primary);
+	opacity: 1;
+}
+.blog-grid {
+	gap: 22px;
+}
+@media (max-width: 960px) {
+	.blog-layout {
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+	.blog-cats {
+		position: static;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+	.blog-cat {
+		padding: 7px 13px;
+		border: 1px solid var(--border-default);
+	}
+	.blog-cat[data-active="true"] {
+		border-color: var(--color-primary);
+	}
+	.blog-grid.grid-3 {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+@media (max-width: 560px) {
+	.blog-grid.grid-3 {
+		grid-template-columns: 1fr;
+	}
 }
 
 /* ── 하이브리드 보존용 본문 옵션(choice-admin 툴바가 클래스로 부여, 기존 글엔 무영향) ──
@@ -1621,7 +1914,7 @@ button.ds-card {
 	padding: 0;
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	gap: 24px;
+	gap: 40px;
 }
 .proc-step {
 	display: flex;
@@ -1657,6 +1950,7 @@ button.ds-card {
 	color: var(--text-heading);
 }
 .proc-step-desc {
+	white-space: pre-line;
 	margin-top: 10px;
 	font-size: 15px;
 	line-height: 1.7;
@@ -1807,7 +2101,7 @@ button.ds-card {
 	align-items: center;
 	justify-content: center;
 	gap: 10px;
-	min-height: 48px;
+	min-height: 60px;
 }
 .affiliation-emblem {
 	flex-shrink: 0;
@@ -1823,7 +2117,7 @@ button.ds-card {
 	white-space: nowrap;
 }
 .affiliation-lockup {
-	height: 34px;
+	height: 52px;
 	width: auto;
 	object-fit: contain;
 }
@@ -2006,6 +2300,9 @@ button.ds-card {
 	line-height: 1.9;
 	color: var(--text-body);
 	margin-bottom: 30px;
+	/* 슬라이드별 본문 줄 수 차이(4~5줄)로 패널 높이가 변해 화살표가 흔들리던 문제 →
+	   가장 긴 슬라이드(5줄) 높이를 예약해 모든 슬라이드 높이를 고정(폰트 상대값이라 반응형 안전) */
+	min-height: calc(1.9em * 5);
 }
 .str-hl {
 	color: var(--color-primary);
@@ -2677,10 +2974,7 @@ button.ds-card {
 	display: flex;
 	width: max-content;
 	padding: 6px 0 14px;
-	animation: rvMarquee 60s linear infinite;
-}
-.rv-marquee:hover .rv-marquee-track {
-	animation-play-state: paused;
+	animation: rvMarquee 160s linear infinite;
 }
 @keyframes rvMarquee {
 	to {
@@ -2880,8 +3174,8 @@ button.ds-card {
 .rv-lb-img {
 	width: auto;
 	height: auto;
-	max-width: min(88vw, 440px);
-	max-height: 72vh;
+	max-width: min(92vw, 640px);
+	max-height: 76vh;
 	object-fit: contain;
 	background: #fff;
 	padding: 10px;
@@ -2901,7 +3195,7 @@ button.ds-card {
 }
 .rv-lb-cap {
 	margin-top: 16px;
-	max-width: 440px;
+	max-width: 640px;
 	text-align: center;
 	font-size: 14px;
 	line-height: 1.6;
@@ -2968,8 +3262,8 @@ button.ds-card {
 		right: 8px;
 	}
 	.rv-lb-img {
-		max-width: 92vw;
-		max-height: 66vh;
+		max-width: 94vw;
+		max-height: 70vh;
 	}
 }
 

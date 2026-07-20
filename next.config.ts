@@ -88,6 +88,8 @@ const nextConfig: NextConfig = {
 	},
 
 	images: {
+		// AVIF 우선(더 작음) → WebP 폴백. next/image가 소스 포맷과 무관하게 최적 포맷으로 변환·전송.
+		formats: ["image/avif", "image/webp"],
 		// 실제 사용 도메인만 허용(오픈 이미지 프록시 방지). 새 출처 추가 시 여기에 등록.
 		remotePatterns: [
 			{ protocol: "https", hostname: "images.unsplash.com" },

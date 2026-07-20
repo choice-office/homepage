@@ -60,6 +60,10 @@ export const metadata: Metadata = {
 		follow: true,
 		googleBot: { index: true, follow: true, "max-image-preview": "large" },
 	},
+	// 네이버 서치어드바이저 사이트 소유확인(HTML 태그 방식) — 온케팅 계정
+	other: {
+		"naver-site-verification": "df5ad3375ff3b00260e4f87fea556bf9f88740de",
+	},
 };
 
 const jsonLd = {
@@ -67,7 +71,7 @@ const jsonLd = {
 	"@type": ["Organization", "LegalService"],
 	name: siteConfig.name,
 	url: siteConfig.url,
-	logo: siteConfig.ogImage,
+	logo: `${siteConfig.url}/brand/mark-square.png`,
 	image: siteConfig.ogImage,
 	description: siteConfig.description,
 	sameAs: [NAVER_BLOG, YOUTUBE_CHANNEL],

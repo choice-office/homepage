@@ -53,6 +53,7 @@
 		"@typescript/native-preview": "^7.0.0-dev.20260428.1",
 		"knip": "^6.7.0",
 		"lefthook": "^1.11.13",
+		"playwright": "^1.61.1",
 		"shadcn": "^4.1.1",
 		"tailwindcss": "^4",
 		"typescript": "^5"

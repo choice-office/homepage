@@ -18,8 +18,10 @@ export default function GreetingPage() {
 		<>
 			<PageHero
 				title="인사말"
-				sub="초이스 행정사 사무소가 의뢰인께 드리는 말씀입니다."
+				sub="초이스 행정사 사무소를 찾아주셔서 감사합니다."
 				crumbs={[{ label: "홈", route: "home" }, ABOUT_CRUMB, { label: "인사말" }]}
+				image="/인사말-hero.png"
+				imagePosition="66% 72%"
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
@@ -102,16 +104,6 @@ export default function GreetingPage() {
 										"linear-gradient(160deg, rgba(82,70,54,0.55) 0%, rgba(36,29,22,0.8) 100%)",
 								}}
 							/>
-							<div style={{ position: "absolute", left: 32, bottom: 32, color: "#fff", zIndex: 1 }}>
-								<div
-									style={{ fontSize: 14, letterSpacing: ".1em", color: "var(--color-accent-soft)" }}
-								>
-									OUR OFFICE
-								</div>
-								<div style={{ fontSize: 20, fontWeight: 700, marginTop: 6 }}>
-									서울 중구 · 광화문 인근
-								</div>
-							</div>
 						</div>
 					</div>
 				</div>

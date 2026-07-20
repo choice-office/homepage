@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { Fragment } from "react";
 import { Badge } from "@/components/site/ds";
 import { Icon } from "@/components/site/icon";
 import { CTABand, PageHero } from "@/components/site/sections";
@@ -13,18 +14,18 @@ export const metadata: Metadata = {
 
 const ABOUT_CRUMB = { label: "사무소 소개", route: "greeting" };
 
-// 대표(lead) 인삿말 — 사진 없이도 다크 플레이트를 의도적으로 채우는 서명형 메시지
+// 대표(lead) 인사말 — 사진 없이도 다크 플레이트를 의도적으로 채우는 서명형 메시지
 const LEAD_MESSAGE = "복잡하게 느껴지는 출입국 절차, 그 곁에서 길을 함께 찾겠습니다.";
 
 // 구성원 1인 프로필 블록 — 인원이 늘면 좌우 교차(짝수/홀수)로 리듬을 준다.
 const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 	<article className="member-block" data-reveal>
 		<div className="profile-card" data-flip={index % 2 === 1}>
-			{/* 좌: 아이덴티티 + (대표) 인삿말 — 사진 대신 타이포·서명으로 채운 다크 플레이트 */}
+			{/* 좌: 아이덴티티 + (대표) 인사말 — 사진 대신 타이포·서명으로 채운 다크 플레이트 */}
 			<div className="profile-aside">
 				<Image
 					className="profile-monogram"
-					src="/logo-mark.png"
+					src="/brand/logo-mark.png"
 					alt=""
 					width={246}
 					height={203}
@@ -33,7 +34,6 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 				<div className="profile-identity">
 					<span className="profile-eyebrow">초이스 행정사 사무소</span>
 					<h2 className="profile-name">{m.name}</h2>
-					<p className="profile-tagline">{m.summary}</p>
 				</div>
 				{m.lead && (
 					<blockquote className="profile-quote">
@@ -42,7 +42,6 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 							style={{ width: 26, height: 26, color: "var(--color-accent-soft)", opacity: 0.9 }}
 						/>
 						<p>{LEAD_MESSAGE}</p>
-						<cite>— {m.name}</cite>
 					</blockquote>
 				)}
 			</div>
@@ -51,9 +50,13 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 				<span className="profile-section-label">전문 분야</span>
 				<div className="profile-tags">
 					{m.tags.map((t) => (
-						<Badge key={t} variant="outline">
-							{t}
-						</Badge>
+						// 각 칩은 한 줄(nowrap). "외국인 연예인비자" 뒤에서 줄을 강제로 바꿔 4개 / 2개로 배치.
+						<Fragment key={t}>
+							<Badge variant="outline">{t}</Badge>
+							{t === "외국인 연예인비자" && (
+								<span aria-hidden="true" style={{ flexBasis: "100%", height: 0 }} />
+							)}
+						</Fragment>
 					))}
 				</div>
 				<span className="profile-section-label" style={{ marginTop: 30 }}>
@@ -69,7 +72,6 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 						</div>
 					))}
 				</div>
-				<div className="profile-reg">{m.reg}</div>
 			</div>
 		</div>
 
@@ -99,8 +101,9 @@ export default function MembersPage() {
 		<>
 			<PageHero
 				title="구성원"
-				sub="상담부터 접수까지 직접 책임지는 행정사를 소개합니다."
+				sub="전문성과 책임감을 갖춘 행정사를 소개합니다."
 				crumbs={[{ label: "홈", route: "home" }, ABOUT_CRUMB, { label: "구성원" }]}
+				image="/구성원-hero.png"
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
@@ -112,7 +115,8 @@ export default function MembersPage() {
 					<p
 						style={{ textAlign: "center", marginTop: 44, fontSize: 15, color: "var(--text-muted)" }}
 					>
-						상담은 시험 출신 행정사가 직접 진행하며, 담당이 바뀌지 않고 한 사람이 끝까지 책임집니다.
+						초이스 행정사 사무소는 사무장이 없는 행정사 사무소로, 상담부터 접수까지 모든 과정을
+						행정사가 직접 진행합니다.
 					</p>
 				</div>
 			</section>
