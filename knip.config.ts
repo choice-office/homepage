@@ -26,6 +26,8 @@ const config: KnipConfig = {
 		// shadcn carousel(ui/carousel.tsx) 전용 peer deps — knip이 ui/ 미추적이라 오탐
 		"embla-carousel-react",
 		"embla-carousel-autoplay",
+		// 시각 QA·레이아웃 측정용 — 스크립트에서만 사용, 앱 코드 import 없음
+		"playwright",
 	],
 
 	// 파일 내부에서만 사용하는 export는 오탐 제외
