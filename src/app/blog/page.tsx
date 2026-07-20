@@ -157,17 +157,19 @@ export default async function BlogPage({
 	const { page, category } = await searchParams;
 	const [allPosts, allCategories] = await Promise.all([getPublishedPosts(), getCategories()]);
 
-	// 네이버 블로그와 동일한 카테고리 전체를 sort_order 순으로 노출(글 0개도 표시).
+	// 카테고리는 sort_order 순으로 노출하되, 글이 0개인 분류는 숨긴다.
 	const countMap = new Map<string, number>();
 	for (const p of allPosts) {
 		if (!p.categorySlug) continue;
 		countMap.set(p.categorySlug, (countMap.get(p.categorySlug) ?? 0) + 1);
 	}
-	const categories = allCategories.map((c) => ({
-		slug: c.slug,
-		name: c.name,
-		count: countMap.get(c.slug) ?? 0,
-	}));
+	const categories = allCategories
+		.map((c) => ({
+			slug: c.slug,
+			name: c.name,
+			count: countMap.get(c.slug) ?? 0,
+		}))
+		.filter((c) => c.count > 0);
 	const validSlugs = new Set(allCategories.map((c) => c.slug));
 
 	const active = category && validSlugs.has(category) ? category : undefined;

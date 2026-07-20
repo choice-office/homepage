@@ -1319,6 +1319,12 @@
 	height: auto;
 	margin-inline: auto; /* 작은 이미지는 가운데 정렬(네이버 기본 동작) */
 	border-radius: var(--radius);
+	/* 로딩 플레이스홀더 — 본문 이미지는 width/height가 없어 로드 전 박스가 0이 된다.
+	   min-height로 박스를 확보하고 나비 마크 배경으로 "이미지 준비 중"을 표시. 로드되면
+	   불투명 사진이 배경을 덮는다(placeholder는 로드 전에만 보임). */
+	min-height: 160px;
+	background: var(--surface-subtle, #f4efe7) url("/brand/mark-square.png") center / 52px auto
+		no-repeat;
 }
 /* 네이버 이식 본문 이미지: 살짝 축소 + 가운데 */
 .prose figure img {
@@ -2603,6 +2609,43 @@ button.ds-card {
 	height: 100%;
 	border: 0;
 }
+/* 쇼츠 파사드(썸네일 버튼) — 클릭 전 유튜브 iframe 대신 표시(스크롤 렉 방지) */
+.short-facade {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	border: 0;
+	cursor: pointer;
+	background: #000;
+	display: block;
+}
+.short-play {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 62px;
+	height: 62px;
+	border-radius: 50%;
+	background: rgba(20, 16, 13, 0.55);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-left: 3px;
+	color: #fff;
+	transition:
+		background 0.2s ease,
+		transform 0.2s ease;
+}
+.short-play svg {
+	fill: #fff;
+}
+.short-facade:hover .short-play {
+	background: var(--color-primary);
+	transform: translate(-50%, -50%) scale(1.06);
+}
 
 /* ── 후기 카드 입체감 ─────────────────────────────────────────── */
 .review-card {
@@ -2881,6 +2924,35 @@ button.ds-card {
 	top: 9px;
 	width: 6px;
 	height: 6px;
+	background: var(--color-accent);
+}
+/* 하위 목록(예: 협회 교육 아래 세부 과정) — 왼쪽 레일로 그룹핑 + 항목마다 작은 점 마커.
+   부모(채운 사각)와 대비되게 서브는 레일+원형 점으로 계층을 단정하게 표현. */
+.profile-bio-sub {
+	list-style: none;
+	margin: 10px 0 2px 2px;
+	padding-left: 15px;
+	border-left: 1.5px solid var(--border-default);
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.profile-bio-subitem {
+	position: relative;
+	padding-left: 15px;
+	font-size: 14.5px;
+	line-height: 1.55;
+	color: var(--text-muted);
+	word-break: keep-all;
+}
+.profile-bio-subitem::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 9px;
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
 	background: var(--color-accent);
 }
 @media (max-width: 900px) {

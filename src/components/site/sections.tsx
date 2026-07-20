@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { type FormEvent, Fragment, type ReactNode, useEffect, useState } from "react";
-import { submitContact } from "@/app/actions/contact";
+import { submitContact, submitQuickConsult } from "@/app/actions/contact";
 import {
 	Select,
 	SelectContent,
@@ -652,6 +652,42 @@ export const Stats = () => (
 	</section>
 );
 
+// 유튜브 쇼츠 파사드 — 로드 시 무거운 iframe 4개를 미리 띄우지 않고 썸네일+재생버튼만 표시.
+// 클릭하면 그때 실제 iframe(autoplay) 로드 → 스크롤 렉 제거 + 초기 로드 경량화(유튜브 JS 0).
+const ShortEmbed = ({ id }: { id: string }) => {
+	const [play, setPlay] = useState(false);
+	if (play) {
+		return (
+			<iframe
+				src={`https://www.youtube.com/embed/${id}?autoplay=1`}
+				title="초이스 행정사 쇼츠"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				referrerPolicy="strict-origin-when-cross-origin"
+				allowFullScreen
+			/>
+		);
+	}
+	return (
+		<button
+			type="button"
+			className="short-facade"
+			onClick={() => setPlay(true)}
+			aria-label="영상 재생"
+		>
+			<Image
+				src={`https://i.ytimg.com/vi/${id}/oardefault.jpg`}
+				alt=""
+				fill
+				sizes="(max-width: 640px) 90vw, 340px"
+				style={{ objectFit: "cover" }}
+			/>
+			<span className="short-play" aria-hidden="true">
+				<Icon n="play" style={{ width: 24, height: 24 }} />
+			</span>
+		</button>
+	);
+};
+
 export const VideoSection = () => (
 	<section className="section" style={{ background: "var(--surface-page)" }}>
 		<div className="container">
@@ -689,14 +725,7 @@ export const VideoSection = () => (
 			<div data-stagger="blur" className="shorts-grid" style={{ marginTop: 48 }}>
 				{SHORTS.map((id) => (
 					<div className="short-embed" key={id}>
-						<iframe
-							src={`https://www.youtube.com/embed/${id}`}
-							title="Korea Visa Master 쇼츠"
-							loading="lazy"
-							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-							referrerPolicy="strict-origin-when-cross-origin"
-							allowFullScreen
-						/>
+						<ShortEmbed id={id} />
 					</div>
 				))}
 			</div>
@@ -1335,6 +1364,32 @@ export const ConsultBar = () => {
 	const go = useGo();
 	const [visible, setVisible] = useState(false);
 	const [svc, setSvc] = useState("");
+	const [phone, setPhone] = useState("");
+	const [sending, setSending] = useState(false);
+	const [done, setDone] = useState(false);
+	const [err, setErr] = useState("");
+	const submitQuick = async (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (sending) return;
+		if (!phone.trim()) {
+			setErr("연락처를 입력해 주세요.");
+			return;
+		}
+		setSending(true);
+		setErr("");
+		const fd = new FormData();
+		fd.set("consultField", svc);
+		fd.set("phone", phone.trim());
+		const res = await submitQuickConsult(null, fd);
+		setSending(false);
+		if (res.success) {
+			setDone(true);
+			setPhone("");
+			setSvc("");
+		} else {
+			setErr(res.error ?? "접수 중 오류가 발생했습니다.");
+		}
+	};
 	useEffect(() => {
 		const on = () => setVisible(window.scrollY > 360);
 		window.addEventListener("scroll", on, { passive: true });
@@ -1384,13 +1439,7 @@ export const ConsultBar = () => {
 							</a>
 						</div>
 					</div>
-					<form
-						className="consult-form"
-						onSubmit={(e) => {
-							e.preventDefault();
-							go("contact");
-						}}
-					>
+					<form className="consult-form" onSubmit={submitQuick}>
 						<span style={{ fontWeight: 600, whiteSpace: "nowrap" }}>신속 상담 신청</span>
 						<Select value={svc} onValueChange={(v) => setSvc(v ?? "")}>
 							<SelectTrigger
@@ -1415,6 +1464,10 @@ export const ConsultBar = () => {
 							</SelectContent>
 						</Select>
 						<input
+							value={phone}
+							onChange={(e) => setPhone(e.target.value)}
+							inputMode="tel"
+							aria-label="연락처"
 							placeholder="연락처"
 							style={{
 								height: 44,
@@ -1429,9 +1482,24 @@ export const ConsultBar = () => {
 								minWidth: 0,
 							}}
 						/>
-						<Button type="submit" variant="secondary" style={{ whiteSpace: "nowrap" }}>
-							상담신청
+						<Button
+							type="submit"
+							variant="secondary"
+							disabled={sending || done}
+							style={{ whiteSpace: "nowrap" }}
+						>
+							{sending ? "신청 중..." : done ? "완료" : "상담신청"}
 						</Button>
+						{done && (
+							<span
+								style={{ fontWeight: 600, color: "var(--color-accent-soft)", whiteSpace: "nowrap" }}
+							>
+								✓ 접수되었습니다. 곧 연락드리겠습니다.
+							</span>
+						)}
+						{err && (
+							<span style={{ color: "#ffd7d0", fontSize: 13, whiteSpace: "nowrap" }}>{err}</span>
+						)}
 					</form>
 				</div>
 			</div>

@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { unstable_cache } from "next/cache";
 import { SERVICES } from "./site-data";
 
 // 블로그 공개 읽기 레이어 — Supabase(blog_posts)에서 published 글만 읽는다(RLS).
@@ -112,7 +113,7 @@ const client = () => {
 	return createClient(url, key, { auth: { persistSession: false } });
 };
 
-export const getPublishedPosts = async (): Promise<BlogPost[]> => {
+const fetchPublishedPosts = async (): Promise<BlogPost[]> => {
 	const supabase = client();
 	if (!supabase) return [];
 	const run = (select: string) =>
@@ -127,6 +128,15 @@ export const getPublishedPosts = async (): Promise<BlogPost[]> => {
 	if (error || !data) return [];
 	return (data as unknown as Row[]).map(toPost);
 };
+
+// 발행글 전체(본문 포함 ~1MB)를 Data Cache로 캐싱한다. /blog는 searchParams로 동적 렌더라
+// 페이지네이션 클릭마다 Supabase 전체를 재조회(≈2초)하던 것을 캐시 히트로 대체(즉시).
+// 커버가 전부 본문 첫 이미지에서 파생되어 content가 필요하므로 트림 불가 → 전체 캐싱이 정답.
+// revalidate 60s(페이지의 revalidate와 동일). 글 발행 시 즉시 반영이 필요하면 revalidateTag("blog-posts").
+export const getPublishedPosts = unstable_cache(fetchPublishedPosts, ["blog:published-posts"], {
+	revalidate: 60,
+	tags: ["blog-posts"],
+});
 
 // 블로그 카테고리 전체(네이버 블로그와 동일) — 글 수와 무관하게 모두 노출한다.
 export type BlogCategory = { slug: string; name: string; sortOrder: number };

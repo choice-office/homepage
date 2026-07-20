@@ -82,11 +82,24 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 						<dt className="profile-bio-label">{b.label}</dt>
 						<dd className="profile-bio-wrap">
 							<ul className="profile-bio-items">
-								{b.items.map((it) => (
-									<li className="profile-bio-item" key={it}>
-										{it}
-									</li>
-								))}
+								{b.items.map((it) =>
+									typeof it === "string" ? (
+										<li className="profile-bio-item" key={it}>
+											{it}
+										</li>
+									) : (
+										<li className="profile-bio-item" key={it.text}>
+											{it.text}
+											<ul className="profile-bio-sub">
+												{it.sub.map((s) => (
+													<li className="profile-bio-subitem" key={s}>
+														{s}
+													</li>
+												))}
+											</ul>
+										</li>
+									),
+								)}
 							</ul>
 						</dd>
 					</div>

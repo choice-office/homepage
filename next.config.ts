@@ -95,6 +95,8 @@ const nextConfig: NextConfig = {
 			{ protocol: "https", hostname: "images.unsplash.com" },
 			// 관리자에서 업로드한 블로그 이미지(Supabase Storage) 대비
 			{ protocol: "https", hostname: "*.supabase.co" },
+			// 유튜브 쇼츠 파사드 썸네일(클릭 전 표시)
+			{ protocol: "https", hostname: "i.ytimg.com" },
 		],
 	},
 };
