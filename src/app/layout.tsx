@@ -19,7 +19,10 @@ const fontSans = Noto_Sans_KR({
 	subsets: ["latin"],
 	weight: ["400", "500", "700"],
 	variable: "--font-noto-sans-kr",
-	display: "swap",
+	// optional: 로드 중 폴백→웹폰트 스왑을 하지 않아 한글이 "쪼그라들었다 커지는" FOUT 제거.
+	// 빠른 회선은 폰트가 짧은 블록기간(~100ms) 내 도착해 Noto 즉시 표시, 느린 회선은
+	// 시스템 한글 폰트로 표시(스왑 없음) + 다음 방문부터 캐시된 Noto 사용.
+	display: "optional",
 });
 
 export const viewport: Viewport = {
