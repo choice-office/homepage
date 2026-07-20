@@ -1002,6 +1002,86 @@
 .consult-mobile {
 	display: none;
 }
+/* 신속상담 접수 완료 토스트 — 상담바 위에 뜨는 브랜드 카드(폼 레이아웃엔 영향 없음, fixed) */
+@keyframes consult-toast-in {
+	from {
+		opacity: 0;
+		transform: translate(-50%, 14px);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, 0);
+	}
+}
+.consult-toast {
+	position: fixed;
+	left: 50%;
+	bottom: 92px;
+	transform: translateX(-50%);
+	z-index: 60;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	max-width: calc(100vw - 32px);
+	padding: 9px 18px 9px 11px;
+	background: #ffffff;
+	border: 1px solid var(--border-default);
+	border-radius: 11px;
+	box-shadow: 0 10px 28px -14px rgba(34, 29, 22, 0.42);
+	animation: consult-toast-in 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.consult-toast-ic {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var(--color-primary);
+	color: #ffffff;
+}
+.consult-toast-txt {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	font-size: 11.5px;
+	line-height: 1.4;
+	color: var(--text-muted);
+	white-space: nowrap;
+}
+.consult-toast-txt strong {
+	font-size: 13.5px;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	color: var(--text-heading);
+}
+/* 완료 토스트 — 더 크고 눈에 띄게(성공만 강조), 골드 테두리 + 강한 그림자 */
+.consult-toast--ok {
+	gap: 13px;
+	padding: 14px 24px 14px 15px;
+	border-color: color-mix(in oklch, var(--color-primary) 32%, var(--border-default));
+	box-shadow: 0 16px 40px -12px rgba(34, 29, 22, 0.5);
+}
+.consult-toast--ok .consult-toast-ic {
+	width: 36px;
+	height: 36px;
+}
+.consult-toast--ok .consult-toast-txt {
+	font-size: 12.5px;
+}
+.consult-toast--ok .consult-toast-txt strong {
+	font-size: 15.5px;
+}
+/* 에러 토스트 — 아이콘 경고색(웜 레드) */
+.consult-toast--err .consult-toast-ic {
+	background: #c0503f;
+}
+@media (prefers-reduced-motion: reduce) {
+	.consult-toast {
+		animation: none;
+	}
+}
 
 @media (max-width: 960px) {
 	.section {
@@ -1323,8 +1403,8 @@
 	   min-height로 박스를 확보하고 나비 마크 배경으로 "이미지 준비 중"을 표시. 로드되면
 	   불투명 사진이 배경을 덮는다(placeholder는 로드 전에만 보임). */
 	min-height: 160px;
-	background: var(--surface-subtle, #f4efe7) url("/brand/mark-square.png") center / 52px auto
-		no-repeat;
+	background:
+		var(--surface-subtle, #f4efe7) url("/brand/mark-square.png") center / 52px auto no-repeat;
 }
 /* 네이버 이식 본문 이미지: 살짝 축소 + 가운데 */
 .prose figure img {

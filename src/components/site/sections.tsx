@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { type FormEvent, Fragment, type ReactNode, useEffect, useState } from "react";
+import { type FormEvent, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { submitContact, submitQuickConsult } from "@/app/actions/contact";
 import {
 	Select,
@@ -36,7 +36,7 @@ import { ReviewImageGallery } from "./review-gallery";
 import { smoothScrollTo } from "./smooth-scroll";
 import { useGo } from "./use-go";
 
-const HERO_OVERLAY = 0.86;
+const HERO_OVERLAY = 0.78;
 
 type Crumb = { label: string; route?: string; param?: string };
 
@@ -108,7 +108,7 @@ export const PageHero = ({
 				position: "relative",
 				overflow: "hidden",
 				padding: "176px 0 84px",
-				background: "#241d16",
+				background: "#3a2f24",
 			}}
 		>
 			<Image
@@ -117,14 +117,15 @@ export const PageHero = ({
 				fill
 				priority
 				sizes="100vw"
-				style={{ objectFit: "cover", objectPosition: imagePosition ?? "center", opacity: 0.45 }}
+				style={{ objectFit: "cover", objectPosition: imagePosition ?? "center", opacity: 0.72 }}
 			/>
+			{/* 좌측(텍스트 영역)만 충분히 어둡게, 우측으로 갈수록 이미지가 밝게 드러나도록 그라디언트 완화 */}
 			<div
 				style={{
 					position: "absolute",
 					inset: 0,
 					background:
-						"linear-gradient(115deg, rgba(30,24,18,0.78) 0%, rgba(52,43,33,0.58) 44%, rgba(82,70,54,0.3) 100%)",
+						"linear-gradient(115deg, rgba(28,22,16,0.72) 0%, rgba(45,37,28,0.42) 46%, rgba(70,58,44,0.12) 100%)",
 				}}
 			/>
 			<div className="container" style={{ position: "relative", zIndex: 2 }}>
@@ -1366,28 +1367,42 @@ export const ConsultBar = () => {
 	const [svc, setSvc] = useState("");
 	const [phone, setPhone] = useState("");
 	const [sending, setSending] = useState(false);
-	const [done, setDone] = useState(false);
-	const [err, setErr] = useState("");
+	const [toast, setToast] = useState<{ kind: "ok" | "err"; msg: string } | null>(null);
+	// 같은 번호로 연속 신청 방지 — 이번 세션에서 접수 성공한 번호(숫자만)를 기억
+	const submittedPhones = useRef<Set<string>>(new Set());
+	const showToast = (kind: "ok" | "err", msg: string) => {
+		setToast({ kind, msg });
+		window.setTimeout(() => setToast(null), kind === "ok" ? 3500 : 2400);
+	};
 	const submitQuick = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (sending) return;
+		if (!svc) {
+			showToast("err", "상담분야를 선택해 주세요.");
+			return;
+		}
 		if (!phone.trim()) {
-			setErr("연락처를 입력해 주세요.");
+			showToast("err", "연락처를 입력해 주세요.");
+			return;
+		}
+		const digits = phone.replace(/\D/g, "");
+		if (submittedPhones.current.has(digits)) {
+			showToast("err", "이미 상담 신청하신 번호입니다.");
 			return;
 		}
 		setSending(true);
-		setErr("");
 		const fd = new FormData();
 		fd.set("consultField", svc);
 		fd.set("phone", phone.trim());
 		const res = await submitQuickConsult(null, fd);
 		setSending(false);
 		if (res.success) {
-			setDone(true);
+			submittedPhones.current.add(digits);
 			setPhone("");
 			setSvc("");
+			showToast("ok", "상담 신청이 접수되었습니다");
 		} else {
-			setErr(res.error ?? "접수 중 오류가 발생했습니다.");
+			showToast("err", res.error ?? "접수 중 오류가 발생했습니다.");
 		}
 	};
 	useEffect(() => {
@@ -1409,6 +1424,20 @@ export const ConsultBar = () => {
 	];
 	return (
 		<>
+			{toast && (
+				<div className={`consult-toast consult-toast--${toast.kind}`} role="status">
+					<span className="consult-toast-ic" aria-hidden="true">
+						<Icon
+							n={toast.kind === "ok" ? "check" : "x"}
+							style={toast.kind === "ok" ? { width: 19, height: 19 } : { width: 14, height: 14 }}
+						/>
+					</span>
+					<span className="consult-toast-txt">
+						<strong>{toast.msg}</strong>
+						{toast.kind === "ok" && "곧 연락드리겠습니다."}
+					</span>
+				</div>
+			)}
 			<div
 				className="consult-desktop"
 				style={{
@@ -1465,10 +1494,10 @@ export const ConsultBar = () => {
 						</Select>
 						<input
 							value={phone}
-							onChange={(e) => setPhone(e.target.value)}
+							onChange={(e) => setPhone(formatKrPhone(e.target.value))}
 							inputMode="tel"
 							aria-label="연락처"
-							placeholder="연락처"
+							placeholder="010-0000-0000"
 							style={{
 								height: 44,
 								padding: "0 14px",
@@ -1485,21 +1514,11 @@ export const ConsultBar = () => {
 						<Button
 							type="submit"
 							variant="secondary"
-							disabled={sending || done}
+							disabled={sending}
 							style={{ whiteSpace: "nowrap" }}
 						>
-							{sending ? "신청 중..." : done ? "완료" : "상담신청"}
+							{sending ? "신청 중..." : "상담신청"}
 						</Button>
-						{done && (
-							<span
-								style={{ fontWeight: 600, color: "var(--color-accent-soft)", whiteSpace: "nowrap" }}
-							>
-								✓ 접수되었습니다. 곧 연락드리겠습니다.
-							</span>
-						)}
-						{err && (
-							<span style={{ color: "#ffd7d0", fontSize: 13, whiteSpace: "nowrap" }}>{err}</span>
-						)}
 					</form>
 				</div>
 			</div>

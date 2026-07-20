@@ -7,7 +7,7 @@ import { CTABand, PageHero } from "@/components/site/sections";
 import { type Member, TEAM } from "@/lib/site-data";
 
 export const metadata: Metadata = {
-	title: "구성원",
+	title: "행정사 소개",
 	description: "상담부터 접수까지 직접 책임지는 시험 출신 행정사를 소개합니다.",
 	alternates: { canonical: "/members" },
 };
@@ -50,10 +50,10 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 				<span className="profile-section-label">전문 분야</span>
 				<div className="profile-tags">
 					{m.tags.map((t) => (
-						// 각 칩은 한 줄(nowrap). "외국인 연예인비자" 뒤에서 줄을 강제로 바꿔 4개 / 2개로 배치.
+						// 각 칩은 한 줄(nowrap). "E6외국인 연예인 비자" 뒤에서 줄을 강제로 바꿔 4개 / 2개로 배치.
 						<Fragment key={t}>
 							<Badge variant="outline">{t}</Badge>
-							{t === "외국인 연예인비자" && (
+							{t === "E6외국인 연예인 비자" && (
 								<span aria-hidden="true" style={{ flexBasis: "100%", height: 0 }} />
 							)}
 						</Fragment>
@@ -113,9 +113,9 @@ export default function MembersPage() {
 	return (
 		<>
 			<PageHero
-				title="구성원"
+				title="행정사 소개"
 				sub="전문성과 책임감을 갖춘 행정사를 소개합니다."
-				crumbs={[{ label: "홈", route: "home" }, ABOUT_CRUMB, { label: "구성원" }]}
+				crumbs={[{ label: "홈", route: "home" }, ABOUT_CRUMB, { label: "행정사 소개" }]}
 				image="/구성원-hero.png"
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>

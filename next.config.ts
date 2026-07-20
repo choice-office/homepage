@@ -75,6 +75,20 @@ const securityHeaders = [
 	},
 ];
 
+// Supabase Storage 이미지 호스트 — Next 16.2.1/Turbopack에서 next/image hostname 와일드카드(`*`/`**`)가
+// project-ref 서브도메인(예: xxxx.supabase.co)을 매칭하지 못하는 회귀가 있다. exact 호스트는 정상 매칭되므로
+// SUPABASE_URL에서 정확한 호스트를 뽑아 등록한다. 빌드 시 env가 비는 경우(프리뷰 등) 대비 알려진 호스트를 폴백으로 둔다.
+const supabaseHosts = (() => {
+	const hosts = new Set<string>(["pohfmrzgtoxdbwdsrckt.supabase.co"]);
+	const url = process.env.SUPABASE_URL;
+	if (url) {
+		try {
+			hosts.add(new URL(url).hostname);
+		} catch {}
+	}
+	return [...hosts];
+})();
+
 const nextConfig: NextConfig = {
 	async headers() {
 		// dev에서는 CSP가 Turbopack HMR WebSocket을 차단하므로 비활성화
@@ -93,8 +107,8 @@ const nextConfig: NextConfig = {
 		// 실제 사용 도메인만 허용(오픈 이미지 프록시 방지). 새 출처 추가 시 여기에 등록.
 		remotePatterns: [
 			{ protocol: "https", hostname: "images.unsplash.com" },
-			// 관리자에서 업로드한 블로그 이미지(Supabase Storage) 대비
-			{ protocol: "https", hostname: "*.supabase.co" },
+			// 관리자에서 업로드한 블로그/후기 이미지(Supabase Storage) — exact 호스트로 등록(위 supabaseHosts 참고)
+			...supabaseHosts.map((hostname) => ({ protocol: "https" as const, hostname })),
 			// 유튜브 쇼츠 파사드 썸네일(클릭 전 표시)
 			{ protocol: "https", hostname: "i.ytimg.com" },
 		],

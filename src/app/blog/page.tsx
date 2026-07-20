@@ -188,7 +188,7 @@ export default async function BlogPage({
 				crumbs={[{ label: "홈", route: "home" }, { label: "블로그" }]}
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
-				<div className="container blog-layout">
+				<div className="blog-layout container">
 					<aside className="blog-cats" aria-label="카테고리">
 						<Link className="blog-cat" data-active={!active} href={buildHref(1)}>
 							<span>전체</span>

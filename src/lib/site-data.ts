@@ -21,7 +21,7 @@ export const NAV: NavItem[] = [
 		route: "greeting",
 		children: [
 			{ label: "인사말", route: "greeting" },
-			{ label: "구성원", route: "profile" },
+			{ label: "행정사 소개", route: "profile" },
 			{ label: "오시는 길", route: "location" },
 			{ label: "자주 묻는 질문", route: "faq" },
 		],
@@ -116,10 +116,10 @@ export const TEAM: Member[] = [
 		summary: "상담부터 접수까지 직접 책임지는 시험 출신 행정사",
 		tags: [
 			"F4비자 · 거소증",
-			"영주권",
+			"F5영주권",
 			"F6결혼비자",
-			"외국인 연예인비자",
-			"외국인 전문직 비자",
+			"E6외국인 연예인 비자",
+			"E7외국인 전문직 비자",
 			"국적회복",
 		],
 		career: [
@@ -142,7 +142,7 @@ export const TEAM: Member[] = [
 			{
 				label: "보유 자격",
 				items: [
-					"행정사",
+					"행정사(2018년, 제6회 국가자격시험 합격)",
 					"민원행정상담사",
 					"행정처분구제분석사",
 					"학교폭력예방상담사",
@@ -150,7 +150,7 @@ export const TEAM: Member[] = [
 				],
 			},
 			{
-				label: "소속",
+				label: "소속 · 수상",
 				items: [
 					"대한행정사회 정회원",
 					"한국시험행정사회 정회원",
