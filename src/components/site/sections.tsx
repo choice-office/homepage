@@ -1408,6 +1408,8 @@ export const ConsultBar = () => {
 	const [qr, setQr] = useState(false); // 모바일 위챗 QR 팝업(위챗은 ID 딥링크 불가 → QR 안내)
 	const [svc, setSvc] = useState("");
 	const [phone, setPhone] = useState("");
+	const [name, setName] = useState("");
+	const [agree, setAgree] = useState(false);
 	const [sending, setSending] = useState(false);
 	const [toast, setToast] = useState<{ kind: "ok" | "err"; msg: string } | null>(null);
 	// 같은 번호로 연속 신청 방지 — 이번 세션에서 접수 성공한 번호(숫자만)를 기억
@@ -1419,12 +1421,20 @@ export const ConsultBar = () => {
 	const submitQuick = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (sending) return;
+		if (!name.trim()) {
+			showToast("err", "성함을 입력해 주세요.");
+			return;
+		}
 		if (!svc) {
 			showToast("err", "상담분야를 선택해 주세요.");
 			return;
 		}
 		if (!phone.trim()) {
 			showToast("err", "연락처를 입력해 주세요.");
+			return;
+		}
+		if (!agree) {
+			showToast("err", "개인정보 수집·이용에 동의해 주세요.");
 			return;
 		}
 		const digits = phone.replace(/\D/g, "");
@@ -1434,14 +1444,18 @@ export const ConsultBar = () => {
 		}
 		setSending(true);
 		const fd = new FormData();
+		fd.set("name", name.trim());
 		fd.set("consultField", svc);
 		fd.set("phone", phone.trim());
+		fd.set("privacyConsent", "on");
 		const res = await submitQuickConsult(null, fd);
 		setSending(false);
 		if (res.success) {
 			submittedPhones.current.add(digits);
 			setPhone("");
 			setSvc("");
+			setName("");
+			setAgree(false);
 			showToast("ok", "상담 신청이 접수되었습니다");
 		} else {
 			showToast("err", res.error ?? "접수 중 오류가 발생했습니다.");
@@ -1531,29 +1545,60 @@ export const ConsultBar = () => {
 					boxShadow: "0 -4px 20px rgba(34,34,34,.18)",
 				}}
 			>
-				<div className="consult-bar-inner container" style={{ padding: "16px 24px" }}>
+				<div className="consult-bar-inner container" style={{ padding: "16px 24px", gap: 20 }}>
 					<div style={{ display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap" }}>
 						<Icon
 							n="phone-call"
 							style={{ width: 22, height: 22, color: "var(--color-accent-soft)" }}
 						/>
-						<div>
+						<div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
+							<span
+								style={{
+									fontSize: 12.5,
+									fontWeight: 600,
+									color: "var(--color-accent-soft)",
+									letterSpacing: ".02em",
+								}}
+							>
+								신속 상담
+							</span>
 							<a
 								href={CONTACT.phone.href}
-								style={{ fontSize: 22, fontWeight: 700, color: "#fff", letterSpacing: "-.01em" }}
+								style={{ fontSize: 20, fontWeight: 700, color: "#fff", letterSpacing: "-.01em" }}
 							>
 								{CONTACT.phone.display}
 							</a>
 						</div>
 					</div>
-					<form className="consult-form" onSubmit={submitQuick}>
-						<span style={{ fontWeight: 600, whiteSpace: "nowrap" }}>신속 상담 신청</span>
+					<form
+						className="consult-form"
+						onSubmit={submitQuick}
+						style={{ flex: "0 1 1060px", gap: 10 }}
+					>
+						<input
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+							aria-label="성함"
+							placeholder="성함"
+							style={{
+								height: 44,
+								padding: "0 14px",
+								borderRadius: "var(--radius)",
+								border: "none",
+								background: "#fff",
+								fontFamily: "var(--font-sans)",
+								fontSize: 15,
+								color: "var(--text-body)",
+								flex: "0 1 210px",
+								minWidth: 0,
+							}}
+						/>
 						<Select value={svc} onValueChange={(v) => setSvc(v ?? "")}>
 							<SelectTrigger
 								className="border-none"
 								style={{
 									height: 44,
-									flex: "0 1 180px",
+									flex: "0 1 175px",
 									background: "#fff",
 									borderRadius: "var(--radius)",
 									fontSize: 15,
@@ -1585,15 +1630,36 @@ export const ConsultBar = () => {
 								fontFamily: "var(--font-sans)",
 								fontSize: 15,
 								color: "var(--text-body)",
-								flex: "1 1 auto",
+								flex: "0 1 340px",
+								maxWidth: 340,
 								minWidth: 0,
 							}}
 						/>
+						<label
+							style={{
+								display: "flex",
+								alignItems: "center",
+								gap: 6,
+								flex: "0 0 auto",
+								whiteSpace: "nowrap",
+								fontSize: 13,
+								color: "rgba(255,255,255,0.82)",
+								cursor: "pointer",
+							}}
+						>
+							<input
+								type="checkbox"
+								checked={agree}
+								onChange={(e) => setAgree(e.target.checked)}
+								style={{ width: 16, height: 16, accentColor: "var(--color-accent)" }}
+							/>
+							<span>개인정보 수집·이용 동의</span>
+						</label>
 						<Button
 							type="submit"
 							variant="secondary"
 							disabled={sending}
-							style={{ whiteSpace: "nowrap" }}
+							style={{ whiteSpace: "nowrap", minWidth: 132 }}
 						>
 							{sending ? "신청 중..." : "상담신청"}
 						</Button>

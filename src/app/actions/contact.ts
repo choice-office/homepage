@@ -149,13 +149,19 @@ export const submitQuickConsult = async (
 	_prevState: ContactResult | null,
 	formData: FormData,
 ): Promise<ContactResult> => {
+	const name = text(formData, "name");
 	const consultField = text(formData, "consultField");
 	const phone = text(formData, "phone");
+	const privacyConsent = formData.get("privacyConsent") === "on";
 
+	// 필수값 — 문의하기(submitContact)와 동일한 기준으로 성함·동의를 함께 요구
+	if (!name) return { success: false, error: "성함을 입력해 주세요." };
 	if (!phone) return { success: false, error: "연락처를 입력해 주세요." };
+	if (!privacyConsent) return { success: false, error: "개인정보 수집·이용에 동의해 주세요." };
 
 	const consultLabel = CONSULT_LABELS[consultField] ?? "미선택";
 	const rows: [string, string][] = [
+		["성함", name],
 		["상담분야", consultLabel],
 		["연락처", phone],
 	];
@@ -171,8 +177,8 @@ export const submitQuickConsult = async (
 		const { error } = await resend.emails.send({
 			from,
 			to: contactEmail,
-			subject: `[⚡신속 상담] ${consultLabel} · ${phone}`,
-			text: `[신속 상담 신청 · 홈페이지 하단 상담바]\n상담분야: ${consultLabel}\n연락처: ${phone}`,
+			subject: `[⚡신속 상담] ${name} · ${consultLabel} · ${phone}`,
+			text: `[신속 상담 신청 · 홈페이지 하단 상담바]\n성함: ${name}\n상담분야: ${consultLabel}\n연락처: ${phone}`,
 			html,
 		});
 		if (error) {
