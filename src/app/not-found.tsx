@@ -1,14 +1,7 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { redirect } from "next/navigation";
 
+// 존재하지 않는 경로(404)는 홈으로 이동시킨다.
+// 매칭되지 않는 URL과 페이지 내부의 notFound() 호출(없는 블로그/업무분야 id 등)이 모두 여기로 온다.
 export default function NotFound() {
-	return (
-		<section className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-			<h1 className="font-bold text-6xl">404</h1>
-			<p className="mt-4 text-lg text-muted-foreground">페이지를 찾을 수 없습니다.</p>
-			<Button render={<Link href="/" />} className="mt-8">
-				홈으로 돌아가기
-			</Button>
-		</section>
-	);
+	redirect("/");
 }

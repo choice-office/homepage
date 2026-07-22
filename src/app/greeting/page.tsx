@@ -25,7 +25,7 @@ export default function GreetingPage() {
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
 				<div className="container">
-					<div data-stagger="split" className="grid-2" style={{ gap: 56, alignItems: "stretch" }}>
+					<div data-stagger="split" className="grid-2 greeting-split" style={{ alignItems: "stretch" }}>
 						<div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
 							<Icon
 								n="quote"

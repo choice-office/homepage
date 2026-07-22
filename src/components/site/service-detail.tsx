@@ -233,7 +233,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 						>
 							Other Services
 						</span>
-						<h2 style={{ fontSize: "clamp(24px,3vw,30px)", marginTop: 12 }}>다른 업무분야</h2>
+						<h2 style={{ fontSize: "clamp(21px,3vw,30px)", marginTop: 12 }}>다른 업무분야</h2>
 						<p style={{ fontSize: 16, color: "var(--text-muted)", marginTop: 12, lineHeight: 1.7 }}>
 							찾으시는 분야가 있다면 함께 살펴보세요. 분야를 선택하면 대상·서류·절차·기간을 안내해
 							드립니다.
@@ -292,7 +292,9 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 									<Badge>{o.code}</Badge>
 								</div>
 								<CardTitle style={{ fontSize: 18 }}>{o.title}</CardTitle>
-								<CardBody style={{ fontSize: 14.5, flex: 1 }}>{o.summary}</CardBody>
+								<CardBody className="svc-other-desc" style={{ fontSize: 14.5, flex: 1 }}>
+									{o.summary}
+								</CardBody>
 								<span
 									style={{
 										display: "inline-flex",

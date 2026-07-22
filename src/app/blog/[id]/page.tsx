@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { BlogCard } from "@/components/site/blog-card";
 import { Badge } from "@/components/site/ds";
 import { Icon } from "@/components/site/icon";
@@ -109,7 +109,7 @@ const buildJsonLd = (post: BlogPost) => {
 export default async function BlogDetailPage({ params }: Params) {
 	const { id } = await params;
 	const post = await getPostBySlug(id);
-	if (!post) notFound();
+	if (!post) redirect("/");
 
 	const related = await getRelatedPosts(post, 3);
 	const service = serviceForCategory(post.categorySlug);

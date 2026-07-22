@@ -22,6 +22,21 @@ export const smoothScrollTo = (target: number, opts?: { immediate?: boolean }) =
 	window.scrollTo({ top: target, behavior: opts?.immediate ? "auto" : "smooth" });
 };
 
+// 모바일 드로어/모달 열림 동안 배경 스크롤 잠금.
+// Lenis(휠 관성) 정지 + html/body overflow:hidden 으로 루트 스크롤 차단(스크롤 위치 보존 → 복원 불필요).
+// 단, stop 상태의 Lenis는 wheel/touch 를 preventDefault 하므로, 내부 스크롤이 필요한 요소(드로어 패널)에는
+// data-lenis-prevent 를 붙여야 네이티브 스크롤이 살아난다(+ overscroll-behavior:contain 으로 배경 체이닝 차단).
+export const lockBodyScroll = () => {
+	lenisInstance?.stop();
+	document.documentElement.style.overflow = "hidden";
+	document.body.style.overflow = "hidden";
+};
+export const unlockBodyScroll = () => {
+	document.documentElement.style.overflow = "";
+	document.body.style.overflow = "";
+	lenisInstance?.start();
+};
+
 export const SmoothScroll = () => {
 	const pathname = usePathname();
 	const isFirstRef = useRef(true);

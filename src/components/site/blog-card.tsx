@@ -81,7 +81,9 @@ export const BlogCard = ({ post, compact = false }: BlogCardProps) => {
 					>
 						{post.title}
 					</CardTitle>
-					<CardBody style={{ fontSize: compact ? 13.5 : 15, flex: 1 }}>{post.excerpt}</CardBody>
+					<CardBody className="blog-excerpt" style={{ fontSize: compact ? 13.5 : 15, flex: 1 }}>
+						{post.excerpt}
+					</CardBody>
 				</div>
 			</Card>
 		</Link>

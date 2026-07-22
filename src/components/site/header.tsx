@@ -7,7 +7,7 @@ import { CONTACT, NAV, type NavItem, routePath, SERVICES } from "@/lib/site-data
 import { cn } from "@/lib/utils";
 import { Button } from "./ds";
 import { Icon } from "./icon";
-import { smoothScrollTo } from "./smooth-scroll";
+import { lockBodyScroll, smoothScrollTo, unlockBodyScroll } from "./smooth-scroll";
 import { pathToRoute, useGo, usePrefetch } from "./use-go";
 
 const SVC_SHORT: Record<string, string> = {
@@ -252,7 +252,28 @@ function MobileDrawer({
 	route: string;
 }) {
 	const go = useGo();
-	const [exp, setExp] = useState<string | null>(null);
+	const pathname = usePathname();
+	// 현재 페이지가 속한 드롭다운 그룹 라벨(없으면 null)
+	const currentGroup =
+		NAV.find((n) =>
+			(hasDropdown(n) ? dropChildren(n) : []).some((c) => routePath(c.route, c.param) === pathname),
+		)?.label ?? null;
+	// 초기값 = 현재 페이지 그룹 → 드로어를 처음 열 때부터 이미 펼쳐진 상태로 보인다.
+	const [exp, setExp] = useState<string | null>(currentGroup);
+	// 드로어가 닫혀 있을 때(open=false)만 현재 그룹으로 되돌린다. 열려 있는 동안엔 사용자의 수동
+	// 펼침을 유지하고, 닫히면 초기화 → 다음에 열면 이미 현재 그룹이 펼쳐진 상태라 "다른 그룹이
+	// 닫히며 열리는" 깜빡임이 보이지 않는다.
+	useEffect(() => {
+		if (open) return;
+		setExp(currentGroup);
+	}, [open, currentGroup]);
+	// 드로어 열림 동안 배경(본문) 스크롤 잠금 — Lenis 정지 + body 고정(모바일 터치까지 차단).
+	// 스크롤은 드로어 패널(.panel, overflow-y:auto) 내부에서만.
+	useEffect(() => {
+		if (!open) return;
+		lockBodyScroll();
+		return () => unlockBodyScroll();
+	}, [open]);
 	const nav = (r: string, p?: string) => {
 		go(r, p);
 		onClose();
@@ -260,108 +281,92 @@ function MobileDrawer({
 	return (
 		<div className={cn("drawer", open && "open")} style={{ pointerEvents: open ? "auto" : "none" }}>
 			<button type="button" className="scrim" aria-label="메뉴 닫기" onClick={onClose} />
-			<div className="panel">
-				<div
-					style={{
-						display: "flex",
-						justifyContent: "space-between",
-						alignItems: "center",
-						marginBottom: 20,
-					}}
-				>
-					<span style={{ fontWeight: 700, fontSize: 17 }}>초이스 행정사</span>
-					<button
-						type="button"
-						className="lk"
-						onClick={onClose}
-						aria-label="닫기"
-						style={{ background: "none", border: "none", padding: 6 }}
-					>
-						<Icon n="x" style={{ width: 24, height: 24 }} />
+			{/* data-lenis-prevent: Lenis가 stop된 동안에도 이 컨테이너 내부는 네이티브 스크롤 허용
+			    (없으면 lenis.stop()이 터치/휠 이벤트를 preventDefault해서 패널 스크롤이 막힘) */}
+			<div className="panel" data-lenis-prevent>
+				<div className="drawer-head">
+					<Image
+						className="drawer-head-logo"
+						src="/brand/logo.png"
+						alt="초이스 행정사 사무소"
+						width={531}
+						height={127}
+					/>
+					<button type="button" className="drawer-close lk" onClick={onClose} aria-label="닫기">
+						<Icon n="x" style={{ width: 20, height: 20 }} />
 					</button>
 				</div>
 				<nav style={{ display: "flex", flexDirection: "column" }}>
 					{NAV.map((n) => {
 						const kids = hasDropdown(n) ? dropChildren(n) : null;
 						const isExp = exp === n.label;
+						// 하위(상세) 탭이 현재 페이지와 일치하면 그 하위에 표시하고, 부모 전체는 강조하지 않는다.
+						const subMatch = !!kids?.some((c) => routePath(c.route, c.param) === pathname);
 						return (
-							<div key={n.label} style={{ borderBottom: "1px solid var(--border-default)" }}>
+							<div
+								key={n.label}
+								className="drawer-item"
+								data-active={route === n.route && !subMatch ? "true" : undefined}
+							>
 								<div style={{ display: "flex", alignItems: "center" }}>
-									<button
-										type="button"
-										className="lk"
-										onClick={() => nav(n.route)}
-										style={{
-											flex: 1,
-											textAlign: "left",
-											background: "none",
-											border: "none",
-											padding: "14px 6px",
-											fontSize: 16,
-											fontWeight: 600,
-											color: route === n.route ? "var(--color-primary)" : "var(--text-heading)",
-										}}
-									>
+									<button type="button" className="drawer-link lk" onClick={() => nav(n.route)}>
 										{n.label}
 									</button>
 									{kids && (
 										<button
 											type="button"
-											className="lk"
+											className="drawer-chev lk"
+											data-open={isExp ? "true" : undefined}
 											onClick={() => setExp(isExp ? null : n.label)}
 											aria-label="하위 메뉴"
-											style={{ background: "none", border: "none", padding: 10 }}
+											aria-expanded={isExp}
 										>
-											<Icon
-												n={isExp ? "chevron-up" : "chevron-down"}
-												style={{ width: 18, height: 18, color: "var(--text-muted)" }}
-											/>
+											<Icon n="chevron-down" style={{ width: 18, height: 18 }} />
 										</button>
 									)}
 								</div>
-								{kids && isExp && (
-									<div style={{ display: "flex", flexDirection: "column", paddingBottom: 8 }}>
-										{kids.map((c) => (
-											<button
-												key={c.label}
-												type="button"
-												className="lk"
-												onClick={() => nav(c.route, c.param)}
-												style={{
-													textAlign: "left",
-													background: "none",
-													border: "none",
-													padding: "10px 6px 10px 18px",
-													fontSize: 14,
-													color: "var(--text-body)",
-												}}
-											>
-												{c.label}
-											</button>
-										))}
+								{kids && (
+									<div className="drawer-sub" data-open={isExp ? "true" : undefined}>
+										<div className="drawer-sub-inner">
+											{kids.map((c) => (
+												<button
+													key={c.label}
+													type="button"
+													className="drawer-sublink lk"
+													data-active={
+														routePath(c.route, c.param) === pathname ? "true" : undefined
+													}
+													onClick={() => nav(c.route, c.param)}
+												>
+													{c.label}
+												</button>
+											))}
+										</div>
 									</div>
 								)}
 							</div>
 						);
 					})}
 				</nav>
-				<Button
-					variant="primary"
-					size="lg"
-					style={{ width: "100%", marginTop: 22 }}
-					onClick={() => nav("contact")}
-				>
-					상담 신청
-				</Button>
-				<Button
-					href={CONTACT.phone.href}
-					variant="outline"
-					size="lg"
-					style={{ width: "100%", marginTop: 10 }}
-					iconStart={<Icon n="phone" style={{ width: 16, height: 16 }} />}
-				>
-					{CONTACT.phone.display}
-				</Button>
+				<div className="drawer-cta">
+					<Button
+						variant="primary"
+						size="lg"
+						style={{ width: "100%" }}
+						onClick={() => nav("contact")}
+					>
+						상담 신청
+					</Button>
+					<Button
+						href={CONTACT.phone.href}
+						variant="outline"
+						size="lg"
+						style={{ width: "100%", marginTop: 10 }}
+						iconStart={<Icon n="phone" style={{ width: 16, height: 16 }} />}
+					>
+						{CONTACT.phone.display}
+					</Button>
+				</div>
 			</div>
 		</div>
 	);

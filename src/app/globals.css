@@ -325,10 +325,18 @@
 }
 
 @layer base {
+	/* 오프스크린 드로어·fixed 상담바가 만드는 가로 오버플로는 스크롤 루트(html)에서 잘라야
+	   모바일 레이아웃 뷰포트가 콘텐츠 폭까지 확장(→ fixed 헤더·햄버거가 화면 밖으로 밀림)되는 걸 막는다.
+	   body만으로는 부족 — fixed 요소는 body overflow로 클리핑되지 않는다.
+	   clip은 스크롤 컨테이너를 만들지 않아 sticky/Lenis 세로 스크롤에 영향 없음. */
+	html {
+		overflow-x: clip;
+	}
 	body {
 		color: var(--text-body);
 		background: var(--surface-page);
 		word-break: keep-all;
+		overflow-x: clip;
 	}
 	h1,
 	h2,
@@ -479,6 +487,10 @@
 	grid-template-columns: 1fr 1fr;
 	gap: 24px;
 }
+/* 인사말 좌우 그리드 — 데스크톱은 넉넉히(56), 모바일 스택 시엔 텍스트↔이미지가 붙도록 좁힘 */
+.grid-2.greeting-split {
+	gap: 56px;
+}
 .contact-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -556,6 +568,10 @@
 @media (max-width: 640px) {
 	.site-logo-img {
 		height: 42px;
+	}
+	/* 모바일 헤더 높이 축소 — 88px는 폰에서 과도 (로고 42 + 여백) */
+	.site-header-bar {
+		height: 64px;
 	}
 }
 /* 푸터(어두운 배경) 로고 — logo-dark(금색 나비 + 밝은 글자) 그대로 사용 */
@@ -1097,6 +1113,9 @@
 		grid-template-columns: 1fr;
 		gap: 32px;
 	}
+	.grid-2.greeting-split {
+		gap: 24px;
+	}
 	.contact-grid {
 		grid-template-columns: 1fr;
 		gap: 40px;
@@ -1174,6 +1193,7 @@
 	box-shadow: -8px 0 30px rgba(34, 34, 34, 0.15);
 	padding: 24px;
 	overflow-y: auto;
+	overscroll-behavior: contain;
 }
 .drawer.open {
 	pointer-events: auto;
@@ -1183,6 +1203,129 @@
 }
 .drawer.open .panel {
 	transform: translateX(0);
+}
+/* ── 모바일 메뉴 드로어 — 프리미엄 다듬기(모바일 전용) ────────────────── */
+.drawer .panel {
+	width: 300px;
+	padding-top: 18px;
+}
+.drawer-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-bottom: 11px;
+	margin-bottom: 2px;
+	border-bottom: 1px solid var(--border-default);
+}
+.drawer-head-logo {
+	height: 40px;
+	width: auto;
+}
+/* 닫기: 동그라미 없이 아이콘만 */
+.drawer-close {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px;
+	background: none;
+	border: none;
+	color: var(--text-body);
+	cursor: pointer;
+}
+.drawer-item {
+	position: relative;
+	border-bottom: 1px solid color-mix(in oklch, var(--border-default) 55%, transparent);
+}
+.drawer-item:last-of-type {
+	border-bottom: none;
+}
+/* 현재 페이지 탭: 배경 톤 + 좌측 골드 액센트 바 + primary 색.
+   배경/액센트는 '부모 링크 행'(첫 번째 자식)에만 적용 — 펼쳐진 하위 목록까지 칠해지지 않게. */
+.drawer-item[data-active="true"] > div:first-child {
+	position: relative;
+	background: var(--surface-sunken);
+}
+.drawer-item[data-active="true"] > div:first-child::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+	background: var(--color-accent);
+}
+.drawer-link {
+	flex: 1;
+	text-align: left;
+	background: none;
+	border: none;
+	padding: 15px 6px 15px 14px;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--text-heading);
+	cursor: pointer;
+	transition: color 0.15s ease;
+}
+.drawer-item[data-active="true"] .drawer-link {
+	color: var(--color-primary);
+}
+.drawer-sublink {
+	width: 100%;
+	text-align: left;
+	background: none;
+	border: none;
+	padding: 11px 6px 11px 18px;
+	font-size: 14px;
+	color: var(--text-muted);
+	cursor: pointer;
+	transition: color 0.15s ease;
+}
+.drawer-sublink:hover {
+	color: var(--color-primary);
+}
+/* 현재 페이지인 상세(하위) 탭: 배경 톤 + primary 강조 */
+.drawer-sublink[data-active="true"] {
+	background: var(--surface-sunken);
+	color: var(--color-primary);
+	font-weight: 700;
+}
+/* 화살표(펼침 아이콘) — 부드럽게 180° 회전 */
+.drawer-chev {
+	flex: 0 0 auto;
+	display: inline-flex;
+	padding: 10px;
+	background: none;
+	border: none;
+	color: var(--text-muted);
+	cursor: pointer;
+}
+.drawer-chev svg {
+	transition: transform 0.3s ease;
+}
+.drawer-chev[data-open="true"] svg {
+	transform: rotate(180deg);
+}
+/* 서브메뉴 부드러운 펼침 — grid-rows 0fr↔1fr 트랜지션(높이 애니메이션) */
+.drawer-sub {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows 0.3s ease;
+}
+.drawer-sub[data-open="true"] {
+	grid-template-rows: 1fr;
+}
+.drawer-sub-inner {
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	padding-bottom: 6px;
+}
+/* CTA 구획 — 상단 구분선으로 상담 영역 분리 */
+.drawer-cta {
+	margin-top: 22px;
+	padding-top: 20px;
+	border-top: 1px solid var(--border-default);
 }
 .lk {
 	cursor: pointer;
@@ -1995,6 +2138,11 @@ button.ds-card {
 	align-items: center;
 	text-align: center;
 }
+/* 데스크톱: body를 투명하게(자식이 .proc-step의 직속처럼 동작) → 기존 세로 스택 그대로.
+   모바일에서만 실제 박스로 바꿔 가로 레이아웃(번호 노드 좌 + 제목/설명 우)에 사용. */
+.proc-step-body {
+	display: contents;
+}
 .proc-node {
 	position: relative;
 	z-index: 2;
@@ -2111,15 +2259,61 @@ button.ds-card {
 @media (max-width: 760px) {
 	.proc-steps {
 		grid-template-columns: 1fr;
-		gap: 30px;
-		max-width: 340px;
+		gap: 0;
+		max-width: 440px;
 		margin: 0 auto;
+		position: relative;
+	}
+	/* 세로 타임라인 레일 — 번호 노드 중심(24px)을 잇는 선 */
+	.proc-steps::before {
+		content: "";
+		position: absolute;
+		left: 23px;
+		top: 24px;
+		bottom: 24px;
+		width: 2px;
+		background: var(--border-default);
+		z-index: 0;
 	}
 	.proc-track {
 		display: none;
 	}
+	/* 스텝을 가로로: 번호 노드(좌) + 본문(우) */
+	.proc-step {
+		flex-direction: row;
+		align-items: flex-start;
+		text-align: left;
+		gap: 16px;
+		padding-bottom: 28px;
+		position: relative;
+		z-index: 1;
+	}
+	.proc-step:last-child {
+		padding-bottom: 0;
+	}
+	.proc-node {
+		width: 48px;
+		height: 48px;
+		flex: 0 0 48px;
+		font-size: 15px;
+	}
+	.proc-step-body {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-width: 0;
+		padding-top: 3px;
+	}
+	.proc-step-icon {
+		display: none;
+	}
+	.proc-step-title {
+		margin-top: 0;
+		font-size: 16px;
+	}
 	.proc-step-desc {
 		max-width: none;
+		margin-top: 6px;
 	}
 }
 
@@ -2573,10 +2767,26 @@ button.ds-card {
 	.str-visual {
 		aspect-ratio: 16 / 10;
 	}
+	/* 슬라이드별 높이차로 아래 콘텐츠가 흔들리지 않게 고정 + 스와이프 애니메이션 클리핑 */
+	.str-stage {
+		min-height: 560px;
+		overflow: clip;
+	}
+	/* 파운더스식: 왼쪽 화살표 숨기고 오른쪽(다음) 화살표만 노출. 이미지 영역 위로 내려 배치 */
 	.str-arrow {
 		display: none;
 	}
-	/* 모바일: 화살표가 없으니 좌우 인셋을 줄인다 */
+	.str-arrow:last-of-type {
+		display: inline-flex;
+		top: 54%;
+		bottom: auto;
+		transform: translateY(-50%);
+		right: 4px;
+		width: 40px;
+		height: 40px;
+		background: transparent;
+		color: var(--text-heading);
+	}
 	.str-title,
 	.str-stage,
 	.str-tabs {
@@ -2585,26 +2795,60 @@ button.ds-card {
 	.str-title::before {
 		left: calc(clamp(16px, 4vw, 32px) - 18px);
 	}
-	.str-tabs {
-		grid-template-columns: 1fr;
+	/* 하단 탭: 가로 3분할 + 숫자 제거 + 작은 라벨(파운더스식) */
+	.str-tab {
+		flex-direction: column;
+		gap: 4px;
+		justify-content: center;
+		padding: 13px 6px;
+		margin-top: -1px;
+		border-top: 2px solid transparent;
+		text-align: center;
 	}
-	.str-tabs::before {
+	.str-tab-no {
 		display: none;
+	}
+	.str-tab-label {
+		font-size: 12px;
+		line-height: 1.3;
+		word-break: keep-all;
+	}
+	.str-tab[data-active="true"] {
+		color: var(--text-heading);
+		border-top-color: var(--color-primary);
+		background: transparent;
 	}
 	.str-tab-bar {
 		display: none;
 	}
-	.str-tab {
-		justify-content: flex-start;
-		padding: 16px 14px;
-		margin-top: 0;
-		border-top: 1px solid var(--border-default);
-		border-left: 2px solid transparent;
+}
+/* 모바일 슬라이드 전환: 오른쪽에서 밀려오는 스와이프 느낌(데스크톱 36px보다 크게) */
+@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+	.str-panel {
+		animation: strSwipeNext 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 	}
-	.str-tab[data-active="true"] {
-		border-top-color: var(--border-default);
-		border-left-color: var(--color-primary);
-		background: var(--surface-card);
+	.str-panel[data-dir="-1"] {
+		animation-name: strSwipePrev;
+	}
+}
+@keyframes strSwipeNext {
+	from {
+		opacity: 0;
+		transform: translateX(66px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+@keyframes strSwipePrev {
+	from {
+		opacity: 0;
+		transform: translateX(-66px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
 	}
 }
 
@@ -3412,4 +3656,356 @@ button.ds-card {
 	flex: 0 0 300px;
 	width: 300px;
 	margin-right: 24px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   모바일 전용 보정 (≤960px) — PC(데스크톱) 레이아웃은 이 블록에 걸리지 않아 불변.
+   인라인 스타일을 덮어써야 하는 곳만 !important 사용.
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 960px) {
+	/* 오시는 길 연락처 표: 라벨(좌, 192px 고정) + 축소 불가한 값(이메일 등)이
+	   그리드 트랙을 뷰포트보다 넓게 밀어 이메일/전화/교통안내가 우측에서 잘리고
+	   지도까지 오른쪽으로 넘치던 문제. → 그리드 아이템이 줄어들 수 있게 min-width:0,
+	   행은 라벨 위·값 아래 세로 스택으로 전환해 값이 전체 폭을 쓰도록. */
+	.contact-grid,
+	.contact-grid > * {
+		min-width: 0;
+	}
+	.loc-row {
+		flex-direction: column !important;
+		align-items: flex-start !important;
+		gap: 6px !important;
+	}
+	.loc-row-label {
+		width: auto !important;
+		flex: 0 0 auto !important;
+	}
+	.loc-row-val {
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+
+	/* 문의 폼: 2열 그리드가 좁아 좌측 placeholder 잘림 + "현재 체류자격" 라벨 2줄 → 1열 */
+	.contact-form-grid {
+		grid-template-columns: 1fr !important;
+	}
+
+	/* 다른 업무분야 카드 설명: 한글 단어 유지로 "(거소증)" 여는 괄호 고아 방지.
+	   단 좁은 폭(≤360)에서 긴 토큰이 넘치지 않도록 overflow-wrap 안전장치 병행. */
+	.svc-other-desc {
+		word-break: keep-all;
+		overflow-wrap: anywhere;
+	}
+
+	/* 서브 히어로 본문: 밝아진 히어로 이미지 위 가독성 보강(모바일만) */
+	.page-hero-sub {
+		text-shadow: 0 1px 10px rgba(20, 15, 10, 0.45);
+	}
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   모바일 타이포/간격 스케일 (≤640px) — 폰에서 전체적으로 한 단계 작고 촘촘하게.
+   변수 기반 텍스트(카드 제목·본문 등)와 섹션 여백을 하향. clamp 헤딩은 min을 낮춰
+   별도로 축소됨(넓은 화면=max라 PC 불변). 이 블록은 파일 최후미라 앞선 규칙보다 우선.
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+	:root {
+		--text-h2: 27px;
+		--text-h3: 18px;
+		--text-body-lg: 16px;
+		--text-base: 15px;
+		--text-small: 13px;
+		--text-caption: 12px;
+		--leading-relaxed: 1.62;
+		/* 큰 세로 리듬(섹션 간격 등) 축소 */
+		--space-16: 44px;
+		--space-20: 52px;
+		--space-24: 64px;
+	}
+	/* 섹션 상하 여백을 폰에서 더 타이트하게 */
+	.section {
+		padding: 52px 0;
+	}
+	/* 컨테이너 좌우 여백 소폭 축소 → 좁은 폭에서 콘텐츠 폭 확보 */
+	.container {
+		padding: 0 18px;
+	}
+	/* 서브 히어로 상단 여백: 176px는 헤더가 64px로 줄어든 폰에서 과도(위 빈 공간).
+	   고정 헤더(64) + 여백을 감안해 축소. 좌우(0)는 인라인 유지. */
+	.page-hero-section {
+		padding-top: 104px !important;
+		padding-bottom: 52px !important;
+	}
+	/* 홈 히어로: 100vh 중앙정렬에서 콘텐츠가 살짝 아래로 보여 상단 패딩 제거로 위로 */
+	.home-hero-inner {
+		padding-top: 0 !important;
+	}
+	/* 스탯 밴드: 폰에서 2×2 그리드 + 셀 사이 구분선(가로 나열) */
+	.stats-grid {
+		grid-template-columns: 1fr 1fr !important;
+		gap: 0 !important;
+	}
+	.stats-grid > div {
+		padding: 20px 8px;
+	}
+	.stats-grid > div:nth-child(odd) {
+		border-right: 1px solid rgba(255, 255, 255, 0.16);
+	}
+	.stats-grid > div:nth-child(-n + 2) {
+		border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+	}
+	.stats-grid > div > div:first-child {
+		font-size: 22px !important;
+	}
+	.stats-grid > div > div:nth-child(2) {
+		font-size: 13px !important;
+	}
+	/* 스탯 밴드 공백 축소 + 사방 꽉차게(좌우 엣지까지, 상하 여백 제거) */
+	.stats-section {
+		padding: 0 !important;
+	}
+	.stats-grid {
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+	}
+	.stats-grid > div {
+		padding: 30px 10px !important;
+	}
+	/* 블로그 목록: 폰에서 한 줄에 하나 + 가로 리스트 카드(썸네일 좌 · 내용 우). */
+	/* 블로그 목록 + 홈 프리뷰 모두: 한 줄에 하나 + 가로 리스트(썸네일 좌 · 내용 우) */
+	.blog-grid.grid-3,
+	.home-blog-grid.grid-4 {
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+	.blog-grid .ds-card {
+		flex-direction: row !important;
+		min-height: 108px;
+	}
+	/* 썸네일:내용 비율 — 썸네일을 116px로 좁혀 내용(배지 1줄 포함)에 여유를 준다 */
+	.blog-grid .ds-card > div:first-child {
+		flex: 0 0 116px;
+		aspect-ratio: auto !important;
+		align-self: stretch;
+	}
+	.blog-grid .ds-card > div:nth-child(2) {
+		flex: 1 1 auto;
+		min-width: 0;
+		padding: 12px 14px !important;
+	}
+	.blog-grid .ds-card h3 {
+		font-size: 14.5px !important;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+	/* 블로그 카테고리: 세로로 길게 쌓이지 않게 가로 스크롤 스트립(스와이프). */
+	.blog-cats {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		gap: 8px;
+		padding-bottom: 6px;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+	.blog-cats::-webkit-scrollbar {
+		display: none;
+	}
+	.blog-cat {
+		flex: 0 0 auto;
+		white-space: nowrap;
+	}
+	/* 2열 좁은 카드: 카테고리 배지 줄바꿈 허용(인라인 nowrap 오버라이드)로 넘침 방지 */
+	/* 카테고리 배지: 가로 카드에선 한 줄 유지 + 축소(균형).
+	   Badge 컴포넌트 인라인(fontSize:13/padding:6px 12px)을 이기려면 !important 필요. */
+	.blog-grid .ds-badge {
+		white-space: nowrap !important;
+		font-size: 10px !important;
+		padding: 4px 8px !important;
+		letter-spacing: -0.01em;
+	}
+	/* 후기 카드: 조금 축소(이미지 창을 정사각으로 짧게 + 여백↓) */
+	.rv-card {
+		padding: 15px 15px 13px;
+	}
+	.rv-window {
+		aspect-ratio: 1 / 1;
+	}
+	/* 오시는 길: 문의 페이지식 다크 아이콘칩 카드로 톤 통일(모바일).
+	   내부 인라인 var() 색상을 카드 스코프에서 라이트로 재정의 → 모든 텍스트/아이콘/구분선이
+	   다크 위에서 안전하게 밝아진다(요소별 오버라이드 불필요·누락 위험 없음). */
+	.contact-grid > div:first-child {
+		background:
+			radial-gradient(130% 120% at 100% 0%, rgba(124, 99, 70, 0.5) 0%, transparent 55%),
+			linear-gradient(158deg, var(--color-primary-dark) 0%, #362d22 100%);
+		border: none;
+		border-radius: 18px;
+		padding: 26px 20px;
+		box-shadow: 0 22px 50px -28px rgba(34, 28, 22, 0.6);
+		--text-heading: #ffffff;
+		--text-body: rgba(255, 255, 255, 0.85);
+		--text-muted: rgba(255, 255, 255, 0.58);
+		--color-primary: var(--color-accent-soft);
+		--border-default: rgba(255, 255, 255, 0.14);
+	}
+	/* 리스트 아이콘 칩(문의 페이지 톤). 데스크톱엔 이 규칙이 없어 평범한 인라인 아이콘 유지. */
+	.loc-row-ic {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		flex: 0 0 36px;
+		background: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.16);
+	}
+	/* 구성원 자격·이력: 6개 나열을 섹션별 카드로 그룹화(위계·리듬 부여) */
+	.profile-bio {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin-top: 30px;
+	}
+	.profile-bio-row {
+		border: 1px solid var(--border-default) !important;
+		border-radius: 14px;
+		background: var(--surface-card);
+		padding: 16px 16px 18px !important;
+		gap: 12px !important;
+	}
+	.profile-bio-label {
+		font-size: 14.5px;
+		color: var(--color-primary);
+		padding-bottom: 11px;
+		border-bottom: 1px solid var(--border-default);
+	}
+	/* 블로그 2열 카드: 본문 발췌 2줄 말줄임 → 카드 높이 정렬 */
+	.blog-grid .blog-excerpt {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+	/* 강점 캐러셀: 이미지↔탭 간격 축소 */
+	.str-tabs {
+		margin-top: 16px;
+	}
+	/* 홈 블로그 프리뷰는 위 .blog-grid 가로 리스트 규칙을 그대로 따른다(한 줄에 하나). */
+	/* 업무분야 카드: 폰에서 한 줄에 한 개(풀폭) + 컴팩트한 카드.
+	   풀폭이라 배지가 1줄로 일관되게 들어오고, 폰트를 줄여 답답함을 해소한다. */
+	.svc-grid.grid-4 {
+		grid-template-columns: 1fr;
+		gap: 14px;
+	}
+	.svc-grid .ds-card {
+		padding: 20px 18px !important;
+	}
+	.svc-grid .ds-card > div:first-of-type {
+		margin-bottom: 14px !important;
+	}
+	.svc-grid .ds-card h3 {
+		font-size: 16.5px !important;
+	}
+	.svc-grid .ds-card p {
+		font-size: 13.5px !important;
+		line-height: 1.6 !important;
+	}
+	.svc-grid .svc-more {
+		margin-top: 14px !important;
+		font-size: 13.5px;
+	}
+	/* 하단 CTA 밴드: 여백·본문 축소 + 자연스러운 줄바꿈(balance) + 버튼 풀폭 세로 스택 */
+	.cta-band {
+		padding: 54px 0 !important;
+	}
+	.cta-title {
+		text-wrap: balance;
+		line-height: 1.34;
+	}
+	.cta-sub {
+		font-size: 15px !important;
+		text-wrap: balance;
+		max-width: 330px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	/* 버튼 2개를 가로 2등분으로. 긴 전화번호가 좁은 버튼에서 넘치지 않게 폰트·좌우패딩 축소. */
+	.cta-actions {
+		flex-direction: row;
+		flex-wrap: nowrap;
+		gap: 8px !important;
+		margin-top: 26px !important;
+	}
+	.cta-actions .ds-btn {
+		flex: 1 1 0;
+		min-width: 0;
+		justify-content: center;
+		padding-left: 10px !important;
+		padding-right: 10px !important;
+		font-size: 14.5px !important;
+		white-space: nowrap;
+	}
+}
+
+/* 모바일 하단바 위챗 QR 팝업(위챗은 ID 딥링크 불가 → QR/아이디 안내). 하단바(≤960)에서만 트리거됨 */
+.consult-qr {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	background: rgba(20, 15, 10, 0.55);
+}
+.consult-qr-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	max-width: 300px;
+	width: 100%;
+	padding: 30px 24px 24px;
+	background: #fff;
+	border-radius: 16px;
+	box-shadow: 0 24px 60px -20px rgba(20, 15, 10, 0.5);
+	text-align: center;
+}
+.consult-qr-card img {
+	width: 190px;
+	height: 190px;
+}
+.consult-qr-close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border: none;
+	background: var(--surface-sunken);
+	color: var(--text-body);
+	border-radius: 50%;
+	cursor: pointer;
+}
+.consult-qr-title {
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--text-heading);
+}
+.consult-qr-desc {
+	font-size: 13px;
+	line-height: 1.6;
+	color: var(--text-muted);
+	word-break: keep-all;
+}
+.consult-qr-desc strong {
+	color: var(--color-primary);
+	font-weight: 700;
 }

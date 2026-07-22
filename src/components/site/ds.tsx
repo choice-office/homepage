@@ -26,6 +26,7 @@ export const Badge = ({
 	style?: Sx;
 }) => (
 	<span
+		className="ds-badge"
 		style={{
 			display: "inline-flex",
 			alignItems: "center",
@@ -154,8 +155,17 @@ export const CardTitle = ({ children, style }: { children: ReactNode; style?: Sx
 	</h3>
 );
 
-export const CardBody = ({ children, style }: { children: ReactNode; style?: Sx }) => (
+export const CardBody = ({
+	children,
+	style,
+	className,
+}: {
+	children: ReactNode;
+	style?: Sx;
+	className?: string;
+}) => (
 	<p
+		className={className}
 		style={{
 			fontSize: "var(--text-base)",
 			color: "var(--text-body)",

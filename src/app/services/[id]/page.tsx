@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { ServiceDetail } from "@/components/site/service-detail";
 import { siteConfig } from "@/config/site";
 import { toJsonLd } from "@/lib/json-ld";
@@ -58,7 +58,7 @@ const buildJsonLd = (s: Service) => {
 export default async function ServiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
 	const s = SERVICES.find((x) => x.id === id);
-	if (!s) notFound();
+	if (!s) redirect("/");
 	return (
 		<>
 			<script

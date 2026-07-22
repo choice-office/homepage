@@ -61,7 +61,7 @@ export const SectionHead = ({
 	>
 		<h2
 			style={{
-				fontSize: "clamp(24px, 3.2vw, 34px)",
+				fontSize: "clamp(20px, 3.2vw, 34px)",
 				fontWeight: 800,
 				letterSpacing: "-0.015em",
 				lineHeight: 1.25,
@@ -104,6 +104,7 @@ export const PageHero = ({
 	return (
 		<section
 			data-hero-dark
+			className="page-hero-section"
 			style={{
 				position: "relative",
 				overflow: "hidden",
@@ -187,7 +188,7 @@ export const PageHero = ({
 				)}
 				<h1
 					style={{
-						fontSize: "clamp(29px, 4.6vw, 44px)",
+						fontSize: "clamp(24px, 4.6vw, 44px)",
 						fontWeight: 800,
 						letterSpacing: "-0.02em",
 						lineHeight: 1.14,
@@ -209,8 +210,9 @@ export const PageHero = ({
 				/>
 				{sub && (
 					<p
+						className="page-hero-sub"
 						style={{
-							fontSize: "clamp(15px, 1.7vw, 17px)",
+							fontSize: "clamp(14px, 1.7vw, 17px)",
 							color: "rgba(255,255,255,.82)",
 							marginTop: 22,
 							maxWidth: 640,
@@ -257,7 +259,7 @@ export const Hero = () => {
 				}}
 			/>
 			<div
-				className="container"
+				className="home-hero-inner container"
 				style={{ position: "relative", zIndex: 2, width: "100%", paddingTop: 80 }}
 			>
 				<div style={{ maxWidth: 640, color: "#fff" }}>
@@ -278,7 +280,7 @@ export const Hero = () => {
 					<h1
 						style={{
 							marginTop: 24,
-							fontSize: "clamp(31px, 5vw, 50px)",
+							fontSize: "clamp(26px, 5vw, 50px)",
 							lineHeight: 1.18,
 							color: "#fff",
 						}}
@@ -290,7 +292,7 @@ export const Hero = () => {
 					<p
 						style={{
 							marginTop: 24,
-							fontSize: "clamp(16px, 2vw, 18px)",
+							fontSize: "clamp(15px, 2vw, 18px)",
 							lineHeight: 1.7,
 							color: "rgba(255,255,255,0.86)",
 						}}
@@ -495,11 +497,13 @@ export const StrengthsRow = () => (
 					{PROCESS.map((p, i) => (
 						<li className="proc-step" key={p.title}>
 							<span className="proc-node">{`0${i + 1}`}</span>
-							<span className="proc-step-icon" aria-hidden="true">
-								<Icon n={p.icon} style={{ width: 24, height: 24 }} />
-							</span>
-							<h3 className="proc-step-title">{p.title}</h3>
-							<p className="proc-step-desc">{p.desc}</p>
+							<div className="proc-step-body">
+								<span className="proc-step-icon" aria-hidden="true">
+									<Icon n={p.icon} style={{ width: 24, height: 24 }} />
+								</span>
+								<h3 className="proc-step-title">{p.title}</h3>
+								<p className="proc-step-desc">{p.desc}</p>
+							</div>
 						</li>
 					))}
 				</ol>
@@ -529,7 +533,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 						<h2
 							style={{
 								marginTop: 16,
-								fontSize: "clamp(22px, 2.8vw, 32px)",
+								fontSize: "clamp(19px, 2.8vw, 32px)",
 								lineHeight: 1.42,
 								color: "var(--text-heading)",
 							}}
@@ -633,13 +637,16 @@ export const Process = () => (
 );
 
 export const Stats = () => (
-	<section style={{ background: "var(--color-primary)", padding: "72px 0" }}>
-		<div data-stagger="scale" className="grid-4 container" style={{ gap: 24 }}>
+	<section
+		className="stats-section"
+		style={{ background: "var(--color-primary)", padding: "72px 0" }}
+	>
+		<div data-stagger="scale" className="grid-4 stats-grid container" style={{ gap: 24 }}>
 			{STATS.map((s) => (
 				<div key={s.l} style={{ textAlign: "center", color: "#fff" }}>
 					<div
 						style={{
-							fontSize: "clamp(29px,4.2vw,38px)",
+							fontSize: "clamp(24px,4.2vw,38px)",
 							fontWeight: 700,
 							letterSpacing: "-0.02em",
 						}}
@@ -766,7 +773,11 @@ export const BlogPreview = ({ posts }: { posts: BlogPost[] }) => (
 					블로그 전체보기 <Icon n="arrow-right" style={{ width: 16, height: 16 }} />
 				</Link>
 			</div>
-			<div data-stagger className="grid-4" style={{ marginTop: 48 }}>
+			<div
+				data-stagger
+				className="grid-4 blog-grid home-blog-grid"
+				style={{ marginTop: "clamp(20px, 5vw, 48px)" }}
+			>
 				{posts.slice(0, 4).map((p) => (
 					<BlogCard key={p.slug} post={p} compact />
 				))}
@@ -832,6 +843,7 @@ export const CTABand = () => {
 	const go = useGo();
 	return (
 		<section
+			className="cta-band"
 			style={{
 				background:
 					"linear-gradient(160deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)",
@@ -839,13 +851,26 @@ export const CTABand = () => {
 			}}
 		>
 			<div data-reveal="scale" className="container" style={{ textAlign: "center", color: "#fff" }}>
-				<h2 style={{ fontSize: "clamp(23px,3.4vw,32px)", color: "#fff" }}>
+				<h2
+					className="cta-title"
+					style={{ fontSize: "clamp(20px,3.4vw,32px)", color: "#fff", wordBreak: "keep-all" }}
+				>
 					혼자 고민하지 마세요. 경험이 결과를 바꿉니다.
 				</h2>
-				<p style={{ fontSize: 17, color: "rgba(255,255,255,.82)", marginTop: 16, lineHeight: 1.7 }}>
-					3,500건 이상의 업무 경험을 바탕으로 최적의 해결 방향을 제시해 드립니다.
+				<p
+					className="cta-sub"
+					style={{
+						fontSize: 17,
+						color: "rgba(255,255,255,.82)",
+						marginTop: 16,
+						lineHeight: 1.7,
+						wordBreak: "keep-all",
+					}}
+				>
+					3,500건 이상의 업무 경험을 바탕으로 최적의 해결&nbsp;방향을 제시해 드립니다.
 				</p>
 				<div
+					className="cta-actions"
 					style={{
 						display: "flex",
 						gap: 12,
@@ -924,7 +949,11 @@ export const ContactForm = () => {
 	};
 
 	return (
-		<Card hover={false} padding="36px" className="contact-form-card">
+		<Card
+			hover={false}
+			padding="clamp(28px, 4vw, 36px) clamp(18px, 5vw, 36px)"
+			className="contact-form-card"
+		>
 			{sent ? (
 				<div style={{ textAlign: "center", padding: "40px 0" }}>
 					<div
@@ -951,7 +980,10 @@ export const ContactForm = () => {
 				</div>
 			) : (
 				<form onSubmit={handleSubmit}>
-					<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+					<div
+						className="contact-form-grid"
+						style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}
+					>
 						<div>
 							<Label htmlFor="cn">성함</Label>
 							<Input id="cn" name="name" placeholder="홍길동" required />
@@ -1194,6 +1226,7 @@ export const LocationDetail = () => (
 					const body = (
 						<>
 							<span
+								className="loc-row-label"
 								style={{
 									display: "inline-flex",
 									alignItems: "center",
@@ -1204,10 +1237,18 @@ export const LocationDetail = () => (
 									fontSize: 14,
 								}}
 							>
-								<Icon n={r.icon} style={{ width: 18, height: 18, color: "var(--color-primary)" }} />
+								<span className="loc-row-ic" aria-hidden="true">
+									<Icon
+										n={r.icon}
+										style={{ width: 18, height: 18, color: "var(--color-primary)" }}
+									/>
+								</span>
 								{r.label}
 							</span>
-							<span style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}>
+							<span
+								className="loc-row-val"
+								style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}
+							>
 								{r.value}
 							</span>
 						</>
@@ -1222,6 +1263,7 @@ export const LocationDetail = () => (
 					return r.href ? (
 						<a
 							key={r.label}
+							className="loc-row"
 							href={r.href}
 							target={r.href.startsWith("http") ? "_blank" : undefined}
 							rel="noopener noreferrer"
@@ -1230,7 +1272,7 @@ export const LocationDetail = () => (
 							{body}
 						</a>
 					) : (
-						<div key={r.label} style={rowStyle}>
+						<div key={r.label} className="loc-row" style={rowStyle}>
 							{body}
 						</div>
 					);
@@ -1362,8 +1404,8 @@ export const FAQ_ = ({
 };
 
 export const ConsultBar = () => {
-	const go = useGo();
 	const [visible, setVisible] = useState(false);
+	const [qr, setQr] = useState(false); // 모바일 위챗 QR 팝업(위챗은 ID 딥링크 불가 → QR 안내)
 	const [svc, setSvc] = useState("");
 	const [phone, setPhone] = useState("");
 	const [sending, setSending] = useState(false);
@@ -1411,16 +1453,26 @@ export const ConsultBar = () => {
 		on();
 		return () => window.removeEventListener("scroll", on);
 	}, []);
-	const mobileItems = [
-		{ icon: "file-text", label: "블로그", onClick: () => go("blog") },
-		{ icon: "message-square", label: "온라인 상담", onClick: () => go("contact") },
+	// 모바일 하단 바 — 전화상담 + 소셜 4개(카톡·위챗·블로그·유튜브). 카톡/위챗은 바로 연결.
+	// img(브랜드 svg)가 있으면 이미지, 없으면 lucide(icon). href면 <a>, onClick이면 <button>.
+	const mobileItems: {
+		label: string;
+		icon?: string;
+		img?: string;
+		href?: string;
+		onClick?: () => void;
+	}[] = [
 		{
-			icon: "phone",
-			label: "전화 상담",
+			icon: "phone-call",
+			label: "전화상담",
 			onClick: () => {
 				window.location.href = CONTACT.phone.href;
 			},
 		},
+		{ img: "/icons/kakao.svg", label: "카톡", href: CONTACT.kakao.href ?? undefined },
+		{ img: "/icons/wechat.svg", label: "위챗", onClick: () => setQr(true) },
+		{ img: "/icons/blog.svg", label: "블로그", href: NAVER_BLOG },
+		{ img: "/icons/youtube.svg", label: "유튜브", href: YOUTUBE_CHANNEL },
 	];
 	return (
 		<>
@@ -1436,6 +1488,32 @@ export const ConsultBar = () => {
 						<strong>{toast.msg}</strong>
 						{toast.kind === "ok" && "곧 연락드리겠습니다."}
 					</span>
+				</div>
+			)}
+			{qr && (
+				<div className="consult-qr" role="dialog" aria-modal="true" aria-label="위챗 QR 코드">
+					<div className="consult-qr-card">
+						<button
+							type="button"
+							className="consult-qr-close"
+							onClick={() => setQr(false)}
+							aria-label="닫기"
+						>
+							<Icon n="x" style={{ width: 18, height: 18 }} />
+						</button>
+						<Image
+							src="/contact/wechat-qr.png"
+							alt="초이스 행정사 사무소 위챗 QR 코드"
+							width={200}
+							height={200}
+							unoptimized
+						/>
+						<p className="consult-qr-title">위챗(WeChat)</p>
+						<p className="consult-qr-desc">
+							QR을 캡처해 위챗 &gt; 스캔 &gt; 앨범에서 선택하거나, 아이디{" "}
+							<strong>koreavisa8</strong> 로 검색해 추가해 주세요.
+						</p>
+					</div>
 				</div>
 			)}
 			<div
@@ -1534,37 +1612,63 @@ export const ConsultBar = () => {
 					background: "var(--color-primary-dark)",
 					boxShadow: "0 -4px 20px rgba(34,34,34,.22)",
 					paddingBottom: "env(safe-area-inset-bottom, 0px)",
+					transform: visible ? "translateY(0)" : "translateY(100%)",
+					transition: "transform .35s ease",
 				}}
 			>
-				{mobileItems.map((it, i) => (
-					<button
-						key={it.label}
-						type="button"
-						className="lk"
-						onClick={it.onClick}
-						style={{
-							flex: 1,
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							justifyContent: "center",
-							gap: 6,
-							padding: "12px 4px",
-							minHeight: 64,
-							background: "none",
-							border: "none",
-							borderLeft: i ? "1px solid rgba(255,255,255,0.14)" : "none",
-							color: "#fff",
-							fontFamily: "var(--font-sans)",
-						}}
-					>
-						<Icon
-							n={it.icon}
-							style={{ width: 21, height: 21, color: "var(--color-accent-soft)" }}
-						/>
-						<span style={{ fontSize: 13, fontWeight: 600 }}>{it.label}</span>
-					</button>
-				))}
+				{mobileItems.map((it, i) => {
+					const cellStyle = {
+						flex: 1,
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						justifyContent: "center",
+						gap: 5,
+						padding: "12px 2px",
+						minHeight: 60,
+						background: "none",
+						border: "none",
+						borderLeft: i ? "1px solid rgba(255,255,255,0.14)" : "none",
+						color: "#fff",
+						fontFamily: "var(--font-sans)",
+						textDecoration: "none",
+					} as const;
+					const inner = (
+						<>
+							{it.img ? (
+								<Image src={it.img} alt="" width={21} height={21} unoptimized />
+							) : (
+								<Icon
+									n={it.icon as string}
+									style={{ width: 20, height: 20, color: "var(--color-accent-soft)" }}
+								/>
+							)}
+							<span style={{ fontSize: 12, fontWeight: 600 }}>{it.label}</span>
+						</>
+					);
+					return it.href ? (
+						<a
+							key={it.label}
+							className="lk"
+							href={it.href}
+							target="_blank"
+							rel="noopener noreferrer"
+							style={cellStyle}
+						>
+							{inner}
+						</a>
+					) : (
+						<button
+							key={it.label}
+							type="button"
+							className="lk"
+							onClick={it.onClick}
+							style={cellStyle}
+						>
+							{inner}
+						</button>
+					);
+				})}
 			</div>
 		</>
 	);
