@@ -6,14 +6,12 @@ import { cn } from "@/lib/utils";
 type Sx = CSSProperties;
 
 /* ── Badge ── */
-const badgeVariants: Record<string, Sx> = {
-	default: { background: "var(--badge-bg)", color: "var(--badge-fg)" },
-	primary: { background: "var(--color-primary)", color: "var(--color-on-primary)" },
-	outline: {
-		background: "transparent",
-		color: "var(--text-body)",
-		boxShadow: "inset 0 0 0 1px var(--border-default)",
-	},
+// variant 색은 arbitrary-value 유틸로(기존 CSS 변수 그대로 → 값 동일)
+const badgeVariantClass: Record<string, string> = {
+	default: "bg-[var(--badge-bg)] text-[color:var(--badge-fg)]",
+	primary: "bg-[var(--color-primary)] text-[color:var(--color-on-primary)]",
+	outline:
+		"bg-transparent text-[color:var(--text-body)] shadow-[inset_0_0_0_1px_var(--border-default)]",
 };
 
 export const Badge = ({
@@ -26,31 +24,23 @@ export const Badge = ({
 	style?: Sx;
 }) => (
 	<span
-		className="ds-badge"
-		style={{
-			display: "inline-flex",
-			alignItems: "center",
-			gap: 6,
-			fontFamily: "var(--font-sans)",
-			fontWeight: 500,
-			fontSize: 13,
-			lineHeight: 1,
-			padding: "6px 12px",
-			borderRadius: "0",
-			whiteSpace: "nowrap",
-			...badgeVariants[variant],
-			...style,
-		}}
+		className={cn(
+			"ds-badge inline-flex items-center gap-1.5 font-medium text-[13px] leading-none whitespace-nowrap rounded-none px-3 py-1.5",
+			badgeVariantClass[variant],
+		)}
+		style={style}
 	>
 		{children}
 	</span>
 );
 
 /* ── Button (hover는 globals.css .ds-btn-*:hover 로 처리) ── */
-const btnSizes: Record<string, Sx> = {
-	sm: { height: 36, padding: "0 14px", fontSize: 14 },
-	md: { height: 44, padding: "0 20px", fontSize: 16 },
-	lg: { height: 52, padding: "0 28px", fontSize: 17 },
+// 크기: font-size만 arbitrary(px)로 — text-sm/base 같은 이름 유틸은 line-height까지 주입해
+// 원본(인라인=폰트크기만, line-height 없음)과 텍스트 세로 정렬이 미세하게 달라지므로 사용 금지.
+const btnSizeClass: Record<string, string> = {
+	sm: "h-9 px-3.5 text-[14px]",
+	md: "h-11 px-5 text-[16px]",
+	lg: "h-[52px] px-7 text-[17px]",
 };
 
 export const Button = ({
@@ -76,11 +66,10 @@ export const Button = ({
 	type?: "button" | "submit" | "reset";
 	style?: Sx;
 }) => {
-	const className = cn("ds-btn", `ds-btn-${variant}`, disabled && "is-disabled");
-	const composed: Sx = { ...btnSizes[size], ...style };
+	const className = cn("ds-btn", `ds-btn-${variant}`, btnSizeClass[size], disabled && "is-disabled");
 	if (href) {
 		return (
-			<a href={href} onClick={onClick} className={className} style={composed}>
+			<a href={href} onClick={onClick} className={className} style={style}>
 				{iconStart}
 				{children}
 				{iconEnd}
@@ -88,13 +77,7 @@ export const Button = ({
 		);
 	}
 	return (
-		<button
-			type={type}
-			onClick={onClick}
-			disabled={disabled}
-			className={className}
-			style={composed}
-		>
+		<button type={type} onClick={onClick} disabled={disabled} className={className} style={style}>
 			{iconStart}
 			{children}
 			{iconEnd}
@@ -103,6 +86,7 @@ export const Button = ({
 };
 
 /* ── Card ── */
+// padding은 런타임 prop(호출부에서 clamp 등 전달) → 인라인 유지가 정확
 export const Card = ({
 	children,
 	hover = true,
@@ -122,12 +106,7 @@ export const Card = ({
 	// 카드 자체가 클릭 동작을 가지면 button(키보드/포커스 기본 지원), 아니면 div
 	if (onClick) {
 		return (
-			<button
-				type="button"
-				className={cls}
-				onClick={onClick}
-				style={{ display: "block", padding, ...style }}
-			>
+			<button type="button" className={cn(cls, "block")} onClick={onClick} style={{ padding, ...style }}>
 				{children}
 			</button>
 		);
@@ -141,15 +120,8 @@ export const Card = ({
 
 export const CardTitle = ({ children, style }: { children: ReactNode; style?: Sx }) => (
 	<h3
-		style={{
-			fontSize: "var(--text-h3)",
-			fontWeight: 700,
-			color: "var(--text-heading)",
-			lineHeight: "var(--leading-snug)",
-			letterSpacing: "var(--tracking-tight)",
-			margin: 0,
-			...style,
-		}}
+		className="m-0 font-bold text-[length:var(--text-h3)] text-[color:var(--text-heading)] leading-[var(--leading-snug)] tracking-[var(--tracking-tight)]"
+		style={style}
 	>
 		{children}
 	</h3>
@@ -165,14 +137,11 @@ export const CardBody = ({
 	className?: string;
 }) => (
 	<p
-		className={className}
-		style={{
-			fontSize: "var(--text-base)",
-			color: "var(--text-body)",
-			lineHeight: "var(--leading-relaxed)",
-			margin: "var(--space-3) 0 0",
-			...style,
-		}}
+		className={cn(
+			"mt-[var(--space-3)] text-[length:var(--text-base)] text-[color:var(--text-body)] leading-[var(--leading-relaxed)]",
+			className,
+		)}
+		style={style}
 	>
 		{children}
 	</p>
@@ -190,14 +159,8 @@ export const Label = ({
 }) => (
 	<label
 		htmlFor={htmlFor}
-		style={{
-			display: "block",
-			fontSize: 14,
-			fontWeight: 500,
-			color: "var(--text-heading)",
-			marginBottom: 8,
-			...style,
-		}}
+		className="mb-2 block text-[14px] font-medium text-[color:var(--text-heading)]"
+		style={style}
 	>
 		{children}
 	</label>
@@ -209,8 +172,8 @@ export const Input = ({
 	...rest
 }: InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean }) => (
 	<input
-		className={cn("ds-field", invalid && "is-invalid")}
-		style={{ height: 48, padding: "0 14px", ...style }}
+		className={cn("ds-field h-12 px-3.5", invalid && "is-invalid")}
+		style={style}
 		{...rest}
 	/>
 );
@@ -222,9 +185,9 @@ export const Textarea = ({
 	...rest
 }: TextareaHTMLAttributes<HTMLTextAreaElement> & { invalid?: boolean }) => (
 	<textarea
-		className={cn("ds-field", invalid && "is-invalid")}
+		className={cn("ds-field resize-y px-3.5 py-3 leading-[1.6]", invalid && "is-invalid")}
 		rows={rows}
-		style={{ padding: "12px 14px", lineHeight: 1.6, resize: "vertical", ...style }}
+		style={style}
 		{...rest}
 	/>
 );
