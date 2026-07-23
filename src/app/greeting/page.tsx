@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Icon } from "@/components/site/icon";
 import { CTABand, PageHero } from "@/components/site/sections";
 import { OFFICE_IMG } from "@/lib/site-data";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
 	title: "인사말",
@@ -23,30 +24,20 @@ export default function GreetingPage() {
 				image="/인사말-hero.png"
 				imagePosition="66% 72%"
 			/>
-			<section className="section" style={{ background: "var(--surface-page)" }}>
+			<section className={cn("section", "bg-[var(--surface-page)]")}>
 				<div className="container">
-					<div data-stagger="split" className="grid-2 greeting-split" style={{ alignItems: "stretch" }}>
-						<div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+					<div data-stagger="split" className={cn("grid-2 greeting-split", "items-stretch")}>
+						<div className="flex flex-col justify-center">
 							<Icon
 								n="quote"
 								style={{ width: 40, height: 40, color: "var(--color-primary-light)" }}
 							/>
-							<h2 style={{ fontSize: "clamp(26px,3.4vw,34px)", lineHeight: 1.5, marginTop: 16 }}>
+							<h2 className="mt-4 text-[clamp(26px,3.4vw,34px)] leading-[1.5]">
 								복잡하게 느껴지는 출입국 절차,
 								<br />그 곁에서 길을 함께 찾겠습니다.
 							</h2>
-							<div
-								style={{
-									marginTop: 28,
-									display: "flex",
-									flexDirection: "column",
-									gap: 18,
-									fontSize: 16.5,
-									lineHeight: 1.9,
-									color: "var(--text-body)",
-								}}
-							>
-								<p>안녕하십니까. ‘실력에 책임감을 더한’ 초이스 행정사 사무소입니다.</p>
+							<div className="mt-7 flex flex-col gap-[18px] text-[16.5px] text-[color:var(--text-body)] leading-[1.9]">
+								<p>안녕하십니까. '실력에 책임감을 더한' 초이스 행정사 사무소입니다.</p>
 								<p>
 									살다 보면 익숙하지 않은 행정 절차 앞에서 무엇부터 시작해야 할지, 어떤 정보가
 									정확한지 판단하기 어려운 막막한 순간이 있습니다. 초이스 행정사 사무소는 그런
@@ -62,48 +53,25 @@ export default function GreetingPage() {
 									함께하겠습니다.
 								</p>
 							</div>
-							<div
-								style={{
-									marginTop: 32,
-									paddingTop: 24,
-									borderTop: "1px solid var(--border-default)",
-								}}
-							>
-								<div style={{ fontSize: 15, color: "var(--text-muted)" }}>마음을 다해,</div>
-								<div
-									style={{ fontSize: 22, fontWeight: 700, marginTop: 6, letterSpacing: "-0.02em" }}
-								>
+							<div className="mt-8 border-t border-t-[color:var(--border-default)] pt-6">
+								<div className="text-[15px] text-[color:var(--text-muted)]">마음을 다해,</div>
+								<div className="mt-1.5 font-bold text-[22px] tracking-[-0.02em]">
 									초이스 행정사 사무소{" "}
-									<span style={{ fontSize: 16, fontWeight: 500, color: "var(--text-muted)" }}>
+									<span className="font-medium text-[16px] text-[color:var(--text-muted)]">
 										드림
 									</span>
 								</div>
 							</div>
 						</div>
-						<div
-							style={{
-								position: "relative",
-								borderRadius: "var(--radius-lg)",
-								overflow: "hidden",
-								minHeight: 460,
-								background: "#241d16",
-							}}
-						>
+						<div className="relative min-h-[460px] overflow-hidden rounded-[var(--radius-lg)] bg-[#241d16]">
 							<Image
 								src={OFFICE_IMG}
 								alt="사무소 전경"
 								fill
 								sizes="(max-width: 960px) 100vw, 50vw"
-								style={{ objectFit: "cover", opacity: 0.62 }}
+								className="object-cover opacity-[0.62]"
 							/>
-							<div
-								style={{
-									position: "absolute",
-									inset: 0,
-									background:
-										"linear-gradient(160deg, rgba(82,70,54,0.55) 0%, rgba(36,29,22,0.8) 100%)",
-								}}
-							/>
+							<div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(82,70,54,0.55)_0%,rgba(36,29,22,0.8)_100%)]" />
 						</div>
 					</div>
 				</div>

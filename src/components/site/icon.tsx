@@ -102,8 +102,16 @@ const MAP: Record<string, LucideIcon> = {
 	x: X,
 };
 
-export const Icon = ({ n, style }: { n: string; style?: CSSProperties }) => {
+export const Icon = ({
+	n,
+	style,
+	className,
+}: {
+	n: string;
+	style?: CSSProperties;
+	className?: string;
+}) => {
 	const Cmp = MAP[n];
 	if (!Cmp) return null;
-	return <Cmp strokeWidth={1.75} style={style} />;
+	return <Cmp strokeWidth={1.75} style={style} className={className} />;
 };

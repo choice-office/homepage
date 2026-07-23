@@ -17,6 +17,7 @@ import {
 	serviceForCategory,
 } from "@/lib/blog";
 import { toJsonLd } from "@/lib/json-ld";
+import { cn } from "@/lib/utils";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -127,57 +128,31 @@ export default async function BlogDetailPage({ params }: Params) {
 				precedence="default"
 				href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap"
 			/>
-			<header
-				className="section"
-				style={{ paddingTop: 128, paddingBottom: 0, background: "var(--surface-page)" }}
-			>
+			<header className={cn("section", "bg-[var(--surface-page)] pt-32 pb-0")}>
 				<div className="blog-prose container">
 					<nav
 						aria-label="경로"
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: 8,
-							fontSize: 14,
-							color: "var(--text-muted)",
-							marginBottom: 20,
-							flexWrap: "wrap",
-						}}
+						className="mb-5 flex flex-wrap items-center gap-2 text-[14px] text-[color:var(--text-muted)]"
 					>
-						<Link className="lk" href="/" style={{ color: "var(--text-muted)" }}>
+						<Link className={cn("lk", "text-[color:var(--text-muted)]")} href="/">
 							홈
 						</Link>
-						<Icon n="chevron-right" style={{ width: 14, height: 14, opacity: 0.6 }} />
-						<Link className="lk" href="/blog" style={{ color: "var(--text-muted)" }}>
+						<Icon n="chevron-right" className="h-3.5 w-3.5 opacity-60" />
+						<Link className={cn("lk", "text-[color:var(--text-muted)]")} href="/blog">
 							블로그
 						</Link>
-						<Icon n="chevron-right" style={{ width: 14, height: 14, opacity: 0.6 }} />
-						<span style={{ color: "var(--text-heading)", fontWeight: 500 }}>{post.category}</span>
+						<Icon n="chevron-right" className="h-3.5 w-3.5 opacity-60" />
+						<span className="font-medium text-[color:var(--text-heading)]">{post.category}</span>
 					</nav>
 
 					<Badge>{post.category}</Badge>
 					<h1
-						className="blog-h1"
-						style={{
-							fontSize: "clamp(23px, 3.2vw, 31px)",
-							lineHeight: 1.35,
-							marginTop: 16,
-							color: "var(--text-heading)",
-						}}
+						className={cn("blog-h1", "mt-4 text-[color:var(--text-heading)] leading-[1.35]")}
+						style={{ fontSize: "clamp(23px, 3.2vw, 31px)" }}
 					>
 						{post.title}
 					</h1>
-					<div
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: 16,
-							marginTop: 20,
-							flexWrap: "wrap",
-							fontSize: 14,
-							color: "var(--text-muted)",
-						}}
-					>
+					<div className="mt-5 flex flex-wrap items-center gap-4 text-[14px] text-[color:var(--text-muted)]">
 						<span>{post.author}</span>
 						<span aria-hidden="true">·</span>
 						<time dateTime={post.date}>{formatBlogDate(post.date)}</time>
@@ -190,27 +165,17 @@ export default async function BlogDetailPage({ params }: Params) {
 				</div>
 			</header>
 
-			<article className="section" style={{ paddingTop: 32, background: "var(--surface-page)" }}>
+			<article className={cn("section", "bg-[var(--surface-page)] pt-8")}>
 				<div className="blog-prose container">
 					{post.cover && (
-						<div
-							style={{
-								position: "relative",
-								width: "100%",
-								aspectRatio: "16 / 9",
-								borderRadius: "var(--radius)",
-								overflow: "hidden",
-								marginBottom: 36,
-								background: "var(--surface-sunken)",
-							}}
-						>
+						<div className="relative mb-9 aspect-video w-full overflow-hidden rounded-[var(--radius)] bg-[var(--surface-sunken)]">
 							<Image
 								src={post.cover}
 								alt={post.coverAlt ?? ""}
 								fill
 								priority
 								sizes="(max-width: 820px) 100vw, 760px"
-								style={{ objectFit: "cover" }}
+								className="object-cover"
 							/>
 						</div>
 					)}
@@ -218,7 +183,7 @@ export default async function BlogDetailPage({ params }: Params) {
 					{post.tldr && (
 						<aside className="post-tldr">
 							<span className="post-tldr-label">
-								<Icon n="badge-check" style={{ width: 13, height: 13 }} />
+								<Icon n="badge-check" className="h-[13px] w-[13px]" />
 								요점
 							</span>
 							<p>{post.tldr}</p>
@@ -251,7 +216,7 @@ export default async function BlogDetailPage({ params }: Params) {
 								</span>
 								<span className="post-service-cta-go">
 									자세히 보기
-									<Icon n="arrow-right" style={{ width: 16, height: 16 }} />
+									<Icon n="arrow-right" className="h-4 w-4" />
 								</span>
 							</span>
 						</Link>
@@ -265,7 +230,7 @@ export default async function BlogDetailPage({ params }: Params) {
 									<li key={s.href}>
 										<a href={s.href} target="_blank" rel="noopener noreferrer">
 											{s.label}
-											<Icon n="external-link" style={{ width: 13, height: 13 }} />
+											<Icon n="external-link" className="h-[13px] w-[13px]" />
 										</a>
 									</li>
 								))}
@@ -288,23 +253,18 @@ export default async function BlogDetailPage({ params }: Params) {
 					</p>
 
 					{post.sourceUrl && (
-						<p style={{ marginTop: 24, textAlign: "center" }}>
+						<p className="mt-6 text-center">
 							<a
 								href={post.sourceUrl}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="lk"
-								style={{
-									display: "inline-flex",
-									alignItems: "center",
-									gap: 6,
-									fontSize: 14,
-									fontWeight: 600,
-									color: "var(--color-primary)",
-								}}
+								className={cn(
+									"lk",
+									"inline-flex items-center gap-1.5 font-semibold text-[14px] text-[color:var(--color-primary)]",
+								)}
 							>
 								네이버 블로그 원문 보기
-								<Icon n="external-link" style={{ width: 14, height: 14 }} />
+								<Icon n="external-link" className="h-3.5 w-3.5" />
 							</a>
 						</p>
 					)}
@@ -312,28 +272,25 @@ export default async function BlogDetailPage({ params }: Params) {
 			</article>
 
 			{related.length > 0 && (
-				<section className="section" style={{ background: "var(--surface-subtle)" }}>
+				<section className={cn("section", "bg-[var(--surface-subtle)]")}>
 					<div className="container">
-						<h2 style={{ fontSize: "clamp(22px, 3vw, 28px)", marginBottom: 28 }}>관련 글</h2>
+						<h2 className="mb-7" style={{ fontSize: "clamp(22px, 3vw, 28px)" }}>
+							관련 글
+						</h2>
 						<div className="grid-3">
 							{related.map((p) => (
 								<BlogCard key={p.slug} post={p} />
 							))}
 						</div>
-						<div style={{ textAlign: "center", marginTop: 36 }}>
+						<div className="mt-9 text-center">
 							<Link
-								className="lk"
+								className={cn(
+									"lk",
+									"inline-flex items-center gap-2 font-semibold text-[15px] text-[color:var(--color-primary)]",
+								)}
 								href="/blog"
-								style={{
-									display: "inline-flex",
-									alignItems: "center",
-									gap: 8,
-									fontSize: 15,
-									fontWeight: 600,
-									color: "var(--color-primary)",
-								}}
 							>
-								목록으로 <Icon n="arrow-right" style={{ width: 16, height: 16 }} />
+								목록으로 <Icon n="arrow-right" className="h-4 w-4" />
 							</Link>
 						</div>
 					</div>

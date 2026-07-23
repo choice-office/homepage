@@ -54,14 +54,12 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 						<Fragment key={t}>
 							<Badge variant="outline">{t}</Badge>
 							{t === "E6외국인 연예인 비자" && (
-								<span aria-hidden="true" style={{ flexBasis: "100%", height: 0 }} />
+								<span aria-hidden="true" className="h-0 basis-full" />
 							)}
 						</Fragment>
 					))}
 				</div>
-				<span className="profile-section-label" style={{ marginTop: 30 }}>
-					핵심 이력
-				</span>
+				<span className="profile-section-label mt-[30px]">핵심 이력</span>
 				<div className="profile-highlights">
 					{m.career.map((c) => (
 						<div className="profile-hl" key={c.text}>
@@ -118,16 +116,14 @@ export default function MembersPage() {
 				crumbs={[{ label: "홈", route: "home" }, ABOUT_CRUMB, { label: "행정사 소개" }]}
 				image="/구성원-hero.png"
 			/>
-			<section className="section" style={{ background: "var(--surface-page)" }}>
+			<section className="section bg-(--surface-page)">
 				<div className="container">
 					<div className="member-list">
 						{TEAM.map((m, i) => (
 							<MemberProfile key={m.name} m={m} index={i} />
 						))}
 					</div>
-					<p
-						style={{ textAlign: "center", marginTop: 44, fontSize: 15, color: "var(--text-muted)" }}
-					>
+					<p className="mt-11 text-center text-(--text-muted) text-[15px]">
 						초이스 행정사 사무소는 사무장이 없는 행정사 사무소로, 상담부터 접수까지 모든 과정을
 						행정사가 직접 진행합니다.
 					</p>

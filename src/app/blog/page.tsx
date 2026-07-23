@@ -4,13 +4,16 @@ import { BlogCard } from "@/components/site/blog-card";
 import { Icon } from "@/components/site/icon";
 import { PageHero } from "@/components/site/sections";
 import { BLOG_PAGE_SIZE, getCategories, getPublishedPosts } from "@/lib/blog";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
 	title: "출입국·비자 칼럼",
 	description: "자주 묻는 절차와 요건을, 사례 중심으로 알기 쉽게 정리한 출입국·비자 칼럼입니다.",
 	alternates: {
 		canonical: "/blog",
-		types: { "application/rss+xml": [{ url: "/feed.xml", title: "초이스 행정사 사무소 · 블로그" }] },
+		types: {
+			"application/rss+xml": [{ url: "/feed.xml", title: "초이스 행정사 사무소 · 블로그" }],
+		},
 	},
 };
 
@@ -91,14 +94,7 @@ const Pagination = ({
 	return (
 		<nav
 			aria-label="블로그 페이지"
-			style={{
-				display: "flex",
-				justifyContent: "center",
-				alignItems: "center",
-				gap: 8,
-				marginTop: 40,
-				flexWrap: "wrap",
-			}}
+			className="mt-10 flex flex-wrap items-center justify-center gap-2"
 		>
 			{prevDisabled ? (
 				<span aria-disabled="true" style={arrowStyle(true)}>
@@ -190,7 +186,7 @@ export default async function BlogPage({
 				sub="자주 묻는 절차와 요건을, 사례 중심으로 알기 쉽게 정리합니다."
 				crumbs={[{ label: "홈", route: "home" }, { label: "블로그" }]}
 			/>
-			<section className="section" style={{ background: "var(--surface-page)" }}>
+			<section className={cn("section", "bg-(--surface-page)")}>
 				<div className="blog-layout container">
 					<aside className="blog-cats" aria-label="카테고리">
 						<Link className="blog-cat" data-active={!active} href={buildHref(1)}>
@@ -217,9 +213,7 @@ export default async function BlogPage({
 								))}
 							</div>
 						) : (
-							<p style={{ textAlign: "center", color: "var(--text-muted)", padding: "48px 0" }}>
-								등록된 글이 없습니다.
-							</p>
+							<p className="py-12 text-center text-(--text-muted)">등록된 글이 없습니다.</p>
 						)}
 						{posts.length > 0 && (
 							<Pagination current={current} totalPages={totalPages} category={active} />

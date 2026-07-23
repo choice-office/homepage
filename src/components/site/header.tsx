@@ -296,7 +296,7 @@ function MobileDrawer({
 						<Icon n="x" style={{ width: 20, height: 20 }} />
 					</button>
 				</div>
-				<nav style={{ display: "flex", flexDirection: "column" }}>
+				<nav className="flex flex-col">
 					{NAV.map((n) => {
 						const kids = hasDropdown(n) ? dropChildren(n) : null;
 						const isExp = exp === n.label;
@@ -308,7 +308,7 @@ function MobileDrawer({
 								className="drawer-item"
 								data-active={route === n.route && !subMatch ? "true" : undefined}
 							>
-								<div style={{ display: "flex", alignItems: "center" }}>
+								<div className="flex items-center">
 									<button type="button" className="drawer-link lk" onClick={() => nav(n.route)}>
 										{n.label}
 									</button>
