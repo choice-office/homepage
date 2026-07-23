@@ -25,7 +25,7 @@ export const Badge = ({
 }) => (
 	<span
 		className={cn(
-			"ds-badge inline-flex items-center gap-1.5 font-medium text-[13px] leading-none whitespace-nowrap rounded-none px-3 py-1.5",
+			"ds-badge inline-flex items-center gap-1.5 whitespace-nowrap rounded-none px-3 py-1.5 font-medium text-[13px] leading-none",
 			badgeVariantClass[variant],
 		)}
 		style={style}
@@ -66,7 +66,12 @@ export const Button = ({
 	type?: "button" | "submit" | "reset";
 	style?: Sx;
 }) => {
-	const className = cn("ds-btn", `ds-btn-${variant}`, btnSizeClass[size], disabled && "is-disabled");
+	const className = cn(
+		"ds-btn",
+		`ds-btn-${variant}`,
+		btnSizeClass[size],
+		disabled && "is-disabled",
+	);
 	if (href) {
 		return (
 			<a href={href} onClick={onClick} className={className} style={style}>
@@ -106,7 +111,12 @@ export const Card = ({
 	// 카드 자체가 클릭 동작을 가지면 button(키보드/포커스 기본 지원), 아니면 div
 	if (onClick) {
 		return (
-			<button type="button" className={cn(cls, "block")} onClick={onClick} style={{ padding, ...style }}>
+			<button
+				type="button"
+				className={cn(cls, "block")}
+				onClick={onClick}
+				style={{ padding, ...style }}
+			>
 				{children}
 			</button>
 		);
@@ -120,7 +130,7 @@ export const Card = ({
 
 export const CardTitle = ({ children, style }: { children: ReactNode; style?: Sx }) => (
 	<h3
-		className="m-0 font-bold text-[length:var(--text-h3)] text-[color:var(--text-heading)] leading-[var(--leading-snug)] tracking-[var(--tracking-tight)]"
+		className="m-0 font-bold text-[color:var(--text-heading)] text-[length:var(--text-h3)] leading-[var(--leading-snug)] tracking-[var(--tracking-tight)]"
 		style={style}
 	>
 		{children}
@@ -138,7 +148,7 @@ export const CardBody = ({
 }) => (
 	<p
 		className={cn(
-			"mt-[var(--space-3)] text-[length:var(--text-base)] text-[color:var(--text-body)] leading-[var(--leading-relaxed)]",
+			"mt-[var(--space-3)] text-[color:var(--text-body)] text-[length:var(--text-base)] leading-[var(--leading-relaxed)]",
 			className,
 		)}
 		style={style}
@@ -159,7 +169,7 @@ export const Label = ({
 }) => (
 	<label
 		htmlFor={htmlFor}
-		className="mb-2 block text-[14px] font-medium text-[color:var(--text-heading)]"
+		className="mb-2 block font-medium text-[14px] text-[color:var(--text-heading)]"
 		style={style}
 	>
 		{children}
@@ -171,11 +181,7 @@ export const Input = ({
 	style,
 	...rest
 }: InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean }) => (
-	<input
-		className={cn("ds-field h-12 px-3.5", invalid && "is-invalid")}
-		style={style}
-		{...rest}
-	/>
+	<input className={cn("ds-field h-12 px-3.5", invalid && "is-invalid")} style={style} {...rest} />
 );
 
 export const Textarea = ({

@@ -1,5 +1,6 @@
 "use client";
 
+import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import Link from "next/link";
 import { type FormEvent, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
@@ -114,7 +115,7 @@ export const PageHero = ({
 		>
 			<Image
 				src={image ?? HERO_IMG}
-				alt=""
+				alt={title}
 				fill
 				priority
 				sizes="100vw"
@@ -245,7 +246,7 @@ export const Hero = () => {
 		>
 			<Image
 				src={HOME_HERO_IMG}
-				alt=""
+				alt="출입국·비자·체류자격 전문 초이스 행정사 사무소"
 				fill
 				priority
 				sizes="100vw"
@@ -357,50 +358,106 @@ export const Hero = () => {
 /* 히어로 바로 아래 — 초이스만의 강점(파운더스식 탭형 캐러셀) */
 export const StrengthsCarousel = () => {
 	const go = useGo();
-	const [active, setActive] = useState(0);
-	const [paused, setPaused] = useState(false);
-	const [dir, setDir] = useState(1); // 전환 방향(1: 다음, -1: 이전) — 패널 슬라이드 방향 결정
 	const total = STRENGTH_SLIDES.length;
+	const sectionRef = useRef<HTMLElement>(null);
+	const [selected, setSelected] = useState(0);
 
-	// 자동 전환(6초). 마우스 오버 시 정지, prefers-reduced-motion 시 미동작.
+	// 무한 루프 + 마우스 드래그. Embla가 transform·드래그·루프를 구동한다.
+	const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start", duration: 25 });
+
+	// 선택 동기화(탭 활성·inert) + 자동전환(6초).
+	// 게이지(CSS 진행 바)와 항상 동기되도록 슬라이드 전환(select)마다 타이머를 리셋한다 →
+	// hover·스크롤·단순 클릭엔 멈추지 않고 계속 흐른다(사용자 요청). reduced-motion 시 자동전환 없음.
 	useEffect(() => {
-		if (paused) return;
-		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-		const timer = setInterval(() => {
-			setDir(1);
-			setActive((i) => (i + 1) % total);
-		}, 6000);
-		return () => clearInterval(timer);
-	}, [paused]);
+		if (!emblaApi) return;
+		const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		let timer: ReturnType<typeof setInterval> | undefined;
+		const restart = () => {
+			if (reduce) return;
+			clearInterval(timer);
+			timer = setInterval(() => emblaApi.scrollNext(), 6000);
+		};
+		const onSelect = () => {
+			setSelected(emblaApi.selectedScrollSnap());
+			restart();
+		};
+		emblaApi.on("select", onSelect).on("reInit", onSelect);
+		onSelect();
+		return () => {
+			clearInterval(timer);
+			emblaApi.off("select", onSelect).off("reInit", onSelect);
+		};
+	}, [emblaApi]);
 
-	const move = (delta: number) => {
-		setDir(delta > 0 ? 1 : -1);
-		setActive((i) => (i + delta + total) % total);
-	};
-	const slide = STRENGTH_SLIDES[active];
+	// 스크롤을 아래로 내려 섹션에 진입할 때마다 리빌 애니메이션 재생(위로 스크롤 시엔 즉시 표시).
+	// 전역 ScrollReveal(1회성)과 분리하기 위해 data-reveal 대신 전용 클래스(sr-*)로 처리.
+	useEffect(() => {
+		const el = sectionRef.current;
+		if (!el) return;
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			el.classList.add("sr-shown");
+			return;
+		}
+		el.classList.add("sr-hidden");
+		let lastY = window.scrollY;
+		let down = true;
+		const onScroll = () => {
+			const y = window.scrollY;
+			if (y !== lastY) down = y > lastY;
+			lastY = y;
+		};
+		window.addEventListener("scroll", onScroll, { passive: true });
+		const io = new IntersectionObserver(
+			(entries) => {
+				for (const e of entries) {
+					if (e.isIntersecting) {
+						if (down) {
+							// 리셋 → 리플로우 → 재생(스크롤-다운마다 애니메이션 재시작)
+							el.classList.remove("sr-in", "sr-shown");
+							el.classList.add("sr-hidden");
+							void el.offsetWidth;
+							el.classList.remove("sr-hidden");
+							el.classList.add("sr-in");
+						} else {
+							el.classList.remove("sr-hidden", "sr-in");
+							el.classList.add("sr-shown");
+						}
+					} else if (el.getBoundingClientRect().top > 0) {
+						// 뷰포트 아래로 벗어남 → 다음 스크롤-다운에 재생되도록 리셋
+						el.classList.remove("sr-in", "sr-shown");
+						el.classList.add("sr-hidden");
+					}
+				}
+			},
+			{ threshold: 0.25 },
+		);
+		io.observe(el);
+		return () => {
+			io.disconnect();
+			window.removeEventListener("scroll", onScroll);
+		};
+	}, []);
 
 	return (
-		<section className="section soft-bg" style={{ background: "var(--surface-subtle)" }}>
+		<section
+			ref={sectionRef}
+			className="section soft-bg str-section"
+			style={{ background: "var(--surface-subtle)" }}
+		>
 			<div className="container">
-				<h2 className="str-title" data-reveal>
-					초이스의 강점
-				</h2>
+				<h2 className="str-title">초이스의 강점</h2>
 
 				<div
 					className="str-stage"
-					data-reveal
-					data-paused={paused}
 					role="group"
 					aria-roledescription="carousel"
 					aria-label="초이스만의 강점"
-					onMouseEnter={() => setPaused(true)}
-					onMouseLeave={() => setPaused(false)}
 				>
 					<button
 						type="button"
 						className="str-arrow"
 						aria-label="이전 강점"
-						onClick={() => move(-1)}
+						onClick={() => emblaApi?.scrollPrev()}
 					>
 						<Icon
 							n="chevron-right"
@@ -408,42 +465,48 @@ export const StrengthsCarousel = () => {
 						/>
 					</button>
 
-					{/* 패널 전체(번호·제목·글·CTA·이미지)를 한 덩어리로 방향성 슬라이드+페이드 전환 */}
-					<div className="str-panel" key={active} data-dir={dir}>
-						<div className="str-text">
-							<span className="str-no">
-								{slide.no}
-								<span className="str-no-total"> / 0{total}</span>
-							</span>
-							<h3 className="str-headline" style={{ whiteSpace: "pre-line" }}>
-								{slide.title}
-							</h3>
-							<p className="str-copy">
-								{slide.lines.map((line, i) => (
-									<Fragment key={line}>
-										{i === slide.highlightIndex ? <span className="str-hl">{line}</span> : line}
-										{i < slide.lines.length - 1 && <br />}
-									</Fragment>
-								))}
-							</p>
-							<button type="button" className="str-cta" onClick={() => go(slide.cta.route)}>
-								{slide.cta.label}
-								<Icon n="arrow-right" style={{ width: 18, height: 18 }} />
-							</button>
-						</div>
+					{/* Embla 캐러셀: 드래그·무한 루프. ref=뷰포트, 첫 자식=트랙(컨테이너), 그 자식들=슬라이드 */}
+					<div className="str-viewport" ref={emblaRef}>
+						<div className="str-track">
+							{STRENGTH_SLIDES.map((s, i) => (
+								<div className="str-panel" key={s.no} inert={i !== selected}>
+									<div className="str-text">
+										<span className="str-no">
+											{s.no}
+											<span className="str-no-total"> / 0{total}</span>
+										</span>
+										<h3 className="str-headline" style={{ whiteSpace: "pre-line" }}>
+											{s.title}
+										</h3>
+										<p className="str-copy">
+											{s.lines.map((line, j) => (
+												<Fragment key={line}>
+													{j === s.highlightIndex ? <span className="str-hl">{line}</span> : line}
+													{j < s.lines.length - 1 && <br />}
+												</Fragment>
+											))}
+										</p>
+										<button type="button" className="str-cta" onClick={() => go(s.cta.route)}>
+											{s.cta.label}
+											<Icon n="arrow-right" style={{ width: 18, height: 18 }} />
+										</button>
+									</div>
 
-						{/* 우: 이미지 — 오프셋 액센트 블록으로 에디토리얼 깊이 */}
-						<div className="str-figure">
-							<span className="str-figure-accent" aria-hidden="true" />
-							<div className="str-visual">
-								<Image
-									src={slide.img}
-									alt=""
-									fill
-									sizes="(max-width: 900px) 100vw, 45vw"
-									style={{ objectFit: "cover" }}
-								/>
-							</div>
+									{/* 우: 이미지 — 오프셋 액센트 블록으로 에디토리얼 깊이 */}
+									<div className="str-figure">
+										<span className="str-figure-accent" aria-hidden="true" />
+										<div className="str-visual">
+											<Image
+												src={s.img}
+												alt={s.tab}
+												fill
+												sizes="(max-width: 900px) 100vw, 45vw"
+												style={{ objectFit: "cover" }}
+											/>
+										</div>
+									</div>
+								</div>
+							))}
 						</div>
 					</div>
 
@@ -451,28 +514,25 @@ export const StrengthsCarousel = () => {
 						type="button"
 						className="str-arrow"
 						aria-label="다음 강점"
-						onClick={() => move(1)}
+						onClick={() => emblaApi?.scrollNext()}
 					>
 						<Icon n="chevron-right" style={{ width: 22, height: 22 }} />
 					</button>
 				</div>
 
 				{/* 하단 탭 */}
-				<div className="str-tabs" data-reveal>
+				<div className="str-tabs">
 					{STRENGTH_SLIDES.map((s, i) => (
 						<button
 							type="button"
 							key={s.no}
 							className="str-tab"
-							data-active={i === active}
-							onClick={() => {
-								setDir(i >= active ? 1 : -1);
-								setActive(i);
-							}}
+							data-active={i === selected}
+							onClick={() => emblaApi?.scrollTo(i)}
 						>
 							<span className="str-tab-no">{s.no}</span>
 							<span className="str-tab-label">{s.tab}</span>
-							{i === active && <span className="str-tab-bar" key={active} aria-hidden="true" />}
+							{i === selected && <span className="str-tab-bar" key={selected} aria-hidden="true" />}
 						</button>
 					))}
 				</div>
@@ -636,15 +696,38 @@ export const Process = () => (
 	</section>
 );
 
+// 통계 항목별 lucide 아이콘 (STATS 순서: Since 2019 / 3,500+ / 법무부 등록 / 100%)
+const STAT_ICONS = ["award", "clipboard-list", "badge-check", "user-check"];
+
 export const Stats = () => (
 	<section
 		className="stats-section"
 		style={{ background: "var(--color-primary)", padding: "72px 0" }}
 	>
 		<div data-stagger="scale" className="grid-4 stats-grid container" style={{ gap: 24 }}>
-			{STATS.map((s) => (
-				<div key={s.l} style={{ textAlign: "center", color: "#fff" }}>
+			{STATS.map((s, i) => (
+				<div
+					key={s.l}
+					className="stat-cell"
+					style={{
+						textAlign: "center",
+						color: "#fff",
+						// 항목 사이 세로 구분선(마지막 제외). 모바일 2×2는 globals.css가 별도 처리.
+						borderRight: i < STATS.length - 1 ? "1px solid rgba(255,255,255,0.16)" : undefined,
+					}}
+				>
+					<Icon
+						n={STAT_ICONS[i]}
+						style={{
+							width: 34,
+							height: 34,
+							display: "block",
+							margin: "0 auto 14px",
+							color: "rgba(255,255,255,0.8)",
+						}}
+					/>
 					<div
+						className="stat-value"
 						style={{
 							fontSize: "clamp(24px,4.2vw,38px)",
 							fontWeight: 700,
@@ -653,7 +736,9 @@ export const Stats = () => (
 					>
 						{s.v}
 					</div>
-					<div style={{ fontSize: 16, fontWeight: 500, marginTop: 8 }}>{s.l}</div>
+					<div className="stat-label" style={{ fontSize: 16, fontWeight: 500, marginTop: 8 }}>
+						{s.l}
+					</div>
 				</div>
 			))}
 		</div>
@@ -1182,46 +1267,52 @@ const LOCATION_ROWS: { icon: string; label: string; value: string; href: string 
 export const LocationDetail = () => (
 	<div className="contact-grid container">
 		<div>
-			<div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-				<Icon
-					n="map-pin"
+			<div style={{ borderTop: "1px solid var(--border-default)" }}>
+				<div
+					className="loc-row"
 					style={{
-						width: 26,
-						height: 26,
-						color: "var(--color-primary)",
-						flex: "0 0 auto",
-						marginTop: 4,
+						display: "flex",
+						alignItems: "flex-start",
+						gap: 16,
+						padding: "16px 0",
+						borderBottom: "1px solid var(--border-default)",
 					}}
-				/>
-				<div>
-					<div
+				>
+					<span
+						className="loc-row-label"
 						style={{
-							fontSize: 13,
-							fontWeight: 700,
-							letterSpacing: ".02em",
+							display: "inline-flex",
+							alignItems: "center",
+							gap: 10,
+							width: 192,
+							flex: "0 0 192px",
 							color: "var(--text-muted)",
+							fontSize: 14,
 						}}
 					>
+						<span className="loc-row-ic" aria-hidden="true">
+							<Icon n="map-pin" style={{ width: 18, height: 18, color: "var(--color-primary)" }} />
+						</span>
 						주소
-					</div>
-					<p
-						style={{
-							marginTop: 8,
-							fontSize: 22,
-							fontWeight: 700,
-							lineHeight: 1.5,
-							color: "var(--text-heading)",
-						}}
+					</span>
+					<span
+						className="loc-row-val"
+						style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}
 					>
 						{CONTACT.address}
-					</p>
-					<p style={{ marginTop: 6, fontSize: 14, color: "var(--text-muted)" }}>
-						{CONTACT.addressNote}
-					</p>
+						<span
+							style={{
+								display: "block",
+								marginTop: 4,
+								fontSize: 13,
+								fontWeight: 400,
+								color: "var(--text-muted)",
+							}}
+						>
+							{CONTACT.addressNote}
+						</span>
+					</span>
 				</div>
-			</div>
-
-			<div style={{ marginTop: 28, borderTop: "1px solid var(--border-default)" }}>
 				{LOCATION_ROWS.map((r) => {
 					const body = (
 						<>

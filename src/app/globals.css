@@ -2704,58 +2704,110 @@ button.ds-card {
 	top: -1px;
 	left: 0;
 	height: 2px;
-	width: 0;
+	width: 100%;
+	/* 진행도를 width가 아닌 scaleX로 애니메이션 → 매 프레임 레이아웃/리페인트 없이 GPU 합성만.
+	   (width 애니메이션은 초당 레이아웃 유발 → 슬라이드 transform과 겹쳐 렉) */
+	transform: scaleX(0);
+	transform-origin: left center;
+	will-change: transform;
 	background: var(--color-primary);
 }
 @media (prefers-reduced-motion: no-preference) {
 	.str-tab-bar {
 		animation: strBar 6s linear both;
 	}
-	.str-stage[data-paused="true"] ~ .str-tabs .str-tab-bar {
-		animation-play-state: paused;
-	}
 }
 @media (prefers-reduced-motion: reduce) {
 	.str-tab-bar {
-		width: 100%;
+		transform: scaleX(1);
 	}
 }
 @keyframes strBar {
 	from {
-		width: 0;
+		transform: scaleX(0);
 	}
 	to {
-		width: 100%;
+		transform: scaleX(1);
 	}
 }
-/* 슬라이드 전환: 패널 전체(글+이미지)를 한 덩어리로 방향성 슬라이드+페이드.
- * key 재마운트 시 data-dir(1=다음/-1=이전)에 맞춰 좌우에서 흘러 들어온다. */
+/* 초이스의 강점 — 스크롤 리빌(sr-*): 아래로 스크롤 진입마다 재생(JS가 sr-hidden/sr-in/sr-shown 토글).
+ * 제목은 왼쪽에서, 스테이지·탭은 아래에서 '샥' 등장. scale은 Embla 폭 측정 왜곡 방지로 제외. */
+.str-section.sr-hidden .str-title {
+	opacity: 0;
+	transform: translateX(-100px);
+}
+.str-section.sr-hidden .str-stage,
+.str-section.sr-hidden .str-tabs {
+	opacity: 0;
+	transform: translateY(60px);
+}
+.str-section.sr-shown .str-title,
+.str-section.sr-shown .str-stage,
+.str-section.sr-shown .str-tabs {
+	opacity: 1;
+	transform: none;
+}
 @media (prefers-reduced-motion: no-preference) {
-	.str-panel {
-		animation: strEnterNext 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+	.str-section.sr-in .str-title {
+		animation: srTitleIn 1s cubic-bezier(0.22, 1, 0.36, 1) both;
 	}
-	.str-panel[data-dir="-1"] {
-		animation-name: strEnterPrev;
+	.str-section.sr-in .str-stage {
+		animation: srWhoosh 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.14s both;
+	}
+	.str-section.sr-in .str-tabs {
+		animation: srWhoosh 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
 	}
 }
-@keyframes strEnterNext {
+@keyframes srTitleIn {
 	from {
 		opacity: 0;
-		transform: translateX(36px);
+		transform: translateX(-100px);
 	}
 	to {
 		opacity: 1;
 		transform: translateX(0);
 	}
 }
-@keyframes strEnterPrev {
+@keyframes srWhoosh {
 	from {
 		opacity: 0;
-		transform: translateX(-36px);
+		transform: translateY(60px);
 	}
 	to {
 		opacity: 1;
-		transform: translateX(0);
+		transform: translateY(0);
+	}
+}
+/* Embla 캐러셀 — 뷰포트(가로 클립·세로는 오프셋 액센트 위해 visible), 트랙(flex; transform은 Embla가 구동),
+ * 슬라이드(풀폭 + 좌우 대칭 padding). 간격은 공식 권장(슬라이드 padding + 뷰포트 음수 margin)이라 루프 이음새에도 유지.
+ * touch-action: 모바일에서 세로 스크롤은 브라우저, 가로 제스처는 캐러셀로 분리(드래그 응답성↑). */
+.str-viewport {
+	position: relative;
+	overflow-x: clip;
+	overflow-y: visible;
+}
+.str-track {
+	display: flex;
+	touch-action: pan-y pinch-zoom;
+	will-change: transform;
+}
+.str-track .str-panel {
+	flex: 0 0 100%;
+	min-width: 0;
+	padding: 0 28px;
+}
+@media (min-width: 901px) {
+	.str-viewport {
+		margin-inline: -28px;
+	}
+}
+@media (max-width: 900px) {
+	.str-track .str-panel {
+		padding: 0 14px;
+		/* 단일 컬럼(풀폭 이미지)에선 str-figure-accent(left:-18px)가 패널 밖으로 나가
+		   이웃 슬라이드가 오른쪽에 살짝 새어 보인다. 패널이 자기 가로 오버플로우를 가둬 차단
+		   (overflow-y는 기본 visible 유지 → 하단 오프셋 액센트·그림자는 그대로 노출). */
+		overflow-x: clip;
 	}
 }
 @media (max-width: 900px) {
@@ -2822,36 +2874,6 @@ button.ds-card {
 		display: none;
 	}
 }
-/* 모바일 슬라이드 전환: 오른쪽에서 밀려오는 스와이프 느낌(데스크톱 36px보다 크게) */
-@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
-	.str-panel {
-		animation: strSwipeNext 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-	}
-	.str-panel[data-dir="-1"] {
-		animation-name: strSwipePrev;
-	}
-}
-@keyframes strSwipeNext {
-	from {
-		opacity: 0;
-		transform: translateX(66px);
-	}
-	to {
-		opacity: 1;
-		transform: translateX(0);
-	}
-}
-@keyframes strSwipePrev {
-	from {
-		opacity: 0;
-		transform: translateX(-66px);
-	}
-	to {
-		opacity: 1;
-		transform: translateX(0);
-	}
-}
-
 /* ── 페이지네이션(후기 등) ─────────────────────────────────────── */
 .pager {
 	display: flex;
@@ -3672,13 +3694,13 @@ button.ds-card {
 		min-width: 0;
 	}
 	.loc-row {
-		flex-direction: column !important;
-		align-items: flex-start !important;
-		gap: 6px !important;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 6px;
 	}
 	.loc-row-label {
-		width: auto !important;
-		flex: 0 0 auto !important;
+		width: auto;
+		flex: 0 0 auto;
 	}
 	.loc-row-val {
 		overflow-wrap: anywhere;
@@ -3687,7 +3709,7 @@ button.ds-card {
 
 	/* 문의 폼: 2열 그리드가 좁아 좌측 placeholder 잘림 + "현재 체류자격" 라벨 2줄 → 1열 */
 	.contact-form-grid {
-		grid-template-columns: 1fr !important;
+		grid-template-columns: 1fr;
 	}
 
 	/* 다른 업무분야 카드 설명: 한글 단어 유지로 "(거소증)" 여는 괄호 고아 방지.
@@ -3733,17 +3755,17 @@ button.ds-card {
 	/* 서브 히어로 상단 여백: 176px는 헤더가 64px로 줄어든 폰에서 과도(위 빈 공간).
 	   고정 헤더(64) + 여백을 감안해 축소. 좌우(0)는 인라인 유지. */
 	.page-hero-section {
-		padding-top: 104px !important;
-		padding-bottom: 52px !important;
+		padding-top: 104px;
+		padding-bottom: 52px;
 	}
 	/* 홈 히어로: 100vh 중앙정렬에서 콘텐츠가 살짝 아래로 보여 상단 패딩 제거로 위로 */
 	.home-hero-inner {
-		padding-top: 0 !important;
+		padding-top: 0;
 	}
 	/* 스탯 밴드: 폰에서 2×2 그리드 + 셀 사이 구분선(가로 나열) */
 	.stats-grid {
-		grid-template-columns: 1fr 1fr !important;
-		gap: 0 !important;
+		grid-template-columns: 1fr 1fr;
+		gap: 0;
 	}
 	.stats-grid > div {
 		padding: 20px 8px;
@@ -3754,22 +3776,22 @@ button.ds-card {
 	.stats-grid > div:nth-child(-n + 2) {
 		border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 	}
-	.stats-grid > div > div:first-child {
-		font-size: 22px !important;
+	.stats-grid .stat-value {
+		font-size: 22px;
 	}
-	.stats-grid > div > div:nth-child(2) {
-		font-size: 13px !important;
+	.stats-grid .stat-label {
+		font-size: 13px;
 	}
 	/* 스탯 밴드 공백 축소 + 사방 꽉차게(좌우 엣지까지, 상하 여백 제거) */
 	.stats-section {
-		padding: 0 !important;
+		padding: 0;
 	}
 	.stats-grid {
-		padding-left: 0 !important;
-		padding-right: 0 !important;
+		padding-left: 0;
+		padding-right: 0;
 	}
 	.stats-grid > div {
-		padding: 30px 10px !important;
+		padding: 30px 10px;
 	}
 	/* 블로그 목록: 폰에서 한 줄에 하나 + 가로 리스트 카드(썸네일 좌 · 내용 우). */
 	/* 블로그 목록 + 홈 프리뷰 모두: 한 줄에 하나 + 가로 리스트(썸네일 좌 · 내용 우) */
@@ -3779,22 +3801,22 @@ button.ds-card {
 		gap: 12px;
 	}
 	.blog-grid .ds-card {
-		flex-direction: row !important;
+		flex-direction: row;
 		min-height: 108px;
 	}
 	/* 썸네일:내용 비율 — 썸네일을 116px로 좁혀 내용(배지 1줄 포함)에 여유를 준다 */
 	.blog-grid .ds-card > div:first-child {
 		flex: 0 0 116px;
-		aspect-ratio: auto !important;
+		aspect-ratio: auto;
 		align-self: stretch;
 	}
 	.blog-grid .ds-card > div:nth-child(2) {
 		flex: 1 1 auto;
 		min-width: 0;
-		padding: 12px 14px !important;
+		padding: 12px 14px;
 	}
 	.blog-grid .ds-card h3 {
-		font-size: 14.5px !important;
+		font-size: 14.5px;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		line-clamp: 2;
@@ -3821,9 +3843,9 @@ button.ds-card {
 	/* 카테고리 배지: 가로 카드에선 한 줄 유지 + 축소(균형).
 	   Badge 컴포넌트 인라인(fontSize:13/padding:6px 12px)을 이기려면 !important 필요. */
 	.blog-grid .ds-badge {
-		white-space: nowrap !important;
-		font-size: 10px !important;
-		padding: 4px 8px !important;
+		white-space: nowrap;
+		font-size: 10px;
+		padding: 4px 8px;
 		letter-spacing: -0.01em;
 	}
 	/* 후기 카드: 조금 축소(이미지 창을 정사각으로 짧게 + 여백↓) */
@@ -3869,11 +3891,11 @@ button.ds-card {
 		margin-top: 30px;
 	}
 	.profile-bio-row {
-		border: 1px solid var(--border-default) !important;
+		border: 1px solid var(--border-default);
 		border-radius: 14px;
 		background: var(--surface-card);
-		padding: 16px 16px 18px !important;
-		gap: 12px !important;
+		padding: 16px 16px 18px;
+		gap: 12px;
 	}
 	.profile-bio-label {
 		font-size: 14.5px;
@@ -3901,32 +3923,32 @@ button.ds-card {
 		gap: 14px;
 	}
 	.svc-grid .ds-card {
-		padding: 20px 18px !important;
+		padding: 20px 18px;
 	}
 	.svc-grid .ds-card > div:first-of-type {
-		margin-bottom: 14px !important;
+		margin-bottom: 14px;
 	}
 	.svc-grid .ds-card h3 {
-		font-size: 16.5px !important;
+		font-size: 16.5px;
 	}
 	.svc-grid .ds-card p {
-		font-size: 13.5px !important;
-		line-height: 1.6 !important;
+		font-size: 13.5px;
+		line-height: 1.6;
 	}
 	.svc-grid .svc-more {
-		margin-top: 14px !important;
+		margin-top: 14px;
 		font-size: 13.5px;
 	}
 	/* 하단 CTA 밴드: 여백·본문 축소 + 자연스러운 줄바꿈(balance) + 버튼 풀폭 세로 스택 */
 	.cta-band {
-		padding: 54px 0 !important;
+		padding: 54px 0;
 	}
 	.cta-title {
 		text-wrap: balance;
 		line-height: 1.34;
 	}
 	.cta-sub {
-		font-size: 15px !important;
+		font-size: 15px;
 		text-wrap: balance;
 		max-width: 330px;
 		margin-left: auto;
@@ -3936,16 +3958,16 @@ button.ds-card {
 	.cta-actions {
 		flex-direction: row;
 		flex-wrap: nowrap;
-		gap: 8px !important;
-		margin-top: 26px !important;
+		gap: 8px;
+		margin-top: 26px;
 	}
 	.cta-actions .ds-btn {
 		flex: 1 1 0;
 		min-width: 0;
 		justify-content: center;
-		padding-left: 10px !important;
-		padding-right: 10px !important;
-		font-size: 14.5px !important;
+		padding-left: 10px;
+		padding-right: 10px;
+		font-size: 14.5px;
 		white-space: nowrap;
 	}
 }

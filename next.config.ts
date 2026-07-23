@@ -90,6 +90,9 @@ const supabaseHosts = (() => {
 })();
 
 const nextConfig: NextConfig = {
+	// 프레임워크 정보(X-Powered-By: Next.js) 노출 제거 — 버전별 취약점 정찰 차단
+	poweredByHeader: false,
+
 	async headers() {
 		// dev에서는 CSP가 Turbopack HMR WebSocket을 차단하므로 비활성화
 		if (process.env.NODE_ENV !== "production") return [];

@@ -23,9 +23,6 @@ const config: KnipConfig = {
 		"shadcn",
 		// @tailwindcss/postcss의 peer dependency — 직접 import 없이 PostCSS가 내부 참조
 		"postcss",
-		// shadcn carousel(ui/carousel.tsx) 전용 peer deps — knip이 ui/ 미추적이라 오탐
-		"embla-carousel-react",
-		"embla-carousel-autoplay",
 		// 시각 QA·레이아웃 측정용 — 스크립트에서만 사용, 앱 코드 import 없음
 		"playwright",
 	],
