@@ -255,7 +255,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 								padding="28px"
 								style={{ display: "flex", flexDirection: "column", gap: 14 }}
 							>
-								<h3 style={{ fontSize: 18 }}>{s.ctaSubject} 상담이 필요하신가요?</h3>
+								<h3 className="svc-cta-title">{s.ctaSubject} 상담이 필요하신가요?</h3>
 								<p style={{ fontSize: 15, color: "var(--text-body)", lineHeight: 1.7 }}>
 									가능 여부와 준비 방향을 안내해 드립니다.
 								</p>

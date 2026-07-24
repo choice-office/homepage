@@ -349,19 +349,12 @@ function MobileDrawer({
 					})}
 				</nav>
 				<div className="drawer-cta">
-					<Button
-						variant="primary"
-						size="lg"
-						style={{ width: "100%" }}
-						onClick={() => nav("contact")}
-					>
-						상담 신청
-					</Button>
+					{/* 상담 신청 버튼은 상단 nav의 "문의하기"와 중복이라 제거(모바일 drawer). 전화만 노출. */}
 					<Button
 						href={CONTACT.phone.href}
 						variant="outline"
 						size="lg"
-						style={{ width: "100%", marginTop: 10 }}
+						style={{ width: "100%" }}
 						iconStart={<Icon n="phone" style={{ width: 16, height: 16 }} />}
 					>
 						{CONTACT.phone.display}

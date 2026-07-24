@@ -69,9 +69,9 @@ export default function GreetingPage() {
 								alt="사무소 전경"
 								fill
 								sizes="(max-width: 960px) 100vw, 50vw"
-								className="object-cover opacity-[0.62]"
+								className="object-cover opacity-[0.95]"
 							/>
-							<div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(82,70,54,0.55)_0%,rgba(36,29,22,0.8)_100%)]" />
+							<div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(82,70,54,0.22)_0%,rgba(36,29,22,0.42)_100%)]" />
 						</div>
 					</div>
 				</div>

@@ -1167,6 +1167,9 @@
 	inset: 0;
 	z-index: 200;
 	pointer-events: none;
+	/* 닫힘 상태의 패널이 translateX(100%)로 화면 오른쪽 밖에 놓여 iOS Safari에서 가로 스크롤을
+	   유발하던 문제 차단(열림 시 패널은 뷰포트 안이라 영향 없음). */
+	overflow: clip;
 }
 .drawer .scrim {
 	position: absolute;
@@ -3680,6 +3683,11 @@ button.ds-card {
 	margin-right: 24px;
 }
 
+/* 업무분야 상세 CTA 제목 기본(PC) — 기존 인라인 18px과 동일, 모바일에서만 아래 미디어쿼리로 축소. */
+.svc-cta-title {
+	font-size: 18px;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    모바일 전용 보정 (≤960px) — PC(데스크톱) 레이아웃은 이 블록에 걸리지 않아 불변.
    인라인 스타일을 덮어써야 하는 곳만 !important 사용.
@@ -3694,15 +3702,26 @@ button.ds-card {
 		min-width: 0;
 	}
 	.loc-row {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 6px;
+		/* 왼쪽 key(라벨) · 오른쪽 value 한 줄. 인라인 align-items(center/flex-start)를 !important로 통일. */
+		flex-direction: row;
+		align-items: flex-start !important;
+		justify-content: space-between;
 	}
 	.loc-row-label {
-		width: auto;
-		flex: 0 0 auto;
+		/* 인라인 flex:"0 0 192px"가 라벨을 192px로 고정하던 것을 콘텐츠 크기로 축소(왼쪽 key). */
+		width: auto !important;
+		flex: 0 0 auto !important;
+	}
+
+	/* 업무분야 상세 CTA 제목: 좁은 폭에서 2줄로 벌어질 때 살짝 축소(PC는 아래 기본값 18px 유지). */
+	.svc-cta-title {
+		font-size: 15.5px;
+		line-height: 1.45;
 	}
 	.loc-row-val {
+		/* 오른쪽 정렬 value. min-width:0으로 긴 주소가 줄바꿈되며 우측에 정렬되게. */
+		text-align: right;
+		min-width: 0;
 		overflow-wrap: anywhere;
 		word-break: break-word;
 	}
@@ -3877,11 +3896,15 @@ button.ds-card {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 36px;
-		height: 36px;
-		flex: 0 0 36px;
+		width: 30px;
+		height: 30px;
+		flex: 0 0 30px;
 		background: rgba(255, 255, 255, 0.08);
 		border: 1px solid rgba(255, 255, 255, 0.16);
+	}
+	.loc-row-ic svg {
+		width: 16px;
+		height: 16px;
 	}
 	/* 구성원 자격·이력: 6개 나열을 섹션별 카드로 그룹화(위계·리듬 부여) */
 	.profile-bio {
