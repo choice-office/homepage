@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 const EFFECTIVE_DATE = "2026년 6월 22일"; // 시행일
 const CONTACT_EMAIL = "choice@kvisa1345.com"; // 개인정보 문의 이메일
 const CONTACT_TEL = "02-6959-9886"; // 개인정보 문의 전화
-const OFFICER_POSITION = "대표 행정사"; // 개인정보 보호책임자(직위) — 실명 대신 직위+연락처 표기(개인정보 보호법 제30조)
+const OFFICER_POSITION = "초이스 행정사 대표"; // 개인정보 보호책임자(직위) — 실명 대신 직위+연락처 표기(개인정보 보호법 제30조)
 
 export default function PrivacyPage() {
 	const company = siteConfig.name;
 
 	return (
-		<main className="mx-auto max-w-3xl px-4 py-24 sm:px-6 lg:px-8">
+		<main className="mx-auto max-w-3xl px-4 pt-36 pb-24 sm:px-6 sm:pt-40 lg:px-8">
 			<h1 className="font-bold text-3xl tracking-tight sm:text-4xl">개인정보처리방침</h1>
 			<p className="mt-4 text-muted-foreground text-sm">시행일: {EFFECTIVE_DATE}</p>
 
@@ -37,6 +37,20 @@ export default function PrivacyPage() {
 						<li>선택: 이메일, 국적, 현재 체류자격</li>
 						<li>자동 수집: 접속 IP, 서비스 이용 기록, 쿠키 (Google Analytics 등)</li>
 					</ul>
+					<p className="mt-3 text-muted-foreground">
+						쿠키는 이용자의 브라우저 설정에서 저장을 거부하거나 삭제할 수 있습니다(설정 &gt;
+						개인정보/보안 &gt; 쿠키). 쿠키 저장을 거부하는 경우 일부 서비스 이용에 불편이 있을 수
+						있습니다. Google Analytics에 의한 정보 수집은{" "}
+						<a
+							href="https://tools.google.com/dlpage/gaoptout"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="underline underline-offset-2"
+						>
+							Google Analytics 차단 부가기능
+						</a>
+						을 통해 거부할 수 있습니다.
+					</p>
 				</section>
 
 				<section>
@@ -78,6 +92,27 @@ export default function PrivacyPage() {
 							수탁자: Supabase Inc. / 위탁 업무: 데이터베이스 운영 (문의 데이터 저장, 해당되는 경우)
 						</li>
 					</ul>
+				</section>
+
+				<section>
+					<h2 className="font-semibold text-base">제6조의2 (개인정보의 국외 이전)</h2>
+					<p className="mt-3 text-muted-foreground">
+						회사는 서비스 제공을 위해 아래와 같이 개인정보를 국외로 이전(처리위탁·보관)합니다.
+						이용자는 국외 이전에 대한 동의를 거부할 수 있으나, 이 경우 서비스 이용이 제한될 수
+						있습니다.
+					</p>
+					<ul className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground">
+						<li>
+							이전받는 자: Vercel Inc. / 이전 국가: 미국 / 이전 항목: 서비스 접속·이용 과정에서
+							처리되는 개인정보(접속 IP, 이용 기록 등) / 이전 일시 및 방법: 서비스 이용 시점에
+							정보통신망을 통한 전송 / 이용목적: 서비스 호스팅 및 인프라 운영 / 보유·이용 기간: 위탁
+							계약 종료 시까지
+						</li>
+					</ul>
+					<p className="mt-3 text-muted-foreground">
+						문의 시 입력하신 개인정보를 저장하는 데이터베이스(Supabase)는 대한민국(서울) 리전에
+						보관되어 국외로 이전되지 않습니다.
+					</p>
 				</section>
 
 				<section>

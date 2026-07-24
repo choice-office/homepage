@@ -1145,10 +1145,33 @@ export const ContactForm = () => {
 							style={{ width: 16, height: 16, accentColor: "var(--color-primary)" }}
 						/>
 						<span>
-							<span style={{ color: "var(--color-primary)" }}>개인정보 수집·이용</span>에
-							동의합니다.
+							<a
+								href="/privacy"
+								target="_blank"
+								rel="noopener noreferrer"
+								style={{
+									color: "var(--color-primary)",
+									textDecoration: "underline",
+									textUnderlineOffset: 2,
+								}}
+							>
+								개인정보 수집·이용
+							</a>
+							에 동의합니다.
 						</span>
 					</label>
+					<p
+						style={{
+							marginTop: 8,
+							fontSize: 12.5,
+							color: "var(--text-muted)",
+							lineHeight: 1.6,
+						}}
+					>
+						수집 항목: 성함·연락처·이메일·국적(필수), 현재 체류자격·상담 분야·문의 내용(선택) · 이용
+						목적: 상담 문의 접수 및 답변 · 보유 기간: 처리 완료 후 3년 · 동의를 거부할 수 있으며, 이
+						경우 상담 접수가 제한될 수 있습니다.
+					</p>
 					{error ? (
 						<p
 							style={{
@@ -1636,7 +1659,7 @@ export const ConsultBar = () => {
 					boxShadow: "0 -4px 20px rgba(34,34,34,.18)",
 				}}
 			>
-				<div className="consult-bar-inner container" style={{ padding: "16px 24px", gap: 20 }}>
+				<div className="consult-bar-inner container" style={{ padding: "24px 24px", gap: 20 }}>
 					<div style={{ display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap" }}>
 						<Icon
 							n="phone-call"
@@ -1744,7 +1767,18 @@ export const ConsultBar = () => {
 								onChange={(e) => setAgree(e.target.checked)}
 								style={{ width: 16, height: 16, accentColor: "var(--color-accent)" }}
 							/>
-							<span>개인정보 수집·이용 동의</span>
+							<span>
+								<a
+									href="/privacy"
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={(e) => e.stopPropagation()}
+									style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: 2 }}
+								>
+									개인정보 수집·이용
+								</a>{" "}
+								동의
+							</span>
 						</label>
 						<Button
 							type="submit"
@@ -2062,6 +2096,14 @@ export const Footer = () => {
 					<p>주소 : {CONTACT.address}</p>
 					<p>
 						전화 {CONTACT.phone.display}, {CONTACT.mobile.display} · 이메일 {CONTACT.email}
+					</p>
+					<p style={{ marginTop: 14, display: "flex", gap: 16, flexWrap: "wrap" }}>
+						<Link href="/privacy" style={{ color: "#fff", fontWeight: 600 }}>
+							개인정보처리방침
+						</Link>
+						<Link href="/terms" style={{ color: "rgba(255,255,255,0.8)" }}>
+							이용약관
+						</Link>
 					</p>
 					<p style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, marginTop: 12 }}>
 						© 2026 초이스 행정사 사무소. ALL RIGHTS RESERVED.

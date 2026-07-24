@@ -15,7 +15,7 @@ export default function TermsPage() {
 	const company = siteConfig.name;
 
 	return (
-		<main className="mx-auto max-w-3xl px-4 py-24 sm:px-6 lg:px-8">
+		<main className="mx-auto max-w-3xl px-4 pt-36 pb-24 sm:px-6 sm:pt-40 lg:px-8">
 			<h1 className="font-bold text-3xl tracking-tight sm:text-4xl">이용약관</h1>
 			<p className="mt-4 text-muted-foreground text-sm">시행일: {EFFECTIVE_DATE}</p>
 

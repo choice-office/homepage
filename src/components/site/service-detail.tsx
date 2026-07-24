@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode, useState } from "react";
-import { SERVICES } from "@/lib/site-data";
+import { SERVICE_SEO, SERVICES } from "@/lib/site-data";
 import { Badge, Button, Card, CardBody, CardTitle } from "./ds";
 import { Icon } from "./icon";
 import { PageHero } from "./sections";
@@ -135,10 +135,63 @@ const Eligibility = ({ title, items }: { title: string; items: string[] }) => {
 	);
 };
 
+// 자주 묻는 질문 — 네이티브 <details>로 접혀도 답변이 DOM/HTML에 항상 존재(색인 O).
+// 연구근거: FAQ 리치결과는 폐지됐으나 "화면에 보이는 직접 답변형 본문"이 검색·AI 인용에 핵심.
+const FaqItem = ({ q, a }: { q: string; a: string }) => {
+	const [open, setOpen] = useState(false);
+	return (
+		<details onToggle={(e) => setOpen(e.currentTarget.open)}>
+			<summary
+				style={{
+					listStyle: "none",
+					cursor: "pointer",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "space-between",
+					gap: 12,
+					padding: "20px 24px",
+					fontSize: 16.5,
+					fontWeight: 600,
+					lineHeight: 1.5,
+				}}
+			>
+				<span style={{ display: "inline-flex", alignItems: "baseline", gap: 10 }}>
+					<span style={{ color: "var(--color-primary)", fontWeight: 700, flex: "0 0 auto" }}>
+						Q
+					</span>
+					{q}
+				</span>
+				<Icon
+					n="chevron-down"
+					style={{
+						width: 20,
+						height: 20,
+						color: "var(--text-muted)",
+						flex: "0 0 auto",
+						transition: "transform .2s ease",
+						transform: open ? "rotate(180deg)" : "none",
+					}}
+				/>
+			</summary>
+			<div
+				style={{
+					padding: "0 24px 22px 46px",
+					fontSize: 15,
+					lineHeight: 1.8,
+					color: "var(--text-body)",
+				}}
+			>
+				{a}
+			</div>
+		</details>
+	);
+};
+
 export const ServiceDetail = ({ id }: { id: string }) => {
 	const go = useGo();
 	const s = SERVICES.find((x) => x.id === id) || SERVICES[0];
 	const others = SERVICES.filter((x) => x.id !== s.id);
+	const faqs = SERVICE_SEO[s.id]?.faqs ?? [];
 	return (
 		<>
 			<PageHero
@@ -219,6 +272,47 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 					</div>
 				</div>
 			</section>
+			{faqs.length > 0 && (
+				<section className="section" style={{ background: "var(--surface-page)", paddingTop: 8 }}>
+					<div className="container">
+						<div style={{ marginBottom: 28 }}>
+							<span
+								style={{
+									fontSize: 13,
+									fontWeight: 700,
+									letterSpacing: ".12em",
+									textTransform: "uppercase",
+									color: "var(--color-accent)",
+								}}
+							>
+								FAQ
+							</span>
+							<h2 style={{ fontSize: "clamp(21px,3vw,30px)", marginTop: 12 }}>
+								{s.title} 자주 묻는 질문
+							</h2>
+							<span
+								style={{
+									display: "block",
+									width: 48,
+									height: 3,
+									background: "var(--color-accent)",
+									marginTop: 18,
+								}}
+							/>
+						</div>
+						<Card hover={false} padding="4px 4px">
+							{faqs.map((f, i) => (
+								<div
+									key={f.q}
+									style={{ borderTop: i > 0 ? "1px solid var(--border-default)" : "none" }}
+								>
+									<FaqItem q={f.q} a={f.a} />
+								</div>
+							))}
+						</Card>
+					</div>
+				</section>
+			)}
 			<section className="section" style={{ background: "var(--surface-sunken)", paddingTop: 72 }}>
 				<div className="container">
 					<div style={{ marginBottom: 36 }}>
