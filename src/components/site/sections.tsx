@@ -78,6 +78,7 @@ export const SectionHead = ({
 					color: light ? "rgba(255,255,255,.78)" : "var(--text-muted)",
 					marginTop: 16,
 					lineHeight: 1.7,
+					whiteSpace: "pre-line",
 				}}
 			>
 				{sub}
@@ -235,9 +236,9 @@ export const Hero = () => {
 	return (
 		<section
 			data-hero-dark
+			className="home-hero-full"
 			style={{
 				position: "relative",
-				minHeight: "100vh",
 				display: "flex",
 				alignItems: "center",
 				overflow: "hidden",
@@ -887,7 +888,7 @@ export const ReviewsPreview = ({ images }: { images: ReviewImage[] }) => {
 				>
 					<SectionHead
 						title="의뢰인이 직접 전한 후기"
-						sub="절차를 마친 의뢰인들이 직접 남겨주신 실제 대화입니다."
+						sub={"실제 의뢰인분들이 보내주신\n소중한 후기입니다."}
 						align="left"
 					/>
 					<button
@@ -916,8 +917,18 @@ export const ReviewsPreview = ({ images }: { images: ReviewImage[] }) => {
 				<ReviewImageGallery variant="marquee" images={images} />
 			</div>
 			<div className="container">
-				<p style={{ textAlign: "center", marginTop: 28, fontSize: 13, color: "var(--text-muted)" }}>
-					※ 실제 의뢰인이 보내주신 내용이며, 개인정보 보호를 위해 일부 정보는 비공개 처리하였습니다.
+				<p
+					style={{
+						textAlign: "center",
+						marginTop: 28,
+						fontSize: 13,
+						color: "var(--text-muted)",
+						wordBreak: "keep-all",
+					}}
+				>
+					※ 실제 의뢰인이 보내주신 내용이며,
+					<br />
+					개인정보 보호를 위해 일부 정보는 비공개 처리하였습니다.
 				</p>
 			</div>
 		</section>
@@ -967,6 +978,7 @@ export const CTABand = () => {
 					<Button
 						variant="secondary"
 						size="lg"
+						className="shine"
 						onClick={() => go("contact")}
 						iconEnd={<Icon n="arrow-right" style={{ width: 18, height: 18 }} />}
 					>
@@ -1332,7 +1344,12 @@ export const LocationDetail = () => (
 								color: "var(--text-muted)",
 							}}
 						>
-							{CONTACT.addressNote}
+							{/* 지하철 안내를 노선별로 줄바꿈(" · " 기준) → 각 노선 안내가 한 줄에 오게 */}
+							{CONTACT.addressNote.split(" · ").map((line) => (
+								<span key={line} style={{ display: "block" }}>
+									{line}
+								</span>
+							))}
 						</span>
 					</span>
 				</div>
@@ -1837,10 +1854,12 @@ export const ConsultBar = () => {
 							<span style={{ fontSize: 12, fontWeight: 600 }}>{it.label}</span>
 						</>
 					);
+					// 전화상담 셀만 PC 레일 전화패널처럼 빛 사선 스윕(반짝임) 부여
+					const cls = it.label === "전화상담" ? "lk shine" : "lk";
 					return it.href ? (
 						<a
 							key={it.label}
-							className="lk"
+							className={cls}
 							href={it.href}
 							target="_blank"
 							rel="noopener noreferrer"
@@ -1852,7 +1871,7 @@ export const ConsultBar = () => {
 						<button
 							key={it.label}
 							type="button"
-							className="lk"
+							className={cls}
 							onClick={it.onClick}
 							style={cellStyle}
 						>
@@ -2072,32 +2091,54 @@ export const Footer = () => {
 							/>
 						</span>
 					</button>
-					<nav style={{ display: "flex", gap: 22, fontSize: 14, flexWrap: "wrap" }}>
+					<nav
+						style={{ display: "flex", columnGap: 22, rowGap: 6, fontSize: 14, flexWrap: "wrap" }}
+					>
 						{NAV.map((n) => (
-							<button
-								key={n.label}
-								type="button"
-								className="lk"
-								onClick={() => go(n.route)}
-								style={{
-									background: "none",
-									border: "none",
-									padding: 0,
-									font: "inherit",
-									color: "rgba(255,255,255,0.8)",
-								}}
-							>
-								{n.label}
-							</button>
+							<Fragment key={n.label}>
+								{/* 모바일에서 '블로그'부터 다음 줄로 내리는 강제 줄바꿈(데스크톱은 CSS로 미표시) */}
+								{n.label === "블로그" && <span className="footer-nav-break" aria-hidden="true" />}
+								<button
+									type="button"
+									className="lk"
+									onClick={() => go(n.route)}
+									style={{
+										background: "none",
+										border: "none",
+										padding: 0,
+										font: "inherit",
+										color: "rgba(255,255,255,0.8)",
+									}}
+								>
+									{n.label}
+								</button>
+							</Fragment>
 						))}
 					</nav>
 				</div>
-				<div style={{ marginTop: 28, fontSize: 14, lineHeight: 1.9 }}>
-					<p>주소 : {CONTACT.address}</p>
-					<p>
-						전화 {CONTACT.phone.display}, {CONTACT.mobile.display} · 이메일 {CONTACT.email}
+				<div className="footer-info" style={{ marginTop: 28, fontSize: 14, lineHeight: 1.9 }}>
+					{/* 라벨(고정폭)+값 2열 → 콜론 정렬 + 주소 줄바꿈 시 둘째 줄이 값 시작선에 맞춰짐.
+					    PC(≥961px)에선 아래 CSS로 블록 전체를 오른쪽 정렬. */}
+					<p style={{ wordBreak: "keep-all" }}>
+						주소 : {CONTACT.address.split(", ")[0]}
+						{", "}
+						{/* 모바일에서만 건물명부터 줄바꿈, PC(≥961px)에선 br 숨겨 한 줄로 */}
+						<br className="br-mobile" />
+						{CONTACT.address.split(", ").slice(1).join(", ")}
 					</p>
-					<p style={{ marginTop: 14, display: "flex", gap: 16, flexWrap: "wrap" }}>
+					<p>
+						전화 : {CONTACT.phone.display}, {CONTACT.mobile.display}
+					</p>
+					<p>이메일 : {CONTACT.email}</p>
+					<p
+						style={{
+							marginTop: 14,
+							display: "flex",
+							gap: 16,
+							flexWrap: "wrap",
+							justifyContent: "flex-end",
+						}}
+					>
 						<Link href="/privacy" style={{ color: "#fff", fontWeight: 600 }}>
 							개인정보처리방침
 						</Link>

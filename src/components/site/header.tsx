@@ -285,13 +285,16 @@ function MobileDrawer({
 			    (없으면 lenis.stop()이 터치/휠 이벤트를 preventDefault해서 패널 스크롤이 막힘) */}
 			<div className="panel" data-lenis-prevent>
 				<div className="drawer-head">
-					<Image
-						className="drawer-head-logo"
-						src="/brand/logo.png"
-						alt="초이스 행정사 사무소"
-						width={531}
-						height={127}
-					/>
+					{/* 로고만 배경 박스+반짝임 안에 두고, 닫기(X)는 박스 밖에 배치 */}
+					<span className="drawer-logo-box shine">
+						<Image
+							className="drawer-head-logo"
+							src="/brand/logo.png"
+							alt="초이스 행정사 사무소"
+							width={531}
+							height={127}
+						/>
+					</span>
 					<button type="button" className="drawer-close lk" onClick={onClose} aria-label="닫기">
 						<Icon n="x" style={{ width: 20, height: 20 }} />
 					</button>
@@ -309,7 +312,14 @@ function MobileDrawer({
 								data-active={route === n.route && !subMatch ? "true" : undefined}
 							>
 								<div className="flex items-center">
-									<button type="button" className="drawer-link lk" onClick={() => nav(n.route)}>
+									{/* 하위메뉴가 있으면(사무소 소개·업무분야) 라벨 탭 시 이동 대신 아코디언 펼침.
+									    하위 없는 항목(후기·블로그·문의하기)만 바로 이동. (drawer=모바일 전용) */}
+									<button
+										type="button"
+										className="drawer-link lk"
+										onClick={() => (kids ? setExp(isExp ? null : n.label) : nav(n.route))}
+										aria-expanded={kids ? isExp : undefined}
+									>
 										{n.label}
 									</button>
 									{kids && (
@@ -352,8 +362,9 @@ function MobileDrawer({
 					{/* 상담 신청 버튼은 상단 nav의 "문의하기"와 중복이라 제거(모바일 drawer). 전화만 노출. */}
 					<Button
 						href={CONTACT.phone.href}
-						variant="outline"
+						variant="primary"
 						size="lg"
+						className="shine"
 						style={{ width: "100%" }}
 						iconStart={<Icon n="phone" style={{ width: 16, height: 16 }} />}
 					>

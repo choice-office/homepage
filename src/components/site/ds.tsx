@@ -54,6 +54,7 @@ export const Button = ({
 	onClick,
 	type = "button",
 	style,
+	className: classNameProp,
 }: {
 	children?: ReactNode;
 	variant?: string;
@@ -65,12 +66,14 @@ export const Button = ({
 	onClick?: () => void;
 	type?: "button" | "submit" | "reset";
 	style?: Sx;
+	className?: string;
 }) => {
 	const className = cn(
 		"ds-btn",
 		`ds-btn-${variant}`,
 		btnSizeClass[size],
 		disabled && "is-disabled",
+		classNameProp,
 	);
 	if (href) {
 		return (

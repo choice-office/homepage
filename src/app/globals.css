@@ -968,6 +968,33 @@
 		transform: translateX(130%);
 	}
 }
+/* 공통 반짝임(빛 사선 스윕) — PC 플로팅 레일 전화패널과 동일 효과를 여러 곳에 재사용.
+   대상 요소에 position:relative·overflow:hidden이 있어야 하며, 아래 클래스가 이를 보장한다. */
+.shine {
+	position: relative;
+	overflow: hidden;
+}
+.shine::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	background: linear-gradient(
+		115deg,
+		transparent 35%,
+		rgba(255, 255, 255, 0.5) 50%,
+		transparent 65%
+	);
+	transform: translateX(-130%);
+	animation: railShine 3.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+	.shine::after {
+		display: none;
+	}
+}
+
 @keyframes railRing {
 	0%,
 	55%,
@@ -1216,9 +1243,17 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding-bottom: 11px;
-	margin-bottom: 2px;
-	border-bottom: 1px solid var(--border-default);
+	gap: 12px;
+	margin-bottom: 12px;
+}
+/* 로고 전용 배경 박스(반짝임은 .shine). 닫기 X는 이 박스 밖에 위치. */
+.drawer-logo-box {
+	display: inline-flex;
+	align-items: center;
+	padding: 10px 14px;
+	border-radius: 12px;
+	background: linear-gradient(120deg, rgba(124, 99, 70, 0.13), rgba(124, 99, 70, 0.03));
+	border: 1px solid var(--border-default);
 }
 .drawer-head-logo {
 	height: 40px;
@@ -3688,6 +3723,40 @@ button.ds-card {
 	font-size: 18px;
 }
 
+/* 홈 히어로 풀높이 — iOS Safari에서 100vh는 주소창 숨긴 큰 뷰포트로 계산돼, 주소창 토글 시
+   히어로가 리사이즈되며 화면이 튀는 문제. svh(주소창 보이는 기준의 고정 높이)로 안정화하고
+   svh 미지원 브라우저는 100vh로 폴백. 데스크톱은 주소창 토글이 없어 svh≈vh(동작 동일). */
+.home-hero-full {
+	min-height: 100vh;
+}
+
+/* 통계 라벨: 한글 단어가 중간에 쪼개지지 않게(‘직접 진행’이 붙어서 줄바꿈되도록). */
+.stat-label {
+	word-break: keep-all;
+}
+
+/* 푸터 nav 강제 줄바꿈 스페이서 — 데스크톱은 숨김, 모바일에서만 전체폭 차지해 '블로그'를 다음 줄로. */
+.footer-nav-break {
+	display: none;
+}
+
+/* 모바일 전용 줄바꿈 <br> — PC(≥961px)에선 숨겨 한 줄로(푸터 주소 등). 모바일 기본은 정상 개행. */
+@media (min-width: 961px) {
+	br.br-mobile {
+		display: none;
+	}
+}
+
+/* 푸터 연락처: 모바일·PC 공통 오른쪽 정렬. 라벨은 값에 자연스럽게 붙는 인라인 텍스트. */
+.footer-info {
+	text-align: right;
+}
+@supports (min-height: 100svh) {
+	.home-hero-full {
+		min-height: 100svh;
+	}
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    모바일 전용 보정 (≤960px) — PC(데스크톱) 레이아웃은 이 블록에 걸리지 않아 불변.
    인라인 스타일을 덮어써야 하는 곳만 !important 사용.
@@ -3702,13 +3771,12 @@ button.ds-card {
 		min-width: 0;
 	}
 	.loc-row {
-		/* 왼쪽 key(라벨) · 오른쪽 value 한 줄. 인라인 align-items(center/flex-start)를 !important로 통일. */
+		/* 왼쪽 key(라벨) + 값 왼쪽 정렬(값을 오른쪽으로 밀지 않음). */
 		flex-direction: row;
-		align-items: flex-start !important;
-		justify-content: space-between;
+		align-items: flex-start;
 	}
 	.loc-row-label {
-		/* 인라인 flex:"0 0 192px"가 라벨을 192px로 고정하던 것을 콘텐츠 크기로 축소(왼쪽 key). */
+		/* 인라인 flex:"0 0 192px"가 라벨을 192px로 고정하던 것을 !important로 덮어 콘텐츠 크기로 축소(왼쪽 key). */
 		width: auto !important;
 		flex: 0 0 auto !important;
 	}
@@ -3718,12 +3786,17 @@ button.ds-card {
 		font-size: 15.5px;
 		line-height: 1.45;
 	}
+	.footer-nav-break {
+		display: block;
+		flex-basis: 100%;
+		height: 0;
+	}
 	.loc-row-val {
-		/* 오른쪽 정렬 value. min-width:0으로 긴 주소가 줄바꿈되며 우측에 정렬되게. */
-		text-align: right;
+		/* 값 왼쪽 정렬. keep-all로 한글 단어(서울파이낸스센터 등)가 중간에 쪼개지지 않고
+		   콤마·공백에서만 줄바꿈되게. overflow-wrap은 초장문 토큰 안전장치. */
 		min-width: 0;
+		word-break: keep-all;
 		overflow-wrap: anywhere;
-		word-break: break-word;
 	}
 
 	/* 문의 폼: 2열 그리드가 좁아 좌측 placeholder 잘림 + "현재 체류자격" 라벨 2줄 → 1열 */

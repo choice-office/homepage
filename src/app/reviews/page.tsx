@@ -28,10 +28,17 @@ export default async function ReviewsPage() {
 				<div className="container">
 					<ReviewImageGallery images={images} />
 					<p
-						style={{ textAlign: "center", marginTop: 36, fontSize: 13, color: "var(--text-muted)" }}
+						style={{
+							textAlign: "center",
+							marginTop: 36,
+							fontSize: 13,
+							color: "var(--text-muted)",
+							wordBreak: "keep-all",
+						}}
 					>
-						※ 실제 의뢰인이 보내주신 내용이며, 개인정보 보호를 위해 일부 정보는 비공개
-						처리하였습니다.
+						※ 실제 의뢰인이 보내주신 내용이며,
+						<br />
+						개인정보 보호를 위해 일부 정보는 비공개 처리하였습니다.
 					</p>
 				</div>
 			</section>
