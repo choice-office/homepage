@@ -3843,9 +3843,12 @@ button.ds-card {
 		align-items: flex-start;
 	}
 	.loc-row-label {
-		/* 인라인 flex:"0 0 192px"가 라벨을 192px로 고정하던 것을 !important로 덮어 콘텐츠 크기로 축소(왼쪽 key). */
-		width: auto;
-		flex: 0 0 auto;
+		/* 인라인 flex:"0 0 192px"(sections.tsx)를 !important로 덮어 콘텐츠 크기로 축소(왼쪽 key).
+		   인라인 스타일은 !important로만 이길 수 있음. 아래 suppress가 없으면 저장 시 자동수정이 지워 회귀. */
+		/* biome-ignore lint/complexity/noImportantStyles: 인라인 flex 오버라이드에 필수(제거 시 오시는길 라벨 깨짐) */
+		width: auto !important;
+		/* biome-ignore lint/complexity/noImportantStyles: 인라인 flex 오버라이드에 필수(제거 시 오시는길 라벨 깨짐) */
+		flex: 0 0 auto !important;
 	}
 
 	/* 업무분야 상세 CTA 제목: 좁은 폭에서 2줄로 벌어질 때 살짝 축소(PC는 아래 기본값 18px 유지). */
