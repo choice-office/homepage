@@ -17,6 +17,7 @@ import {
 	serviceForCategory,
 } from "@/lib/blog";
 import { toJsonLd } from "@/lib/json-ld";
+import { NAVER_BLOG, YOUTUBE_CHANNEL } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 
 type Params = { params: Promise<{ id: string }> };
@@ -72,6 +73,8 @@ const buildJsonLd = (post: BlogPost) => {
 				name: post.author,
 				...(post.authorRole ? { jobTitle: post.authorRole } : {}),
 				url: `${siteConfig.url}${AUTHOR_PROFILE_PATH}`,
+				// E-E-A-T: 저자를 공식 채널(네이버블로그·유튜브)과 연결해 동일 인물임을 명시
+				sameAs: [NAVER_BLOG, YOUTUBE_CHANNEL],
 				worksFor: { "@type": "Organization", name: siteConfig.name },
 			},
 			publisher: {

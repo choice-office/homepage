@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { BlogCard } from "@/components/site/blog-card";
+import { Icon } from "@/components/site/icon";
 import { ServiceDetail } from "@/components/site/service-detail";
 import { siteConfig } from "@/config/site";
+import { getPostsForService } from "@/lib/blog";
 import { toJsonLd } from "@/lib/json-ld";
 import { SERVICE_SEO, SERVICES, type Service } from "@/lib/site-data";
+import { cn } from "@/lib/utils";
+
+// 서비스 상세 하단 ISR — 관련 글이 발행되면 반영
+export const revalidate = 60;
 
 export const generateStaticParams = () => SERVICES.map((s) => ({ id: s.id }));
 
@@ -75,6 +83,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 	const { id } = await params;
 	const s = SERVICES.find((x) => x.id === id);
 	if (!s) redirect("/");
+	// 이 분야의 실제 사례·정보 글을 내부링크로 연결(SEO 권위 전달 + 전환/체류)
+	const related = await getPostsForService(s.id, 6);
 	return (
 		<>
 			<script
@@ -83,6 +93,37 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 				dangerouslySetInnerHTML={{ __html: toJsonLd(buildJsonLd(s)) }}
 			/>
 			<ServiceDetail id={id} />
+			{related.length > 0 && (
+				<section className={cn("section", "bg-[var(--surface-page)]")}>
+					<div className="container">
+						<div style={{ marginBottom: 28 }}>
+							<span className="font-bold text-[13px] text-[color:var(--color-accent)] uppercase tracking-[.12em]">
+								Related
+							</span>
+							<h2 className="mt-3" style={{ fontSize: "clamp(21px,3vw,30px)" }}>
+								{s.title} 관련 글·사례
+							</h2>
+							<span className="mt-[18px] block h-[3px] w-12 bg-[var(--color-accent)]" />
+						</div>
+						<div className="grid-3">
+							{related.map((p) => (
+								<BlogCard key={p.slug} post={p} />
+							))}
+						</div>
+						<div className="mt-9 text-center">
+							<Link
+								className={cn(
+									"lk",
+									"inline-flex items-center gap-2 font-semibold text-[15px] text-[color:var(--color-primary)]",
+								)}
+								href="/blog"
+							>
+								블로그에서 더 보기 <Icon n="arrow-right" className="h-4 w-4" />
+							</Link>
+						</div>
+					</div>
+				</section>
+			)}
 		</>
 	);
 }

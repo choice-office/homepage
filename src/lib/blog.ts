@@ -173,6 +173,13 @@ export const serviceForCategory = (
 	return svc ? { id, title: svc.title, code: svc.code } : null;
 };
 
+// 특정 업무분야(서비스)에 해당하는 발행 글 — 서비스 상세의 "관련 글" 내부링크(SEO·전환·체류).
+// 카테고리→서비스 매핑(SERVICE_BY_CATEGORY)의 역방향으로 최신순 상위 N개.
+export const getPostsForService = async (serviceId: string, limit = 4): Promise<BlogPost[]> => {
+	const all = await getPublishedPosts(); // published, 최신순
+	return all.filter((p) => SERVICE_BY_CATEGORY[p.categorySlug] === serviceId).slice(0, limit);
+};
+
 export const getCategories = async (): Promise<BlogCategory[]> => {
 	const supabase = client();
 	if (!supabase) return [];

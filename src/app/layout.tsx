@@ -10,7 +10,7 @@ import { ConsultBar, FloatRail, Footer } from "@/components/site/sections";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { siteConfig } from "@/config/site";
 import { toJsonLd } from "@/lib/json-ld";
-import { CONTACT, NAVER_BLOG, YOUTUBE_CHANNEL } from "@/lib/site-data";
+import { CONTACT, NAVER_BLOG, SERVICES, YOUTUBE_CHANNEL } from "@/lib/site-data";
 import "./globals.css";
 
 // 폰트: Noto Sans KR (next/font 자체 호스팅 — CDN/CSP 불필요, 한/영 동시 지원).
@@ -90,6 +90,20 @@ const jsonLd = {
 	areaServed: ["KR", "US"],
 	openingHours: "Mo-Fr 10:00-18:00",
 	knowsLanguage: ["ko"],
+	// 업무분야 카탈로그 — 검색·AI가 "무슨 업무를 하는 사무소인지" 구조적으로 인식(AEO)
+	hasOfferCatalog: {
+		"@type": "OfferCatalog",
+		name: "비자·국적 업무",
+		itemListElement: SERVICES.map((s) => ({
+			"@type": "Offer",
+			itemOffered: {
+				"@type": "Service",
+				name: s.title,
+				serviceType: s.code,
+				url: `${siteConfig.url}/services/${s.id}`,
+			},
+		})),
+	},
 };
 
 export default function RootLayout({

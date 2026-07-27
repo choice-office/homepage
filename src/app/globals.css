@@ -3844,8 +3844,8 @@ button.ds-card {
 	}
 	.loc-row-label {
 		/* 인라인 flex:"0 0 192px"가 라벨을 192px로 고정하던 것을 !important로 덮어 콘텐츠 크기로 축소(왼쪽 key). */
-		width: auto !important;
-		flex: 0 0 auto !important;
+		width: auto;
+		flex: 0 0 auto;
 	}
 
 	/* 업무분야 상세 CTA 제목: 좁은 폭에서 2줄로 벌어질 때 살짝 축소(PC는 아래 기본값 18px 유지). */
