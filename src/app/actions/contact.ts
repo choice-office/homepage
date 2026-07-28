@@ -166,28 +166,66 @@ export const submitQuickConsult = async (
 		["연락처", phone],
 	];
 
+	// 상담분야 코드 검증 — 문의하기 폼과 동일 기준(허용 목록 밖이면 null)
+	const consultFieldValue = CONSULT_FIELD_VALUES.includes(
+		consultField as (typeof CONSULT_FIELD_VALUES)[number],
+	)
+		? consultField
+		: null;
+
+	let anyConfigured = false;
+	let anyOk = false;
+
+	// 1) Supabase 저장 — 신속 상담도 문의 DB(contacts)에 기록해 관리자에 노출.
+	// 이메일·국적은 신속 상담 폼에 없으므로 email=""(NOT NULL 대응), source로 유입 경로 구분.
+	const supabaseUrl = process.env.SUPABASE_URL;
+	const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+	if (supabaseUrl && serviceRoleKey) {
+		anyConfigured = true;
+		try {
+			const supabase = createClient(supabaseUrl, serviceRoleKey, {
+				auth: { persistSession: false },
+			});
+			const { error } = await supabase.from("contacts").insert({
+				name,
+				phone,
+				email: "",
+				consult_field: consultFieldValue,
+				privacy_consent: true,
+				source: "quick_consult",
+			});
+			if (error) console.error("[quick-consult] insert 실패:", error.message);
+			else anyOk = true;
+		} catch (e) {
+			console.error("[quick-consult] Supabase 예외:", e);
+		}
+	}
+
+	// 2) 이메일 알림 (Resend)
 	const resendKey = process.env.RESEND_API_KEY;
 	const contactEmail = process.env.CONTACT_EMAIL;
-	if (!resendKey || !contactEmail) return { success: true }; // 미설정(개발) → placeholder
-
-	try {
-		const resend = new Resend(resendKey);
-		const from = process.env.RESEND_FROM ?? "초이스 행정사 사무소 <onboarding@resend.dev>";
-		const html = renderEmailHtml("신속 상담 · 하단 상담바", "⚡ 신속 상담 신청", rows);
-		const { error } = await resend.emails.send({
-			from,
-			to: contactEmail,
-			subject: `[⚡신속 상담] ${name} · ${consultLabel} · ${phone}`,
-			text: `[신속 상담 신청 · 홈페이지 하단 상담바]\n성함: ${name}\n상담분야: ${consultLabel}\n연락처: ${phone}`,
-			html,
-		});
-		if (error) {
-			console.error("[quick-consult] Resend 실패:", error.message ?? error);
-			return { success: false, error: "접수 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." };
+	if (resendKey && contactEmail) {
+		anyConfigured = true;
+		try {
+			const resend = new Resend(resendKey);
+			const from = process.env.RESEND_FROM ?? "초이스 행정사 사무소 <onboarding@resend.dev>";
+			const html = renderEmailHtml("신속 상담 · 하단 상담바", "⚡ 신속 상담 신청", rows);
+			const { error } = await resend.emails.send({
+				from,
+				to: contactEmail,
+				subject: `[⚡신속 상담] ${name} · ${consultLabel} · ${phone}`,
+				text: `[신속 상담 신청 · 홈페이지 하단 상담바]\n성함: ${name}\n상담분야: ${consultLabel}\n연락처: ${phone}`,
+				html,
+			});
+			if (error) console.error("[quick-consult] Resend 실패:", error.message ?? error);
+			else anyOk = true;
+		} catch (e) {
+			console.error("[quick-consult] Resend 예외:", e);
 		}
-		return { success: true };
-	} catch (e) {
-		console.error("[quick-consult] 예외:", e);
-		return { success: false, error: "접수 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." };
 	}
+
+	// 아무 채널도 미설정(개발) → placeholder 성공. 하나라도 성공하면 접수 완료.
+	if (!anyConfigured) return { success: true };
+	if (anyOk) return { success: true };
+	return { success: false, error: "접수 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." };
 };
