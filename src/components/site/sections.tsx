@@ -770,7 +770,7 @@ const ShortEmbed = ({ id }: { id: string }) => {
 		>
 			<Image
 				src={`https://i.ytimg.com/vi/${id}/oardefault.jpg`}
-				alt=""
+				alt="초이스 행정사 유튜브 쇼츠 썸네일"
 				fill
 				sizes="(max-width: 640px) 90vw, 340px"
 				style={{ objectFit: "cover" }}

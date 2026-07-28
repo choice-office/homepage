@@ -92,8 +92,7 @@ const buildJsonLd = (post: BlogPost) => {
 			itemListElement: [
 				{ "@type": "ListItem", position: 1, name: "홈", item: siteConfig.url },
 				{ "@type": "ListItem", position: 2, name: "블로그", item: `${siteConfig.url}/blog` },
-				{ "@type": "ListItem", position: 3, name: post.category },
-				{ "@type": "ListItem", position: 4, name: post.title, item: url },
+				{ "@type": "ListItem", position: 3, name: post.title, item: url },
 			],
 		},
 	];
