@@ -39,6 +39,7 @@ yarn-error.log*
 .omc/handoffs/
 .omc/sessions/
 .omc/state/
+.omc/tmp/
 .omc/project-memory.json
 
 # typescript
