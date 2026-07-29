@@ -1546,16 +1546,34 @@
 	font-weight: 700;
 	color: var(--text-heading);
 }
+/* 인용구 기본형 — 네이버 원문 밑줄형(.se-q-u)과 동일한 디자인으로 통일.
+   admin 툴바의 "인용" 버튼이 만드는 무클래스 blockquote 가 이 스타일을 받는다. */
 .prose blockquote {
-	margin: 1.6em 0;
-	padding: 4px 20px;
-	border-left: 3px solid var(--color-primary);
-	background: var(--surface-subtle);
-	border-radius: 0 var(--radius) var(--radius) 0;
-	color: var(--text-muted);
+	margin: 2.6em 0 1.4em;
+	padding: 0 0 0.55em;
+	border: none;
+	border-bottom: 1px solid var(--border-default);
+	background: none;
+	border-radius: 0;
+	color: var(--text-heading);
+	font-size: 1.4em;
+	font-weight: 500;
+	line-height: 1.5;
+}
+.prose blockquote::before {
+	content: "\201C";
+	display: block;
+	font-family: Georgia, "Times New Roman", serif;
+	font-size: 1.7em;
+	line-height: 0.5;
+	color: #c4c4c4;
+	margin-bottom: 0.1em;
 }
 .prose blockquote p {
-	margin: 0.6em 0;
+	margin: 0;
+}
+.prose blockquote p + p {
+	margin-top: 0.4em;
 }
 .prose hr {
 	border: none;
@@ -1878,15 +1896,19 @@
 .prose blockquote.quote-center {
 	margin: 1.8em 0;
 	padding: 8px 0;
-	border-left: none;
+	border: none;
 	background: transparent;
 	border-radius: 0;
 	text-align: center;
 	color: var(--text-body);
+	font-size: 1em;
+	font-weight: 400;
+	line-height: inherit;
 }
 .prose blockquote.quote-center::before {
 	content: "\201C";
 	display: block;
+	font-family: inherit;
 	font-size: 40px;
 	line-height: 1;
 	color: var(--color-primary-light);
