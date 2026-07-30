@@ -66,6 +66,8 @@ export const GET = async (request: Request) => {
 		.select("id");
 	if (!throttle.error) result.throttleDeleted = throttle.data?.length ?? 0;
 
-	console.info("[cron/retention]", JSON.stringify(result));
+	// 삭제 건수를 로그로 남긴다(개인정보 삭제 이력 확인용 — Vercel 로그에서 조회).
+	// biome 설정상 console 은 warn/error 만 허용된다.
+	console.warn("[cron/retention]", JSON.stringify(result));
 	return Response.json({ ok: true, ranAt: new Date().toISOString(), ...result });
 };
