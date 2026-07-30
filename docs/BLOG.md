@@ -40,7 +40,8 @@ blog_posts (
   created_at, updated_at(트리거 자동)
 )
 index: blog_posts(status, published_at desc), blog_posts(category_id)
-RLS: 공개 SELECT = blog_posts(status=published) / categories·authors(true). 쓰기 정책 없음 → service_role만.
+RLS: 공개 SELECT = blog_posts(status=published) / categories·authors(true).
+     쓰기 = authenticated(관리자 로그인) INSERT/UPDATE/DELETE + 초안 포함 전체 SELECT. 시드 스크립트만 service_role.
 storage bucket 'blog' (public read) — 본문·커버 이미지용. 업로드 정책은 관리자 구현 시.
 ```
 - **설계 의도**: 공유 엔티티(카테고리·작성자)는 정규화(FK), 글-종속 값객체(faq·sources)는 jsonb. `BlogPost`와 컬럼 1:1 매핑 → 렌더 코드 변경 최소.
@@ -53,7 +54,12 @@ alter table blog_posts add column if not exists tags text[] not null default '{}
 ```
 - 읽기(`lib/blog.ts`)는 **컬럼이 없어도 안전**하다: `tags` 포함 SELECT를 먼저 시도하고 실패하면 tags 없는 SELECT로 폴백 → 마이그레이션 전에도 블로그가 정상 동작, 적용 후 자동으로 태그가 흐른다.
 - 렌더: 상세 하단 `.post-tags` 칩 + `BlogPosting.keywords`. 값은 `#` 없이 단어만 저장(렌더 시 `#` 부착).
-- 입력 UI는 choice-admin(별도)에서. RLS 쓰기 정책은 기존과 동일(service_role/관리자).
+- 입력 UI는 choice-admin(별도)에서. RLS 쓰기 정책은 기존과 동일(authenticated 관리자).
+
+## 임시저장(draft)과 공개 노출
+- 공개 읽기는 `status = published` 만 조회한다(목록·상세 모두) → **임시저장 글은 홈페이지에 절대 노출되지 않는다.**
+- 임시저장 글은 **마지막 저장일로부터 30일 보관 후 자동 삭제**된다. 삭제 주체는 어드민(`purgeExpiredDrafts()`, 관리자가 블로그 화면/임시저장 목록을 열 때 실행) — DB 크론이 아니다. 상세는 `choice-admin/docs/ARCHITECTURE.md`.
+- 발행글을 "임시저장"으로 다시 저장하면 `published_at`이 비워져 홈페이지에서 내려간다(발행 취소와 동일).
 
 ## 시드 (`scripts/seed-blog.ts`, 1회용)
 - 초기 글 12편 + 카테고리 10 + 작성자 1을 service_role로 upsert. 데이터: `scripts/seed-data.ts`.
