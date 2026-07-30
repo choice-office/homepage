@@ -188,7 +188,7 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 								width={active.w}
 								height={active.h}
 								className="rv-lb-img"
-								sizes="(max-width: 640px) 94vw, 640px"
+								sizes="(max-width: 700px) 96vw, (max-width: 1490px) 94vw, 1400px"
 							/>
 							<figcaption className="rv-lb-cap">
 								“{active.quote}”<span>— {active.meta}</span>

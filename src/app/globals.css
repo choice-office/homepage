@@ -3703,11 +3703,13 @@ button.ds-card {
 	margin-bottom: 12px;
 	text-align: center;
 }
+/* 이메일 캡처는 가로가 매우 긴 원본(최대 4400×1271)이라 640px 상한에서는 글씨가 안 읽힌다.
+   폭 상한을 넓혀 가로형은 화면폭까지 커지고, 세로형(카톡)은 max-height 에서 먼저 걸려 기존과 동일하게 보인다. */
 .rv-lb-img {
 	width: auto;
 	height: auto;
-	max-width: min(92vw, 640px);
-	max-height: 76vh;
+	max-width: min(94vw, 1400px);
+	max-height: 78vh;
 	object-fit: contain;
 	background: #fff;
 	padding: 10px;
@@ -3794,8 +3796,8 @@ button.ds-card {
 		right: 8px;
 	}
 	.rv-lb-img {
-		max-width: 94vw;
-		max-height: 70vh;
+		max-width: 96vw;
+		max-height: 72vh;
 	}
 }
 
