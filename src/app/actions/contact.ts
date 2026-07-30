@@ -1,11 +1,24 @@
 "use server";
 
+import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
+import { headers } from "next/headers";
 import { Resend } from "resend";
 
 export type ContactResult = { success: boolean; error?: string };
 
-const CONSULT_FIELD_VALUES = ["e6", "e7", "f4", "f5", "f6", "nat", "etc"] as const;
+// 폼(ContactSection·상담바)이 제공하는 값 전체 — DB CHECK(contacts_consult_field_check)와 반드시 일치시킨다
+const CONSULT_FIELD_VALUES = [
+	"short",
+	"resident",
+	"e6",
+	"e7",
+	"f4",
+	"f5",
+	"f6",
+	"nat",
+	"etc",
+] as const;
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 // 상담분야 코드 → 이메일 표기용 라벨
@@ -37,10 +50,87 @@ const renderEmailHtml = (eyebrow: string, title: string, rows: [string, string][
 			"",
 		)}</table></td></tr><tr><td style="background:#f5f3ef;padding:18px 32px;border-top:1px solid #e2ddd3;font:400 12.5px/1.7 ${EMAIL_FONT};color:#888888"><strong style="color:#524636">초이스 행정사 사무소</strong> · 02-6959-9886 · choice@kvisa1345.com<br>홈페이지에서 자동 발송된 알림입니다.</td></tr></table></td></tr></table></div>`;
 
+// 입력 길이 상한 — 초장문 payload 로 DB·메일을 부풀리는 것 방지(정상 입력에는 걸리지 않는 값)
+const LIMITS = {
+	name: 40,
+	phone: 20,
+	email: 120,
+	nationality: 40,
+	currentVisa: 60,
+	consultField: 20,
+	message: 2000,
+} as const;
+
 const text = (formData: FormData, key: string) => {
 	const v = formData.get(key);
-	return typeof v === "string" ? v.trim() : "";
+	const raw = typeof v === "string" ? v.trim() : "";
+	const limit = LIMITS[key as keyof typeof LIMITS];
+	return limit ? raw.slice(0, limit) : raw;
 };
+
+// 봇 트랩 — 사람에게는 보이지 않는 입력(website)이 채워져 있으면 조용히 버린다.
+const isBot = (formData: FormData) => {
+	const trap = formData.get("website");
+	return typeof trap === "string" && trap.trim().length > 0;
+};
+
+// 접수 레이트리밋 — 같은 IP 에서 10분 내 5건까지. 기록은 IP 해시만 남긴다.
+// 어떤 이유로든 조회에 실패하면 통과시킨다(정상 문의를 잃지 않는 쪽으로 실패).
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const RATE_MAX = 5;
+
+const serviceClient = () => {
+	const url = process.env.SUPABASE_URL;
+	const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+	if (!url || !key) return null;
+	return createClient(url, key, { auth: { persistSession: false } });
+};
+
+const clientIpHash = async (): Promise<string | null> => {
+	try {
+		const h = await headers();
+		const ip = (h.get("x-forwarded-for") ?? "").split(",")[0].trim() || h.get("x-real-ip") || "";
+		if (!ip) return null;
+		return createHash("sha256").update(`choice-contact:${ip}`).digest("hex").slice(0, 40);
+	} catch {
+		return null;
+	}
+};
+
+type Throttle = { blocked: boolean; record: () => Promise<void> };
+
+const checkThrottle = async (): Promise<Throttle> => {
+	const pass: Throttle = { blocked: false, record: async () => {} };
+	const sb = serviceClient();
+	const ipHash = await clientIpHash();
+	if (!sb || !ipHash) return pass;
+	try {
+		const since = new Date(Date.now() - RATE_WINDOW_MS).toISOString();
+		const { count, error } = await sb
+			.from("contact_throttle")
+			.select("id", { count: "exact", head: true })
+			.eq("ip_hash", ipHash)
+			.gte("created_at", since);
+		if (error) return pass;
+		if ((count ?? 0) >= RATE_MAX) return { blocked: true, record: async () => {} };
+		return {
+			blocked: false,
+			record: async () => {
+				await sb.from("contact_throttle").insert({ ip_hash: ipHash });
+				// 하루 지난 기록은 접수 때 함께 정리(별도 배치 불필요)
+				await sb
+					.from("contact_throttle")
+					.delete()
+					.lt("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+			},
+		};
+	} catch {
+		return pass;
+	}
+};
+
+const TOO_MANY =
+	"짧은 시간에 여러 번 접수되었습니다. 10분 후 다시 시도해 주시거나 전화로 연락 주세요.";
 
 // useActionState 호환 시그니처: (prevState, formData) => Promise<Result>
 export const submitContact = async (
@@ -56,6 +146,9 @@ export const submitContact = async (
 	const message = text(formData, "message");
 	const privacyConsent = formData.get("privacyConsent") === "on";
 
+	// 봇이 채운 트랩 필드 → 성공처럼 응답하고 버린다(봇에게 실패 신호를 주지 않음)
+	if (isBot(formData)) return { success: true };
+
 	// 유효성 검사 — 필수 필드 + 형식
 	if (!name || !phone || !email || !nationality) {
 		return { success: false, error: "필수 항목을 모두 입력해 주세요." };
@@ -66,6 +159,9 @@ export const submitContact = async (
 	if (!privacyConsent) {
 		return { success: false, error: "개인정보 수집·이용에 동의해 주세요." };
 	}
+
+	const throttle = await checkThrottle();
+	if (throttle.blocked) return { success: false, error: TOO_MANY };
 
 	const consultLabel = CONSULT_LABELS[consultField] ?? "-";
 	const rows: [string, string][] = [
@@ -139,7 +235,10 @@ export const submitContact = async (
 
 	// 아무 채널도 미설정(개발) → placeholder 성공. 하나라도 성공하면 접수 완료(제출 유실 방지).
 	if (!anyConfigured) return { success: true };
-	if (anyOk) return { success: true };
+	if (anyOk) {
+		await throttle.record();
+		return { success: true };
+	}
 	return { success: false, error: "접수 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." };
 };
 
@@ -154,10 +253,15 @@ export const submitQuickConsult = async (
 	const phone = text(formData, "phone");
 	const privacyConsent = formData.get("privacyConsent") === "on";
 
+	if (isBot(formData)) return { success: true };
+
 	// 필수값 — 문의하기(submitContact)와 동일한 기준으로 성함·동의를 함께 요구
 	if (!name) return { success: false, error: "성함을 입력해 주세요." };
 	if (!phone) return { success: false, error: "연락처를 입력해 주세요." };
 	if (!privacyConsent) return { success: false, error: "개인정보 수집·이용에 동의해 주세요." };
+
+	const throttle = await checkThrottle();
+	if (throttle.blocked) return { success: false, error: TOO_MANY };
 
 	const consultLabel = CONSULT_LABELS[consultField] ?? "미선택";
 	const rows: [string, string][] = [
@@ -189,10 +293,10 @@ export const submitQuickConsult = async (
 			const { error } = await supabase.from("contacts").insert({
 				name,
 				phone,
-				email: "",
+				email: null,
 				consult_field: consultFieldValue,
 				privacy_consent: true,
-				source: "quick_consult",
+				source: "consult_bar",
 			});
 			if (error) console.error("[quick-consult] insert 실패:", error.message);
 			else anyOk = true;
@@ -226,6 +330,9 @@ export const submitQuickConsult = async (
 
 	// 아무 채널도 미설정(개발) → placeholder 성공. 하나라도 성공하면 접수 완료.
 	if (!anyConfigured) return { success: true };
-	if (anyOk) return { success: true };
+	if (anyOk) {
+		await throttle.record();
+		return { success: true };
+	}
 	return { success: false, error: "접수 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." };
 };

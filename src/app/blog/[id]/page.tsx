@@ -17,6 +17,7 @@ import {
 	serviceForCategory,
 } from "@/lib/blog";
 import { toJsonLd } from "@/lib/json-ld";
+import { sanitizePostHtml } from "@/lib/sanitize-post-html";
 import { NAVER_BLOG, YOUTUBE_CHANNEL } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 
@@ -116,6 +117,7 @@ export default async function BlogDetailPage({ params }: Params) {
 
 	const related = await getRelatedPosts(post, 3);
 	const service = serviceForCategory(post.categorySlug);
+	const safeContent = sanitizePostHtml(post.content);
 
 	return (
 		<>
@@ -192,9 +194,10 @@ export default async function BlogDetailPage({ params }: Params) {
 						</aside>
 					)}
 
-					{/* 본문은 관리자 에디터가 출력한 HTML. 추후 Supabase 저장 시 입력 단계에서 sanitize 권장. */}
-					{/* biome-ignore lint/security/noDangerouslySetInnerHtml: 1차 제공(관리자 작성) 블로그 본문 HTML */}
-					<div className="prose" dangerouslySetInnerHTML={{ __html: post.content }} />
+					{/* 본문은 관리자 에디터가 출력한 HTML — 렌더 직전 허용목록으로 살균(저장형 XSS 차단).
+					    허용목록은 발행글 전수 조사 기반이라 기존 렌더 결과는 그대로다(@/lib/sanitize-post-html). */}
+					{/* biome-ignore lint/security/noDangerouslySetInnerHtml: sanitizePostHtml 통과 후 주입 */}
+					<div className="prose" dangerouslySetInnerHTML={{ __html: safeContent }} />
 
 					{post.faq && post.faq.length > 0 && (
 						<section className="post-faq" aria-labelledby="faq-heading">

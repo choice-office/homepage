@@ -73,3 +73,9 @@ src/
 - 커밋 전: `pnpm check-types` · `pnpm lint`(필요시 `pnpm lint:fix`) · `pnpm build`.
 - pre-push에서 `knip`(미사용 export 감지)가 돈다 → 죽은 코드 남기지 말 것.
 - `main` push → Vercel 자동 배포. (커밋 author 이메일이 Vercel Git 계정과 안 맞으면 **CLI `vercel deploy`는 BLOCKED** — git push 경로로 배포할 것.)
+
+## 보안 (2026-07-30 정리)
+- **본문 HTML 살균**: 블로그 상세·RSS 는 `sanitizePostHtml`(`src/lib/sanitize-post-html.ts`, 서버 전용)을 통과한 HTML만 주입한다. 허용목록은 발행글 205건 전수 조사 + 에디터가 만들 수 있는 마크업 기준이며, 도입 시 205건 모두 DOM 동일함을 검증했다. 새 에디터 기능(임베드 등)을 추가하면 이 허용목록도 함께 넓혀야 한다.
+- **문의 폼 남용 방어**: 서버에서 입력 길이 상한(`LIMITS`), 허니팟 필드(`website` — 채워지면 성공처럼 응답하고 버림), IP 해시 기준 레이트리밋(10분 5건, `contact_throttle` 테이블). 레이트리밋 조회가 실패하면 **통과**시킨다(정상 문의 유실 방지).
+- **CSP**: `next.config.ts` 의 `script-src` 에 `'unsafe-inline'` 이 남아 있다(GA·hydration). 이를 제거하려면 nonce + 요청별 렌더가 필요해 SSG 이점을 잃으므로, XSS 1차 방어는 위 살균으로 둔다(의도적 선택).
+- 권한(RLS·회원가입 차단·스토리지)은 choice-admin/docs/ARCHITECTURE.md 의 '권한 모델' 참고.

@@ -1,5 +1,6 @@
 import { siteConfig } from "@/config/site";
 import { getPublishedPosts } from "@/lib/blog";
+import { sanitizePostHtml } from "@/lib/sanitize-post-html";
 
 // 블로그 RSS 2.0 피드 — Google Search Console / 네이버 서치어드바이저에 제출용.
 // /feed.xml 로 서빙. 최신 글 위주로 30개만 담아 피드 용량을 제한한다.
@@ -37,7 +38,7 @@ export const GET = async () => {
       <pubDate>${rfc822(p.date)}</pubDate>
       <category>${esc(p.category)}</category>
       <description>${cdata(p.metaDescription ?? p.excerpt)}</description>
-      <content:encoded>${cdata(p.content)}</content:encoded>
+      <content:encoded>${cdata(sanitizePostHtml(p.content))}</content:encoded>
     </item>`;
 		})
 		.join("\n");

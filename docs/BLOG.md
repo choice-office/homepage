@@ -40,8 +40,9 @@ blog_posts (
   created_at, updated_at(트리거 자동)
 )
 index: blog_posts(status, published_at desc), blog_posts(category_id)
-RLS: 공개 SELECT = blog_posts(status=published) / categories·authors(true).
-     쓰기 = authenticated(관리자 로그인) INSERT/UPDATE/DELETE + 초안 포함 전체 SELECT. 시드 스크립트만 service_role.
+RLS: 공개(anon) SELECT = blog_posts(status=published) / categories·authors(true).
+     쓰기·초안조회 = public.is_admin() 통과 계정만(admins 화이트리스트). 시드 스크립트만 service_role.
+     ※ 권한 모델 전체는 choice-admin/docs/ARCHITECTURE.md '권한 모델' + docs/sql/2026-07-30-authz-hardening.sql
 storage bucket 'blog' (public read) — 본문·커버 이미지용. 업로드 정책은 관리자 구현 시.
 ```
 - **설계 의도**: 공유 엔티티(카테고리·작성자)는 정규화(FK), 글-종속 값객체(faq·sources)는 jsonb. `BlogPost`와 컬럼 1:1 매핑 → 렌더 코드 변경 최소.

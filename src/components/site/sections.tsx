@@ -1077,6 +1077,15 @@ export const ContactForm = () => {
 				</div>
 			) : (
 				<form onSubmit={handleSubmit}>
+					{/* 봇 트랩(허니팟) — 사람에게 보이지 않고, 채워지면 서버가 조용히 버린다 */}
+					<input
+						type="text"
+						name="website"
+						tabIndex={-1}
+						autoComplete="off"
+						aria-hidden="true"
+						style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+					/>
 					<div
 						className="contact-form-grid"
 						style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}
