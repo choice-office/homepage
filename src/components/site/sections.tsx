@@ -1015,6 +1015,9 @@ const CONSULT_FIELDS = [
 	{ v: "etc", label: "기타" },
 ];
 
+// Base UI Select 는 items 를 받아야 트리거에 값(e6·f5) 대신 라벨을 표시한다
+const CONSULT_FIELD_ITEMS = CONSULT_FIELDS.map((f) => ({ value: f.v, label: f.label }));
+
 // 입력값을 010-xxxx-xxxx 형태로 자동 정리(숫자만 추출 후 3-4-4 하이픈)
 const formatKrPhone = (raw: string) => {
 	const d = raw.replace(/\D/g, "").slice(0, 11);
@@ -1122,7 +1125,11 @@ export const ContactForm = () => {
 						</div>
 						<div>
 							<Label htmlFor="cf">상담 희망 분야</Label>
-							<Select value={field} onValueChange={(v) => setField(v ?? "")}>
+							<Select
+								items={CONSULT_FIELD_ITEMS}
+								value={field}
+								onValueChange={(v) => setField(v ?? "")}
+							>
 								<SelectTrigger
 									id="cf"
 									style={{ height: 48, width: "100%", fontSize: 16, borderRadius: "var(--radius)" }}
@@ -1733,7 +1740,7 @@ export const ConsultBar = () => {
 								minWidth: 0,
 							}}
 						/>
-						<Select value={svc} onValueChange={(v) => setSvc(v ?? "")}>
+						<Select items={CONSULT_FIELD_ITEMS} value={svc} onValueChange={(v) => setSvc(v ?? "")}>
 							<SelectTrigger
 								className="border-none"
 								style={{
