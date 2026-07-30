@@ -78,4 +78,10 @@ src/
 - **본문 HTML 살균**: 블로그 상세·RSS 는 `sanitizePostHtml`(`src/lib/sanitize-post-html.ts`, 서버 전용)을 통과한 HTML만 주입한다. 허용목록은 발행글 205건 전수 조사 + 에디터가 만들 수 있는 마크업 기준이며, 도입 시 205건 모두 DOM 동일함을 검증했다. 새 에디터 기능(임베드 등)을 추가하면 이 허용목록도 함께 넓혀야 한다.
 - **문의 폼 남용 방어**: 서버에서 입력 길이 상한(`LIMITS`), 허니팟 필드(`website` — 채워지면 성공처럼 응답하고 버림), IP 해시 기준 레이트리밋(10분 5건, `contact_throttle` 테이블). 레이트리밋 조회가 실패하면 **통과**시킨다(정상 문의 유실 방지).
 - **CSP**: `next.config.ts` 의 `script-src` 에 `'unsafe-inline'` 이 남아 있다(GA·hydration). 이를 제거하려면 nonce + 요청별 렌더가 필요해 SSG 이점을 잃으므로, XSS 1차 방어는 위 살균으로 둔다(의도적 선택).
+- **보관기간 자동 정리(Vercel Cron)**: `/api/cron/retention` 이 매일 03:00 KST 에 service_role 로 실행된다(`vercel.json` crons).
+  - 문의(contacts): 개인정보처리방침의 "처리 완료 후 3년" 그대로 — `status=done` 은 `updated_at`+3년, 그 외 상태는 `created_at`+3년.
+  - 블로그 임시저장 30일 · `contact_throttle` 1일도 함께 정리(관리자 접속 여부와 무관하게 돌아간다).
+  - 인증: `CRON_SECRET`(Vercel production·preview + 로컬 `.env.local`). 헤더 불일치면 401 — 외부에서 삭제를 유발할 수 없다.
+- **문의 알림 수신(CONTACT_EMAIL)은 환경별로 다르다**: 로컬·development·preview = 개발자 메일, production = 행정사님 메일.
+  (개발 중 테스트 문의가 사무소 메일함으로 가지 않게)
 - 권한(RLS·회원가입 차단·스토리지)은 choice-admin/docs/ARCHITECTURE.md 의 '권한 모델' 참고.
