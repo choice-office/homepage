@@ -90,6 +90,11 @@ const supabaseHosts = (() => {
 })();
 
 const nextConfig: NextConfig = {
+	// 빌드 산출물 위치. 기본은 .next 이지만, 시각 회귀 검증용 프로덕션 빌드는
+	// 실행 중인 dev 서버와 .next 를 공유하면 서로를 깨뜨리므로 별도 디렉터리로 뺀다.
+	//   NEXT_DIST_DIR=.next-visual pnpm build
+	distDir: process.env.NEXT_DIST_DIR || ".next",
+
 	// 프레임워크 정보(X-Powered-By: Next.js) 노출 제거 — 버전별 취약점 정찰 차단
 	poweredByHeader: false,
 

@@ -45,3 +45,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python (이관 스크립트)
+__pycache__/
+
+# 시각 회귀 검증 산출물
+.next-visual/
+scripts/visual/shots/
+scripts/visual/report.json
+
+# Playwright MCP 스크린샷 출력
+.playwright-mcp/
