@@ -17,7 +17,7 @@ import { getPublishedReviewImages } from "@/lib/review-images";
 
 // 홈 전용 메타: 브랜드만이 아닌 핵심 키워드를 title에 반영, canonical은 자기(홈) URL.
 export const metadata: Metadata = {
-	title: { absolute: "출입국·비자 전문 행정사 | 초이스 행정사 사무소" },
+	title: { absolute: "출입국·비자 전문 행정사 | 초이스 행정사사무소" },
 	alternates: { canonical: "/" },
 };
 

@@ -12,7 +12,7 @@ import { pathToRoute, useGo, usePrefetch } from "./use-go";
 
 const SVC_SHORT: Record<string, string> = {
 	short: "단기초청",
-	resident: "주재원·고위임원",
+	resident: "주재원·임원",
 	e6: "연예인 비자",
 	e7: "외국인 취업비자",
 	f4: "재외동포·거소증",
@@ -133,12 +133,12 @@ export const SiteHeader = () => {
 							if (route === "home") smoothScrollTo(0);
 							else go("home");
 						}}
-						aria-label="초이스 행정사 사무소 홈"
+						aria-label="초이스 행정사사무소 홈"
 					>
 						{/* 솔리드(흰 배경)용 원본 — 금색 나비 + 짙은 글자 */}
 						<Image
 							src="/brand/logo.png"
-							alt="초이스 행정사 사무소"
+							alt="초이스 행정사사무소"
 							width={531}
 							height={127}
 							priority
@@ -290,7 +290,7 @@ function MobileDrawer({
 						<Image
 							className="drawer-head-logo"
 							src="/brand/logo.png"
-							alt="초이스 행정사 사무소"
+							alt="초이스 행정사사무소"
 							width={531}
 							height={127}
 						/>

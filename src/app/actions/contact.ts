@@ -24,7 +24,7 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 // 상담분야 코드 → 이메일 표기용 라벨
 const CONSULT_LABELS: Record<string, string> = {
 	short: "단기초청(C3·C4)",
-	resident: "주재원·고위임원(D7·D8)",
+	resident: "주재원·임원(D7·D8)",
 	e6: "외국인 연예인 비자(E6)",
 	e7: "외국인 취업비자(E7)",
 	f4: "재외동포·거소증(F4)",
@@ -41,14 +41,14 @@ const esc = (s: string) =>
 // 이메일 클라이언트 호환을 위해 table 레이아웃 + 인라인 스타일만 사용.
 const EMAIL_FONT = "'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif";
 const renderEmailHtml = (eyebrow: string, title: string, rows: [string, string][]) =>
-	`<div style="margin:0;padding:0;background:#f5f3ef"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f3ef;padding:32px 12px"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid #e2ddd3;border-radius:14px;overflow:hidden"><tr><td style="background:#241d16;padding:24px 32px"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="vertical-align:middle"><img src="https://kvisa1345.com/brand/mark-square.png" width="32" height="32" alt="" style="display:block"></td><td style="vertical-align:middle;padding-left:11px;color:#ffffff;font:700 16px/1.2 ${EMAIL_FONT};letter-spacing:-.01em">초이스 행정사 사무소</td></tr></table></td></tr><tr><td style="padding:28px 32px 4px"><div style="font:700 12px/1 ${EMAIL_FONT};letter-spacing:.1em;color:#7c6346">${eyebrow}</div><div style="margin:12px 0 0;font:700 23px/1.3 ${EMAIL_FONT};color:#222222;letter-spacing:-.02em">${title}</div><div style="width:44px;height:3px;background:#7c6346;margin-top:16px"></div></td></tr><tr><td style="padding:14px 32px 10px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font:400 15px/1.65 ${EMAIL_FONT};color:#3f3a34">${rows
+	`<div style="margin:0;padding:0;background:#f5f3ef"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f3ef;padding:32px 12px"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid #e2ddd3;border-radius:14px;overflow:hidden"><tr><td style="background:#241d16;padding:24px 32px"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="vertical-align:middle"><img src="https://kvisa1345.com/brand/mark-square.png" width="32" height="32" alt="" style="display:block"></td><td style="vertical-align:middle;padding-left:11px;color:#ffffff;font:700 16px/1.2 ${EMAIL_FONT};letter-spacing:-.01em">초이스 행정사사무소</td></tr></table></td></tr><tr><td style="padding:28px 32px 4px"><div style="font:700 12px/1 ${EMAIL_FONT};letter-spacing:.1em;color:#7c6346">${eyebrow}</div><div style="margin:12px 0 0;font:700 23px/1.3 ${EMAIL_FONT};color:#222222;letter-spacing:-.02em">${title}</div><div style="width:44px;height:3px;background:#7c6346;margin-top:16px"></div></td></tr><tr><td style="padding:14px 32px 10px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font:400 15px/1.65 ${EMAIL_FONT};color:#3f3a34">${rows
 		.map(
 			([k, v], i) =>
 				`<tr><td width="94" style="padding:12px 16px 12px 0;color:#888888;font-size:13.5px;white-space:nowrap;vertical-align:top${i > 0 ? ";border-top:1px solid #efe9df" : ""}">${esc(k)}</td><td style="padding:12px 0;vertical-align:top;white-space:pre-wrap${i > 0 ? ";border-top:1px solid #efe9df" : ""}">${esc(v)}</td></tr>`,
 		)
 		.join(
 			"",
-		)}</table></td></tr><tr><td style="background:#f5f3ef;padding:18px 32px;border-top:1px solid #e2ddd3;font:400 12.5px/1.7 ${EMAIL_FONT};color:#888888"><strong style="color:#524636">초이스 행정사 사무소</strong> · 02-6959-9886 · choice@kvisa1345.com<br>홈페이지에서 자동 발송된 알림입니다.</td></tr></table></td></tr></table></div>`;
+		)}</table></td></tr><tr><td style="background:#f5f3ef;padding:18px 32px;border-top:1px solid #e2ddd3;font:400 12.5px/1.7 ${EMAIL_FONT};color:#888888"><strong style="color:#524636">초이스 행정사사무소</strong> · 02-6959-9886 · choice@kvisa1345.com<br>홈페이지에서 자동 발송된 알림입니다.</td></tr></table></td></tr></table></div>`;
 
 // 입력 길이 상한 — 초장문 payload 로 DB·메일을 부풀리는 것 방지(정상 입력에는 걸리지 않는 값)
 const LIMITS = {
@@ -185,7 +185,7 @@ export const submitContact = async (
 		try {
 			const resend = new Resend(resendKey);
 			// 발신자는 Resend에서 인증한 도메인 주소여야 함. 미설정 시 테스트용 공용 도메인.
-			const from = process.env.RESEND_FROM ?? "초이스 행정사 사무소 <onboarding@resend.dev>";
+			const from = process.env.RESEND_FROM ?? "초이스 행정사사무소 <onboarding@resend.dev>";
 			const html = renderEmailHtml("홈페이지 문의", "새 문의가 접수되었습니다", rows);
 			const { error } = await resend.emails.send({
 				from,
@@ -312,7 +312,7 @@ export const submitQuickConsult = async (
 		anyConfigured = true;
 		try {
 			const resend = new Resend(resendKey);
-			const from = process.env.RESEND_FROM ?? "초이스 행정사 사무소 <onboarding@resend.dev>";
+			const from = process.env.RESEND_FROM ?? "초이스 행정사사무소 <onboarding@resend.dev>";
 			const html = renderEmailHtml("신속 상담 · 하단 상담바", "⚡ 신속 상담 신청", rows);
 			const { error } = await resend.emails.send({
 				from,
