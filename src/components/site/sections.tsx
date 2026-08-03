@@ -102,13 +102,7 @@ export const PageHero = ({
 	return (
 		<section
 			data-hero-dark
-			className="page-hero-section"
-			style={{
-				position: "relative",
-				overflow: "hidden",
-				padding: "176px 0 84px",
-				background: "#3a2f24",
-			}}
+			className="page-hero-section relative overflow-hidden bg-[#3a2f24] pt-[176px] pb-[84px]"
 		>
 			<Image
 				src={image ?? HERO_IMG}
@@ -116,111 +110,48 @@ export const PageHero = ({
 				fill
 				priority
 				sizes="100vw"
-				style={{
-					objectFit: "cover",
-					objectPosition: imagePosition ?? "center",
-					opacity: soft ? 0.6 : 0.72,
-					filter: soft ? "saturate(0.78) brightness(1.06)" : undefined,
-				}}
+				className={cn(
+					"object-cover",
+					soft ? "opacity-60 saturate-[0.78] brightness-[1.06]" : "opacity-[0.72]",
+				)}
+				// object-position 은 호출부가 임의 좌표를 넘기는 런타임 값이라 CSS 변수로 전달한다
+				style={{ objectPosition: imagePosition ?? "center" }}
 			/>
 			{/* 좌측(텍스트 영역)만 충분히 어둡게, 우측으로 갈수록 이미지가 밝게 드러나도록 그라디언트 완화 */}
-			<div
-				style={{
-					position: "absolute",
-					inset: 0,
-					background:
-						"linear-gradient(115deg, rgba(28,22,16,0.72) 0%, rgba(45,37,28,0.42) 46%, rgba(70,58,44,0.12) 100%)",
-				}}
-			/>
-			<div className="wrap" style={{ position: "relative", zIndex: 2 }}>
+			<div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(28,22,16,0.72)_0%,rgba(45,37,28,0.42)_46%,rgba(70,58,44,0.12)_100%)]" />
+			<div className="wrap relative z-[2]">
 				{crumbs && (
-					<nav
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: 8,
-							flexWrap: "wrap",
-							marginBottom: 18,
-							fontSize: 14,
-							color: "rgba(255,255,255,0.75)",
-						}}
-					>
+					<nav className="mb-[18px] flex flex-wrap items-center gap-2 text-[14px] text-white/75">
 						{crumbs.map((c, i) => (
 							<Fragment key={c.label}>
 								{i > 0 && <Icon n="chevron-right" className="size-[14px] opacity-60" />}
 								{c.route ? (
 									<button
 										type="button"
-										className="lk"
+										className="lk inline-flex items-center gap-[5px] border-none bg-none p-0 font-[inherit] text-white/80"
 										onClick={() => go(c.route as string, c.param)}
-										style={{
-											background: "none",
-											border: "none",
-											padding: 0,
-											font: "inherit",
-											color: "rgba(255,255,255,0.8)",
-											display: "inline-flex",
-											alignItems: "center",
-											gap: 5,
-										}}
 									>
 										{i === 0 && <Icon n="home" className="size-[14px]" />}
 										{c.label}
 									</button>
 								) : (
-									<span style={{ color: "#fff", fontWeight: 500 }}>{c.label}</span>
+									<span className="font-medium text-white">{c.label}</span>
 								)}
 							</Fragment>
 						))}
 					</nav>
 				)}
 				{eyebrow && (
-					<span
-						style={{
-							fontSize: 13,
-							fontWeight: 700,
-							letterSpacing: ".12em",
-							textTransform: "uppercase",
-							color: "var(--color-accent-soft)",
-						}}
-					>
+					<span className="font-bold text-[13px] text-[color:var(--color-accent-soft)] uppercase tracking-[.12em]">
 						{eyebrow}
 					</span>
 				)}
-				<h1
-					style={{
-						fontSize: "clamp(24px, 4.6vw, 44px)",
-						fontWeight: 800,
-						letterSpacing: "-0.02em",
-						lineHeight: 1.14,
-						marginTop: 14,
-						color: "#fff",
-					}}
-				>
+				<h1 className="mt-[14px] font-extrabold text-[clamp(24px,4.6vw,44px)] text-white tracking-[-0.02em] [line-height:1.14]">
 					{title}
 				</h1>
-				<span
-					style={{
-						display: "block",
-						width: 56,
-						height: 3,
-						borderRadius: 0,
-						background: "var(--color-accent-soft)",
-						marginTop: 22,
-					}}
-				/>
+				<span className="mt-[22px] block h-[3px] w-[56px] rounded-none bg-[var(--color-accent-soft)]" />
 				{sub && (
-					<p
-						className="page-hero-sub"
-						style={{
-							fontSize: "clamp(14px, 1.7vw, 17px)",
-							color: "rgba(255,255,255,.82)",
-							marginTop: 22,
-							maxWidth: 640,
-							lineHeight: 1.75,
-							wordBreak: "keep-all",
-						}}
-					>
+					<p className="page-hero-sub mt-[22px] max-w-[640px] break-keep text-[clamp(14px,1.7vw,17px)] text-white/[.82] [line-height:1.75]">
 						{sub}
 					</p>
 				)}

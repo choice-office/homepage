@@ -4186,10 +4186,6 @@
 	}
 	/* 서브 히어로 상단 여백: 176px는 헤더가 64px로 줄어든 폰에서 과도(위 빈 공간).
 	   고정 헤더(64) + 여백을 감안해 축소. 좌우(0)는 인라인 유지. */
-	.page-hero-section {
-		padding-top: 104px;
-		padding-bottom: 52px;
-	}
 	/* 홈 히어로: 100vh 중앙정렬에서 콘텐츠가 살짝 아래로 보여 상단 패딩 제거로 위로 */
 	.home-hero-inner {
 		padding-top: 0;

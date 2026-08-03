@@ -112,7 +112,7 @@ const Eligibility = ({ title, items }: { title: string; items: string[] }) => {
 				<span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
 					<Icon
 						n="clipboard-list"
-						className="size-[20px] text-[color:var(--color-primary)] flex-none"
+						className="size-[20px] flex-none text-[color:var(--color-primary)]"
 					/>
 					{title}
 				</span>
