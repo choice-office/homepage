@@ -17,7 +17,7 @@ export default function ContactPage() {
 				image="/문의하기-hero.png"
 			/>
 			<section className="section contact-section">
-				<div className="contact-shell container">
+				<div className="contact-shell wrap">
 					<div className="contact-col" data-reveal>
 						<h2 className="contact-col-title">연락처</h2>
 						<span className="contact-rule" />
@@ -38,7 +38,7 @@ export default function ContactPage() {
 						<ContactForm />
 					</div>
 				</div>
-				<div className="contact-mapwrap container">
+				<div className="contact-mapwrap wrap">
 					<div className="contact-map" data-reveal>
 						<MapBlock height={460} />
 					</div>

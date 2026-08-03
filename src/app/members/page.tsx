@@ -117,7 +117,7 @@ export default function MembersPage() {
 				image="/구성원-hero.png"
 			/>
 			<section className="section bg-(--surface-page)">
-				<div className="container">
+				<div className="wrap">
 					<div className="member-list">
 						{TEAM.map((m, i) => (
 							<MemberProfile key={m.name} m={m} index={i} />

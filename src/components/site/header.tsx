@@ -124,7 +124,7 @@ export const SiteHeader = () => {
 	return (
 		<>
 			<header className={cn("site-header", atTop && "at-top", openMega && "mega-open")}>
-				<div className="site-header-bar container">
+				<div className="site-header-bar wrap">
 					<button
 						type="button"
 						className="lk site-logo"
@@ -199,7 +199,7 @@ export const SiteHeader = () => {
 							id={activeNav ? `nav-dd-${activeNav.route}` : undefined}
 						>
 							{activeNav && (
-								<div className="mega-inner container">
+								<div className="mega-inner wrap">
 									<div className="mega-eyebrow">{activeNav.label}</div>
 									<div className="mega-row">
 										{activeChildren.map((c) => {

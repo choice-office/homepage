@@ -207,7 +207,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 				imagePosition="center 62%"
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
-				<div className="container">
+				<div className="wrap">
 					<div data-stagger="split" className="grid-2" style={{ gap: 24 }}>
 						<Block icon="users" title="이런 분께 권합니다">
 							<List items={s.target} />
@@ -274,7 +274,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 			</section>
 			{faqs.length > 0 && (
 				<section className="section" style={{ background: "var(--surface-page)", paddingTop: 8 }}>
-					<div className="container">
+					<div className="wrap">
 						<div style={{ marginBottom: 28 }}>
 							<span
 								style={{
@@ -314,7 +314,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 				</section>
 			)}
 			<section className="section" style={{ background: "var(--surface-sunken)", paddingTop: 72 }}>
-				<div className="container">
+				<div className="wrap">
 					<div style={{ marginBottom: 36 }}>
 						<span
 							style={{

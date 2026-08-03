@@ -95,7 +95,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 			<ServiceDetail id={id} />
 			{related.length > 0 && (
 				<section className={cn("section", "bg-[var(--surface-page)]")}>
-					<div className="container">
+					<div className="wrap">
 						<div style={{ marginBottom: 28 }}>
 							<span className="font-bold text-[13px] text-[color:var(--color-accent)] uppercase tracking-[.12em]">
 								Related

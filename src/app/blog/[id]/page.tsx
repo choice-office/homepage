@@ -133,7 +133,7 @@ export default async function BlogDetailPage({ params }: Params) {
 				href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap"
 			/>
 			<header className={cn("section", "bg-[var(--surface-page)] pt-32 pb-0")}>
-				<div className="blog-prose container">
+				<div className="blog-prose wrap">
 					<nav
 						aria-label="경로"
 						className="mb-5 flex flex-wrap items-center gap-2 text-[14px] text-[color:var(--text-muted)]"
@@ -170,7 +170,7 @@ export default async function BlogDetailPage({ params }: Params) {
 			</header>
 
 			<article className={cn("section", "bg-[var(--surface-page)] pt-8")}>
-				<div className="blog-prose container">
+				<div className="blog-prose wrap">
 					{post.cover && (
 						<div className="relative mb-9 aspect-video w-full overflow-hidden rounded-[var(--radius)] bg-[var(--surface-sunken)]">
 							<Image
@@ -278,7 +278,7 @@ export default async function BlogDetailPage({ params }: Params) {
 
 			{related.length > 0 && (
 				<section className={cn("section", "bg-[var(--surface-subtle)]")}>
-					<div className="container">
+					<div className="wrap">
 						<h2 className="mb-7" style={{ fontSize: "clamp(22px, 3vw, 28px)" }}>
 							관련 글
 						</h2>

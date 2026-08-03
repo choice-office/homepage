@@ -67,7 +67,7 @@ export default function GreetingPage() {
 				imagePosition="66% 72%"
 			/>
 			<section className={cn("section", "bg-[var(--surface-page)]")}>
-				<div className="container">
+				<div className="wrap">
 					<div data-stagger="split" className={cn("grid-2 greeting-split", "items-stretch")}>
 						<div className="flex flex-col justify-center">
 							<Icon
@@ -124,7 +124,7 @@ export default function GreetingPage() {
 
 			{/* 상표등록 — 홍보 배지가 아니라 등록 원부 발췌처럼 읽히게 조판한다 */}
 			<section className={cn("section", "bg-[var(--surface-subtle)]")} aria-labelledby="tm-title">
-				<div className="container">
+				<div className="wrap">
 					<div className="tm-grid">
 						<figure className="tm-cert">
 							<Image

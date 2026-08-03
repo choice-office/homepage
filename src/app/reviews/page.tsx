@@ -38,7 +38,7 @@ export default async function ReviewsPage() {
 				imagePosition="68% 55%"
 			/>
 			<section className="section" style={{ background: "var(--surface-page)" }}>
-				<div className="container">
+				<div className="wrap">
 					<ReviewImageGallery images={images} />
 					<p
 						style={{
@@ -57,7 +57,7 @@ export default async function ReviewsPage() {
 			</section>
 			{posts.length > 0 && (
 				<section className={cn("section", "bg-[var(--surface-subtle)]")}>
-					<div className="container">
+					<div className="wrap">
 						<div style={{ marginBottom: 28 }}>
 							<span className="font-bold text-[13px] text-[color:var(--color-accent)] uppercase tracking-[.12em]">
 								Related

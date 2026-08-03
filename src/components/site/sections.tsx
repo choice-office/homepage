@@ -139,7 +139,7 @@ export const PageHero = ({
 						"linear-gradient(115deg, rgba(28,22,16,0.72) 0%, rgba(45,37,28,0.42) 46%, rgba(70,58,44,0.12) 100%)",
 				}}
 			/>
-			<div className="container" style={{ position: "relative", zIndex: 2 }}>
+			<div className="wrap" style={{ position: "relative", zIndex: 2 }}>
 				{crumbs && (
 					<nav
 						style={{
@@ -269,7 +269,7 @@ export const Hero = () => {
 				}}
 			/>
 			<div
-				className="home-hero-inner container"
+				className="home-hero-inner wrap"
 				style={{ position: "relative", zIndex: 2, width: "100%", paddingTop: 80 }}
 			>
 				<div style={{ maxWidth: 640, color: "#fff" }}>
@@ -456,7 +456,7 @@ export const StrengthsCarousel = () => {
 			className="section soft-bg str-section"
 			style={{ background: "var(--surface-subtle)" }}
 		>
-			<div className="container">
+			<div className="wrap">
 				<h2 className="str-title">초이스의 강점</h2>
 
 				<div
@@ -555,7 +555,7 @@ export const StrengthsCarousel = () => {
 
 export const StrengthsRow = () => (
 	<section className="section soft-bg" style={{ background: "var(--surface-page)" }}>
-		<div className="container">
+		<div className="wrap">
 			<SectionHead
 				title="상담부터 접수까지, 행정사가 직접 진행합니다."
 				sub="행정사가 상담·검토·서류 작성·접수·결과 안내까지 직접 진행합니다."
@@ -588,7 +588,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 	const go = useGo();
 	return (
 		<section className="section" style={{ background: "var(--surface-subtle)" }}>
-			<div className="container">
+			<div className="wrap">
 				{heading && (
 					<div data-reveal="blur" style={{ maxWidth: 780, margin: "0 auto", textAlign: "center" }}>
 						<span
@@ -663,7 +663,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 
 export const Process = () => (
 	<section className="section" style={{ background: "var(--surface-page)" }}>
-		<div className="container">
+		<div className="wrap">
 			<SectionHead
 				title="진행 절차"
 				sub="상담부터 결과 안내까지, 모든 과정을 행정사가 직접 챙깁니다."
@@ -716,7 +716,7 @@ export const Stats = () => (
 		className="stats-section"
 		style={{ background: "var(--color-primary)", padding: "72px 0" }}
 	>
-		<div data-stagger="scale" className="grid-4 stats-grid container" style={{ gap: 24 }}>
+		<div data-stagger="scale" className="grid-4 stats-grid wrap" style={{ gap: 24 }}>
 			{STATS.map((s, i) => (
 				<div
 					key={s.l}
@@ -795,7 +795,7 @@ const ShortEmbed = ({ id }: { id: string }) => {
 
 export const VideoSection = () => (
 	<section className="section" style={{ background: "var(--surface-page)" }}>
-		<div className="container">
+		<div className="wrap">
 			<div
 				style={{
 					display: "flex",
@@ -840,7 +840,7 @@ export const VideoSection = () => (
 
 export const BlogPreview = ({ posts }: { posts: BlogPostCard[] }) => (
 	<section className="section" style={{ background: "var(--surface-subtle)" }}>
-		<div className="container">
+		<div className="wrap">
 			<div
 				style={{
 					display: "flex",
@@ -887,7 +887,7 @@ export const ReviewsPreview = ({ images }: { images: ReviewImage[] }) => {
 	const go = useGo();
 	return (
 		<section className="section" style={{ background: "var(--surface-page)" }}>
-			<div className="container">
+			<div className="wrap">
 				<div
 					style={{
 						display: "flex",
@@ -927,7 +927,7 @@ export const ReviewsPreview = ({ images }: { images: ReviewImage[] }) => {
 			<div style={{ marginTop: 44 }}>
 				<ReviewImageGallery variant="marquee" images={images} />
 			</div>
-			<div className="container">
+			<div className="wrap">
 				<p
 					style={{
 						textAlign: "center",
@@ -957,7 +957,7 @@ export const CTABand = () => {
 				padding: "80px 0",
 			}}
 		>
-			<div data-reveal="scale" className="container" style={{ textAlign: "center", color: "#fff" }}>
+			<div data-reveal="scale" className="wrap" style={{ textAlign: "center", color: "#fff" }}>
 				<h2
 					className="cta-title"
 					style={{ fontSize: "clamp(20px,3.4vw,32px)", color: "#fff", wordBreak: "keep-all" }}
@@ -1445,7 +1445,7 @@ const LOCATION_ROWS: LocationRow[] = [
 export const LocationDetail = () => {
 	const [qr, setQr] = useState<QrKind | null>(null);
 	return (
-		<div className="contact-grid container">
+		<div className="contact-grid wrap">
 			{qr && <QrDialog kind={qr} onClose={() => setQr(null)} />}
 			<div>
 				<div style={{ borderTop: "1px solid var(--border-default)" }}>
@@ -1616,7 +1616,7 @@ export const LocationDetail = () => {
 /* 홈 하단 — 오시는 길(주소 + 지도). 로어스 CONTACT US 대응 */
 export const LocationSection = () => (
 	<section className="section soft-bg" style={{ background: "var(--surface-page)" }}>
-		<div className="container">
+		<div className="wrap">
 			<SectionHead align="left" title="오시는 길" />
 		</div>
 		<div style={{ marginTop: "clamp(36px, 4vw, 52px)" }}>
@@ -1638,7 +1638,7 @@ export const FAQ_ = ({
 			className="section"
 			style={{ background: banded ? "var(--surface-subtle)" : "var(--surface-page)" }}
 		>
-			<div className="container" style={{ maxWidth: 820 }}>
+			<div className="wrap" style={{ maxWidth: 820 }}>
 				{showHead && <SectionHead title="자주 묻는 질문" />}
 				<div
 					style={{
@@ -1829,7 +1829,7 @@ export const ConsultBar = () => {
 					boxShadow: "0 -4px 20px rgba(34,34,34,.18)",
 				}}
 			>
-				<div className="consult-bar-inner container" style={{ padding: "24px 24px", gap: 20 }}>
+				<div className="consult-bar-inner wrap" style={{ padding: "24px 24px", gap: 20 }}>
 					<div style={{ display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap" }}>
 						{/* 전화 아이콘 — 벨 울리듯 살짝 흔들려 시선을 끈다(PC 레일과 동일 모션) */}
 						<span className="consult-ring" aria-hidden="true">
@@ -2174,7 +2174,7 @@ const AFFILIATIONS: Affiliation[] = [
 
 export const Affiliations = () => (
 	<section className="affiliations">
-		<div className="container">
+		<div className="wrap">
 			<ul className="affiliations-row">
 				{AFFILIATIONS.map((a) => (
 					<li className="affiliation" key={a.kind === "emblem" ? a.name : a.alt}>
@@ -2220,7 +2220,7 @@ export const Footer = () => {
 				paddingBottom: 88,
 			}}
 		>
-			<div className="container" style={{ padding: "56px 24px 32px" }}>
+			<div className="wrap" style={{ padding: "56px 24px 32px" }}>
 				<div
 					style={{
 						display: "flex",

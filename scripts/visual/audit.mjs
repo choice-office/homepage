@@ -53,6 +53,9 @@ const IN_PAGE = () => {
 			for (const p of el.style) {
 				const cssVal = r.style.getPropertyValue(p);
 				if (!cssVal) continue;
+				// !important 는 (important 아닌) 인라인을 이긴다 → 죽은 게 아니라 정상 동작.
+				// 이 예외를 빼면 .loc-row-label 처럼 의도적으로 인라인을 덮는 규칙을 오탐한다.
+				if (r.style.getPropertyPriority(p) === "important") continue;
 				const inlineVal = el.style.getPropertyValue(p);
 				if (cssVal.trim() === inlineVal.trim()) continue;
 				const key = `${r.media ? `@media ${r.media} ` : ""}${r.sel} { ${p}: ${cssVal} }  ← 인라인 ${inlineVal}`;
