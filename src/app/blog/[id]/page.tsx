@@ -12,7 +12,7 @@ import {
 	firstContentImage,
 	formatBlogDate,
 	getPostBySlug,
-	getPublishedPosts,
+	getPostRefs,
 	getRelatedPosts,
 	serviceForCategory,
 } from "@/lib/blog";
@@ -27,8 +27,8 @@ type Params = { params: Promise<{ id: string }> };
 export const revalidate = 60;
 
 export const generateStaticParams = async () => {
-	const posts = await getPublishedPosts();
-	return posts.map((p) => ({ id: p.slug }));
+	const refs = await getPostRefs();
+	return refs.map((r) => ({ id: r.slug }));
 };
 
 const postUrl = (slug: string) => `${siteConfig.url}/blog/${slug}`;

@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
-import { getPublishedPosts } from "@/lib/blog";
+import { getPostRefs } from "@/lib/blog";
 import { SERVICES } from "@/lib/site-data";
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	const posts = await getPublishedPosts();
+	const posts = await getPostRefs();
 	const now = new Date();
 	const u = (path: string) => `${siteConfig.url}${path}`;
 

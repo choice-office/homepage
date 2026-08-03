@@ -1,5 +1,5 @@
 import { siteConfig } from "@/config/site";
-import { getPublishedPosts } from "@/lib/blog";
+import { getPostPage } from "@/lib/blog";
 import { CONTACT, SERVICES } from "@/lib/site-data";
 
 // /llms.txt — AI 답변엔진(LLM)이 사이트 구조·핵심 자원을 빠르게 파악하도록 제공하는 요약 인덱스.
@@ -12,11 +12,8 @@ export const GET = async () => {
 		(s) => `- [${s.title} (${s.code})](${base}/services/${s.id}): ${s.summary}`,
 	).join("\n");
 
-	const posts = await getPublishedPosts();
-	const recent = posts
-		.slice(0, 30)
-		.map((p) => `- [${p.title}](${base}/blog/${p.slug})`)
-		.join("\n");
+	const { items: posts } = await getPostPage(undefined, 1, 30);
+	const recent = posts.map((p) => `- [${p.title}](${base}/blog/${p.slug})`).join("\n");
 
 	const body = `# ${siteConfig.name}
 

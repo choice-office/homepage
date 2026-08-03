@@ -1,14 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import { type BlogPost, firstContentImage, formatBlogDate } from "@/lib/blog";
+import { type BlogPostCard as BlogPostCardData, formatBlogDate } from "@/lib/blog";
 import { cn } from "@/lib/utils";
 import { Badge, Card, CardBody, CardTitle } from "./ds";
 
-type BlogCardProps = { post: BlogPost; compact?: boolean };
+type BlogCardProps = { post: BlogPostCardData; compact?: boolean };
 
 export const BlogCard = ({ post, compact = false }: BlogCardProps) => {
-	// 커버 우선순위: 등록 썸네일 → 본문 첫 이미지 → (둘 다 없으면) 초이스 로고
-	const cover = post.cover ?? firstContentImage(post.content);
+	// 커버는 cover_url 단일 출처(기존 글 백필 완료). 없으면 초이스 로고 플레이스홀더.
+	const cover = post.cover;
 	return (
 		<Link className="lk block h-full" href={`/blog/${post.slug}`}>
 			<Card padding="0" className="flex h-full flex-col overflow-hidden">
@@ -25,7 +25,7 @@ export const BlogCard = ({ post, compact = false }: BlogCardProps) => {
 						<span className="absolute inset-0 flex items-center justify-center">
 							<Image
 								src="/brand/logo-mark.png"
-								alt="초이스 행정사 사무소"
+								alt="초이스 행정사사무소"
 								width={compact ? 92 : 116}
 								height={compact ? 76 : 96}
 								className="object-contain opacity-60"

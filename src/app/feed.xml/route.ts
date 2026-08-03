@@ -1,5 +1,5 @@
 import { siteConfig } from "@/config/site";
-import { getPublishedPosts } from "@/lib/blog";
+import { getFeedPosts } from "@/lib/blog";
 import { sanitizePostHtml } from "@/lib/sanitize-post-html";
 
 // 블로그 RSS 2.0 피드 — Google Search Console / 네이버 서치어드바이저에 제출용.
@@ -26,7 +26,7 @@ const rfc822 = (ymd?: string) => {
 
 export const GET = async () => {
 	const base = siteConfig.url;
-	const posts = (await getPublishedPosts()).slice(0, FEED_SIZE);
+	const posts = await getFeedPosts(FEED_SIZE);
 
 	const items = posts
 		.map((p) => {

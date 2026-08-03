@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BlogCard } from "@/components/site/blog-card";
 import { Icon } from "@/components/site/icon";
 import { PageHero } from "@/components/site/sections";
-import { BLOG_PAGE_SIZE, getCategories, getPublishedPosts } from "@/lib/blog";
+import { BLOG_PAGE_SIZE, getCategories, getPostPage } from "@/lib/blog";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 	alternates: {
 		canonical: "/blog",
 		types: {
-			"application/rss+xml": [{ url: "/feed.xml", title: "초이스 행정사 사무소 · 블로그" }],
+			"application/rss+xml": [{ url: "/feed.xml", title: "초이스 행정사사무소 · 블로그" }],
 		},
 	},
 };
@@ -154,30 +154,21 @@ export default async function BlogPage({
 	searchParams: Promise<{ page?: string; category?: string }>;
 }) {
 	const { page, category } = await searchParams;
-	const [allPosts, allCategories] = await Promise.all([getPublishedPosts(), getCategories()]);
+	const allCategories = await getCategories();
 
 	// 카테고리는 sort_order 순으로 노출하되, 글이 0개인 분류는 숨긴다.
-	const countMap = new Map<string, number>();
-	for (const p of allPosts) {
-		if (!p.categorySlug) continue;
-		countMap.set(p.categorySlug, (countMap.get(p.categorySlug) ?? 0) + 1);
-	}
-	const categories = allCategories
-		.map((c) => ({
-			slug: c.slug,
-			name: c.name,
-			count: countMap.get(c.slug) ?? 0,
-		}))
-		.filter((c) => c.count > 0);
-	const validSlugs = new Set(allCategories.map((c) => c.slug));
+	const categories = allCategories.filter((c) => c.count > 0);
+	const active = category && allCategories.some((c) => c.slug === category) ? category : undefined;
+	const totalAll = allCategories.reduce((n, c) => n + c.count, 0);
 
-	const active = category && validSlugs.has(category) ? category : undefined;
-	const filtered = active ? allPosts.filter((p) => p.categorySlug === active) : allPosts;
-
-	const totalPages = Math.max(1, Math.ceil(filtered.length / BLOG_PAGE_SIZE));
-	const current = Math.min(totalPages, Math.max(1, Number(page) || 1));
-	const start = (current - 1) * BLOG_PAGE_SIZE;
-	const posts = filtered.slice(start, start + BLOG_PAGE_SIZE);
+	// 요청 페이지 분량만 DB에서 잘라 온다(range) — 전체 조회 없음.
+	const requested = Math.max(1, Number(page) || 1);
+	const first = await getPostPage(active, requested, BLOG_PAGE_SIZE);
+	const totalPages = Math.max(1, Math.ceil(first.total / BLOG_PAGE_SIZE));
+	// 범위를 벗어난 page= 로 들어오면 마지막 페이지로 보정해 다시 한 번만 조회한다.
+	const current = Math.min(totalPages, requested);
+	const { items: posts } =
+		current === requested ? first : await getPostPage(active, current, BLOG_PAGE_SIZE);
 
 	return (
 		<>
@@ -191,7 +182,7 @@ export default async function BlogPage({
 					<aside className="blog-cats" aria-label="카테고리">
 						<Link className="blog-cat" data-active={!active} href={buildHref(1)}>
 							<span>전체</span>
-							<span className="blog-cat-n">{allPosts.length}</span>
+							<span className="blog-cat-n">{totalAll}</span>
 						</Link>
 						{categories.map((c) => (
 							<Link
