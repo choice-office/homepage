@@ -39,7 +39,7 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 					<blockquote className="profile-quote">
 						<Icon
 							n="quote"
-							style={{ width: 26, height: 26, color: "var(--color-accent-soft)", opacity: 0.9 }}
+							className="size-[26px] text-[color:var(--color-accent-soft)] opacity-90"
 						/>
 						<p>{LEAD_MESSAGE}</p>
 					</blockquote>
@@ -64,7 +64,7 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 					{m.career.map((c) => (
 						<div className="profile-hl" key={c.text}>
 							<span className="profile-hl-icon" aria-hidden="true">
-								<Icon n={c.icon} style={{ width: 19, height: 19 }} />
+								<Icon n={c.icon} className="size-[19px]" />
 							</span>
 							<span className="profile-hl-text">{c.text}</span>
 						</div>

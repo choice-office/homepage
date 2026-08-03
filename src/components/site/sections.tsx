@@ -31,6 +31,7 @@ import {
 	STRENGTH_SLIDES,
 	YOUTUBE_CHANNEL,
 } from "@/lib/site-data";
+import { cn } from "@/lib/utils";
 import { BlogCard } from "./blog-card";
 import { Badge, Button, Card, CardBody, CardTitle, Input, Label, Textarea } from "./ds";
 import { Icon } from "./icon";
@@ -55,32 +56,24 @@ export const SectionHead = ({
 }) => (
 	<div
 		data-reveal="blur"
-		style={{
-			textAlign: align,
-			maxWidth: align === "center" ? "700px" : "none",
-			margin: align === "center" ? "0 auto" : 0,
-		}}
+		className={cn(
+			align === "center" ? "mx-auto max-w-[700px] text-center" : "max-w-none text-left",
+		)}
 	>
 		<h2
-			style={{
-				fontSize: "clamp(20px, 3.2vw, 34px)",
-				fontWeight: 800,
-				letterSpacing: "-0.015em",
-				lineHeight: 1.25,
-				color: light ? "#fff" : "var(--text-heading)",
-			}}
+			className={cn(
+				"font-extrabold text-[clamp(20px,3.2vw,34px)] tracking-[-0.015em] [line-height:1.25]",
+				light ? "text-white" : "text-[color:var(--text-heading)]",
+			)}
 		>
 			{title}
 		</h2>
 		{sub && (
 			<p
-				style={{
-					fontSize: 16,
-					color: light ? "rgba(255,255,255,.78)" : "var(--text-muted)",
-					marginTop: 16,
-					lineHeight: 1.7,
-					whiteSpace: "pre-line",
-				}}
+				className={cn(
+					"mt-[16px] whitespace-pre-line text-[16px] [line-height:1.7]",
+					light ? "text-white/[.78]" : "text-[color:var(--text-muted)]",
+				)}
 			>
 				{sub}
 			</p>
@@ -154,9 +147,7 @@ export const PageHero = ({
 					>
 						{crumbs.map((c, i) => (
 							<Fragment key={c.label}>
-								{i > 0 && (
-									<Icon n="chevron-right" style={{ width: 14, height: 14, opacity: 0.6 }} />
-								)}
+								{i > 0 && <Icon n="chevron-right" className="size-[14px] opacity-60" />}
 								{c.route ? (
 									<button
 										type="button"
@@ -173,7 +164,7 @@ export const PageHero = ({
 											gap: 5,
 										}}
 									>
-										{i === 0 && <Icon n="home" style={{ width: 14, height: 14 }} />}
+										{i === 0 && <Icon n="home" className="size-[14px]" />}
 										{c.label}
 									</button>
 								) : (
@@ -325,7 +316,7 @@ export const Hero = () => {
 							className="shine"
 							style={{ fontWeight: 800 }}
 							onClick={() => go("contact")}
-							iconEnd={<Icon n="arrow-right" style={{ width: 18, height: 18 }} />}
+							iconEnd={<Icon n="arrow-right" className="size-[18px]" />}
 						>
 							상담 신청
 						</Button>
@@ -361,7 +352,7 @@ export const Hero = () => {
 				}}
 			>
 				SCROLL
-				<Icon n="chevron-down" style={{ width: 18, height: 18 }} />
+				<Icon n="chevron-down" className="size-[18px]" />
 			</div>
 		</section>
 	);
@@ -471,10 +462,7 @@ export const StrengthsCarousel = () => {
 						aria-label="이전 강점"
 						onClick={() => emblaApi?.scrollPrev()}
 					>
-						<Icon
-							n="chevron-right"
-							style={{ width: 22, height: 22, transform: "rotate(180deg)" }}
-						/>
+						<Icon n="chevron-right" className="size-[22px] rotate-180" />
 					</button>
 
 					{/* Embla 캐러셀: 드래그·무한 루프. ref=뷰포트, 첫 자식=트랙(컨테이너), 그 자식들=슬라이드 */}
@@ -500,7 +488,7 @@ export const StrengthsCarousel = () => {
 										</p>
 										<button type="button" className="str-cta" onClick={() => go(s.cta.route)}>
 											{s.cta.label}
-											<Icon n="arrow-right" style={{ width: 18, height: 18 }} />
+											<Icon n="arrow-right" className="size-[18px]" />
 										</button>
 									</div>
 
@@ -528,7 +516,7 @@ export const StrengthsCarousel = () => {
 						aria-label="다음 강점"
 						onClick={() => emblaApi?.scrollNext()}
 					>
-						<Icon n="chevron-right" style={{ width: 22, height: 22 }} />
+						<Icon n="chevron-right" className="size-[22px]" />
 					</button>
 				</div>
 
@@ -571,7 +559,7 @@ export const StrengthsRow = () => (
 							<span className="proc-node">{`0${i + 1}`}</span>
 							<div className="proc-step-body">
 								<span className="proc-step-icon" aria-hidden="true">
-									<Icon n={p.icon} style={{ width: 24, height: 24 }} />
+									<Icon n={p.icon} className="size-[24px]" />
 								</span>
 								<h3 className="proc-step-title">{p.title}</h3>
 								<p className="proc-step-desc">{p.desc}</p>
@@ -632,7 +620,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 								}}
 							>
 								<span className="svc-icon" aria-hidden="true">
-									<Icon n={s.icon} style={{ width: 26, height: 26 }} />
+									<Icon n={s.icon} className="size-[26px]" />
 								</span>
 								<Badge>{s.code}</Badge>
 							</div>
@@ -650,7 +638,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 									color: "var(--color-primary)",
 								}}
 							>
-								자세히 보기 <Icon n="arrow-right" style={{ width: 16, height: 16 }} />
+								자세히 보기 <Icon n="arrow-right" className="size-[16px]" />
 							</span>
 						</Card>
 					))}
@@ -687,7 +675,7 @@ export const Process = () => (
 							>
 								{i + 1}
 							</span>
-							<Icon n={p.icon} style={{ width: 24, height: 24, color: "var(--color-primary)" }} />
+							<Icon n={p.icon} className="size-[24px] text-[color:var(--color-primary)]" />
 						</div>
 						<h3 style={{ fontSize: 18, marginBottom: 8 }}>{p.title}</h3>
 						<p
@@ -786,7 +774,7 @@ const ShortEmbed = ({ id }: { id: string }) => {
 				style={{ objectFit: "cover" }}
 			/>
 			<span className="short-play" aria-hidden="true">
-				<Icon n="play" style={{ width: 24, height: 24 }} />
+				<Icon n="play" className="size-[24px]" />
 			</span>
 		</button>
 	);
@@ -823,7 +811,7 @@ export const VideoSection = () => (
 						whiteSpace: "nowrap",
 					}}
 				>
-					채널 바로가기 <Icon n="external-link" style={{ width: 16, height: 16 }} />
+					채널 바로가기 <Icon n="external-link" className="size-[16px]" />
 				</a>
 			</div>
 			<div data-stagger="blur" className="shorts-grid" style={{ marginTop: 48 }}>
@@ -866,7 +854,7 @@ export const BlogPreview = ({ posts }: { posts: BlogPostCard[] }) => (
 						whiteSpace: "nowrap",
 					}}
 				>
-					블로그 전체보기 <Icon n="arrow-right" style={{ width: 16, height: 16 }} />
+					블로그 전체보기 <Icon n="arrow-right" className="size-[16px]" />
 				</Link>
 			</div>
 			<div
@@ -918,7 +906,7 @@ export const ReviewsPreview = ({ images }: { images: ReviewImage[] }) => {
 							whiteSpace: "nowrap",
 						}}
 					>
-						후기 전체보기 <Icon n="arrow-right" style={{ width: 16, height: 16 }} />
+						후기 전체보기 <Icon n="arrow-right" className="size-[16px]" />
 					</button>
 				</div>
 			</div>
@@ -991,7 +979,7 @@ export const CTABand = () => {
 						className="shine"
 						style={{ fontWeight: 800 }}
 						onClick={() => go("contact")}
-						iconEnd={<Icon n="arrow-right" style={{ width: 18, height: 18 }} />}
+						iconEnd={<Icon n="arrow-right" className="size-[18px]" />}
 					>
 						상담 신청
 					</Button>
@@ -1005,7 +993,7 @@ export const CTABand = () => {
 						}}
 						iconStart={
 							<span className="consult-ring" aria-hidden="true">
-								<Icon n="phone" style={{ width: 17, height: 17 }} />
+								<Icon n="phone" className="size-[17px]" />
 							</span>
 						}
 					>
@@ -1082,7 +1070,7 @@ export const ContactForm = () => {
 							margin: "0 auto 20px",
 						}}
 					>
-						<Icon n="check" style={{ width: 30, height: 30, color: "var(--color-primary-dark)" }} />
+						<Icon n="check" className="size-[30px] text-[color:var(--color-primary-dark)]" />
 					</div>
 					<h3 style={{ fontSize: 22 }}>상담 신청이 접수되었습니다</h3>
 					<p style={{ fontSize: 16, color: "var(--text-body)", marginTop: 12, lineHeight: 1.7 }}>
@@ -1184,7 +1172,7 @@ export const ContactForm = () => {
 							type="checkbox"
 							name="privacyConsent"
 							required
-							style={{ width: 16, height: 16, accentColor: "var(--color-primary)" }}
+							className="size-[16px] accent-[var(--color-primary)]"
 						/>
 						<span>
 							<a
@@ -1289,7 +1277,7 @@ const QrDialog = ({ kind, onClose }: { kind: QrKind; onClose: () => void }) => {
 			<button type="button" className="consult-qr-scrim" onClick={onClose} aria-label="닫기" />
 			<div className="consult-qr-card">
 				<button type="button" className="consult-qr-close" onClick={onClose} aria-label="닫기">
-					<Icon n="x" style={{ width: 18, height: 18 }} />
+					<Icon n="x" className="size-[18px]" />
 				</button>
 				<Image src={info.src} alt={info.alt} width={200} height={200} unoptimized />
 				<p className="consult-qr-title">{info.title}</p>
@@ -1328,7 +1316,7 @@ export const ContactInfo = ({ tone = "light" }: { tone?: "light" | "dark" }) => 
 					const inner = (
 						<>
 							<span className="contact-info-icon" aria-hidden="true">
-								<Icon n={r.icon} style={{ width: 20, height: 20 }} />
+								<Icon n={r.icon} className="size-[20px]" />
 							</span>
 							<span className="contact-info-text">
 								<span className="contact-info-label">{r.label}</span>
@@ -1344,7 +1332,7 @@ export const ContactInfo = ({ tone = "light" }: { tone?: "light" | "dark" }) => 
 									<li className="contact-info-row" key={k}>
 										<div className="contact-info-static">
 											<span className="contact-info-icon" aria-hidden="true">
-												<Icon n={QR_INFO[k].icon} style={{ width: 20, height: 20 }} />
+												<Icon n={QR_INFO[k].icon} className="size-[20px]" />
 											</span>
 											<span className="contact-info-text">
 												<span className="contact-info-label">{QR_INFO[k].title}</span>
@@ -1470,10 +1458,7 @@ export const LocationDetail = () => {
 							}}
 						>
 							<span className="loc-row-ic" aria-hidden="true">
-								<Icon
-									n="map-pin"
-									style={{ width: 18, height: 18, color: "var(--color-primary)" }}
-								/>
+								<Icon n="map-pin" className="size-[18px] text-[color:var(--color-primary)]" />
 							</span>
 							주소
 						</span>
@@ -1516,10 +1501,7 @@ export const LocationDetail = () => {
 									}}
 								>
 									<span className="loc-row-ic" aria-hidden="true">
-										<Icon
-											n={r.icon}
-											style={{ width: 18, height: 18, color: "var(--color-primary)" }}
-										/>
+										<Icon n={r.icon} className="size-[18px] text-[color:var(--color-primary)]" />
 									</span>
 									{r.label}
 								</span>
@@ -1599,7 +1581,7 @@ export const LocationDetail = () => {
 						color: "var(--color-primary)",
 					}}
 				>
-					지도 앱에서 길찾기 <Icon n="external-link" style={{ width: 14, height: 14 }} />
+					지도 앱에서 길찾기 <Icon n="external-link" className="size-[14px]" />
 				</a>
 
 				<p style={{ marginTop: 18, fontSize: 13, lineHeight: 1.7, color: "var(--text-muted)" }}>
@@ -1831,10 +1813,7 @@ export const ConsultBar = () => {
 					<div style={{ display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap" }}>
 						{/* 전화 아이콘 — 벨 울리듯 살짝 흔들려 시선을 끈다(PC 레일과 동일 모션) */}
 						<span className="consult-ring" aria-hidden="true">
-							<Icon
-								n="phone-call"
-								style={{ width: 22, height: 22, color: "var(--color-accent-soft)" }}
-							/>
+							<Icon n="phone-call" className="size-[22px] text-[color:var(--color-accent-soft)]" />
 						</span>
 						<div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
 							<span
@@ -1936,7 +1915,7 @@ export const ConsultBar = () => {
 								type="checkbox"
 								checked={agree}
 								onChange={(e) => setAgree(e.target.checked)}
-								style={{ width: 16, height: 16, accentColor: "var(--color-accent)" }}
+								className="size-[16px] accent-[var(--color-accent)]"
 							/>
 							<span>
 								<a
@@ -2004,7 +1983,7 @@ export const ConsultBar = () => {
 							) : (
 								<Icon
 									n={it.icon as string}
-									style={{ width: 20, height: 20, color: "var(--color-accent-soft)" }}
+									className="size-[20px] text-[color:var(--color-accent-soft)]"
 								/>
 							)}
 							<span style={{ fontSize: 12, fontWeight: 600, whiteSpace: "nowrap" }}>
@@ -2060,7 +2039,7 @@ export const FloatRail = () => {
 						onClick={() => setPop(null)}
 						aria-label="닫기"
 					>
-						<Icon n="x" style={{ width: 16, height: 16 }} />
+						<Icon n="x" className="size-[16px]" />
 					</button>
 					<Image
 						src={isKakao ? "/contact/kakao-qr.jpeg" : "/contact/wechat-qr.png"}
@@ -2085,7 +2064,7 @@ export const FloatRail = () => {
 					aria-label={`전화 상담 ${CONTACT.phone.display}`}
 				>
 					<span className="float-rail-phone">
-						<Icon n="phone-call" style={{ width: 20, height: 20 }} />
+						<Icon n="phone-call" className="size-[20px]" />
 					</span>
 					<span className="float-rail-tel">
 						<span className="frl-eyebrow">전화상담</span>
@@ -2129,7 +2108,7 @@ export const FloatRail = () => {
 					<span>인스타</span>
 				</a>
 				<button type="button" className="float-rail-cell" onClick={() => smoothScrollTo(0)}>
-					<Icon n="arrow-up" style={{ width: 22, height: 22 }} />
+					<Icon n="arrow-up" className="size-[22px]" />
 					<span>TOP</span>
 				</button>
 			</aside>
@@ -2185,7 +2164,7 @@ export const Affiliations = () => (
 											alt=""
 											width={56}
 											height={56}
-											style={{ width: 56, height: 56, objectFit: "contain" }}
+											className="size-[56px] object-contain"
 										/>
 									</span>
 									<span className="affiliation-name">{a.name}</span>

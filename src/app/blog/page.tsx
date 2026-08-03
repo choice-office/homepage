@@ -98,7 +98,7 @@ const Pagination = ({
 		>
 			{prevDisabled ? (
 				<span aria-disabled="true" style={arrowStyle(true)}>
-					<Icon n="chevron-left" style={{ width: 18, height: 18 }} />
+					<Icon n="chevron-left" className="size-[18px]" />
 				</span>
 			) : (
 				<Link
@@ -108,7 +108,7 @@ const Pagination = ({
 					rel="prev"
 					aria-label="이전 페이지"
 				>
-					<Icon n="chevron-left" style={{ width: 18, height: 18 }} />
+					<Icon n="chevron-left" className="size-[18px]" />
 				</Link>
 			)}
 			{items.map((item, i) =>
@@ -131,7 +131,7 @@ const Pagination = ({
 			)}
 			{nextDisabled ? (
 				<span aria-disabled="true" style={arrowStyle(true)}>
-					<Icon n="chevron-right" style={{ width: 18, height: 18 }} />
+					<Icon n="chevron-right" className="size-[18px]" />
 				</span>
 			) : (
 				<Link
@@ -141,7 +141,7 @@ const Pagination = ({
 					rel="next"
 					aria-label="다음 페이지"
 				>
-					<Icon n="chevron-right" style={{ width: 18, height: 18 }} />
+					<Icon n="chevron-right" className="size-[18px]" />
 				</Link>
 			)}
 		</nav>

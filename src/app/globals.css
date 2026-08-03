@@ -4313,10 +4313,6 @@
 		background: rgba(255, 255, 255, 0.08);
 		border: 1px solid rgba(255, 255, 255, 0.16);
 	}
-	.loc-row-ic svg {
-		width: 16px;
-		height: 16px;
-	}
 	/* 구성원 자격·이력: 6개 나열을 섹션별 카드로 그룹화(위계·리듬 부여) */
 	.profile-bio {
 		display: flex;

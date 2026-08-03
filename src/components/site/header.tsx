@@ -231,7 +231,7 @@ export const SiteHeader = () => {
 							onClick={() => setDrawer(true)}
 							aria-label="메뉴 열기"
 						>
-							<Icon n="menu" style={{ width: 26, height: 26 }} />
+							<Icon n="menu" className="size-[26px]" />
 						</button>
 					</div>
 				</div>
@@ -296,7 +296,7 @@ function MobileDrawer({
 						/>
 					</span>
 					<button type="button" className="drawer-close lk" onClick={onClose} aria-label="닫기">
-						<Icon n="x" style={{ width: 20, height: 20 }} />
+						<Icon n="x" className="size-[20px]" />
 					</button>
 				</div>
 				<nav className="flex flex-col">
@@ -331,7 +331,7 @@ function MobileDrawer({
 											aria-label="하위 메뉴"
 											aria-expanded={isExp}
 										>
-											<Icon n="chevron-down" style={{ width: 18, height: 18 }} />
+											<Icon n="chevron-down" className="size-[18px]" />
 										</button>
 									)}
 								</div>
@@ -366,7 +366,7 @@ function MobileDrawer({
 						size="lg"
 						className="shine"
 						style={{ width: "100%" }}
-						iconStart={<Icon n="phone" style={{ width: 16, height: 16 }} />}
+						iconStart={<Icon n="phone" className="size-[16px]" />}
 					>
 						{CONTACT.phone.display}
 					</Button>

@@ -98,7 +98,7 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 				<span className="rv-meta">— {r.meta}</span>
 				<span className="rv-more">
 					전체 보기
-					<Icon n="arrow-right" style={{ width: 14, height: 14 }} />
+					<Icon n="arrow-right" className="size-[14px]" />
 				</span>
 			</span>
 		</button>
@@ -127,10 +127,7 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 							disabled={current === 1}
 							aria-label="이전 페이지"
 						>
-							<Icon
-								n="chevron-right"
-								style={{ width: 18, height: 18, transform: "rotate(180deg)" }}
-							/>
+							<Icon n="chevron-right" className="size-[18px] rotate-180" />
 						</button>
 						{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
 							<button
@@ -151,7 +148,7 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 							disabled={current === totalPages}
 							aria-label="다음 페이지"
 						>
-							<Icon n="chevron-right" style={{ width: 18, height: 18 }} />
+							<Icon n="chevron-right" className="size-[18px]" />
 						</button>
 					</nav>
 				</div>
@@ -167,7 +164,7 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 					>
 						<button type="button" className="rv-lb-scrim" aria-label="닫기" onClick={close} />
 						<button type="button" className="rv-lb-close" aria-label="닫기" onClick={close}>
-							<Icon n="x" style={{ width: 26, height: 26 }} />
+							<Icon n="x" className="size-[26px]" />
 						</button>
 						<button
 							type="button"
@@ -175,10 +172,7 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 							aria-label="이전 후기"
 							onClick={() => step(-1)}
 						>
-							<Icon
-								n="chevron-right"
-								style={{ width: 28, height: 28, transform: "rotate(180deg)" }}
-							/>
+							<Icon n="chevron-right" className="size-[28px] rotate-180" />
 						</button>
 						<figure className="rv-lb-figure">
 							<span className="rv-lb-tag">{active.tag}</span>
@@ -200,7 +194,7 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 							aria-label="다음 후기"
 							onClick={() => step(1)}
 						>
-							<Icon n="chevron-right" style={{ width: 28, height: 28 }} />
+							<Icon n="chevron-right" className="size-[28px]" />
 						</button>
 					</div>,
 					document.body,

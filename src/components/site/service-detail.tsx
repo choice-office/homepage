@@ -21,7 +21,7 @@ const Block = ({ icon, title, children }: { icon: string; title: string; childre
 					justifyContent: "center",
 				}}
 			>
-				<Icon n={icon} style={{ width: 20, height: 20, color: "var(--color-primary-dark)" }} />
+				<Icon n={icon} className="size-[20px] text-[color:var(--color-primary-dark)]" />
 			</div>
 			<h3 style={{ fontSize: 19 }}>{title}</h3>
 		</div>
@@ -112,7 +112,7 @@ const Eligibility = ({ title, items }: { title: string; items: string[] }) => {
 				<span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
 					<Icon
 						n="clipboard-list"
-						style={{ width: 20, height: 20, color: "var(--color-primary)", flex: "0 0 auto" }}
+						className="size-[20px] text-[color:var(--color-primary)] flex-none"
 					/>
 					{title}
 				</span>
@@ -229,10 +229,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 								className="border-none bg-[var(--color-primary)] p-[28px] text-white"
 							>
 								<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-									<Icon
-										n="clock"
-										style={{ width: 22, height: 22, color: "var(--color-accent-soft)" }}
-									/>
+									<Icon n="clock" className="size-[22px] text-[color:var(--color-accent-soft)]" />
 									<h3 style={{ fontSize: 19, color: "#fff" }}>예상 소요 기간</h3>
 								</div>
 								<p style={{ fontSize: 22, fontWeight: 700, marginTop: 16, lineHeight: 1.4 }}>
@@ -258,7 +255,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 									variant="primary"
 									size="lg"
 									onClick={() => go("contact")}
-									iconEnd={<Icon n="arrow-right" style={{ width: 18, height: 18 }} />}
+									iconEnd={<Icon n="arrow-right" className="size-[18px]" />}
 								>
 									상담 신청
 								</Button>
@@ -369,7 +366,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 									>
 										<Icon
 											n={o.icon}
-											style={{ width: 23, height: 23, color: "var(--color-primary-dark)" }}
+											className="size-[23px] text-[color:var(--color-primary-dark)]"
 										/>
 									</div>
 									<Badge>{o.code}</Badge>
@@ -387,7 +384,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 										color: "var(--color-primary)",
 									}}
 								>
-									자세히 보기 <Icon n="arrow-right" style={{ width: 15, height: 15 }} />
+									자세히 보기 <Icon n="arrow-right" className="size-[15px]" />
 								</span>
 							</Card>
 						))}
@@ -411,7 +408,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 								color: "var(--color-primary)",
 							}}
 						>
-							업무분야 전체 보기 <Icon n="arrow-right" style={{ width: 17, height: 17 }} />
+							업무분야 전체 보기 <Icon n="arrow-right" className="size-[17px]" />
 						</button>
 					</div>
 				</div>

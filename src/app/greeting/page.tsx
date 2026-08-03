@@ -70,10 +70,7 @@ export default function GreetingPage() {
 				<div className="wrap">
 					<div data-stagger="split" className={cn("grid-2 greeting-split", "items-stretch")}>
 						<div className="flex flex-col justify-center">
-							<Icon
-								n="quote"
-								style={{ width: 40, height: 40, color: "var(--color-primary-light)" }}
-							/>
+							<Icon n="quote" className="size-[40px] text-[color:var(--color-primary-light)]" />
 							<h2 className="mt-4 text-[clamp(26px,3.4vw,34px)] leading-[1.5]">
 								복잡하게 느껴지는 출입국 절차,
 								<br />그 곁에서 길을 함께 찾겠습니다.
