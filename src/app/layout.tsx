@@ -17,7 +17,8 @@ import "./globals.css";
 // CSS 변수 --font-noto-sans-kr 로 노출 → globals.css 의 --font-sans 가 이를 참조.
 const fontSans = Noto_Sans_KR({
 	subsets: ["latin"],
-	weight: ["400", "500", "700"],
+	// 800: 히어로·상담바 CTA 등 강조용. 빠뜨리면 fontWeight:800 이 700 으로 폴백된다.
+	weight: ["400", "500", "700", "800"],
 	variable: "--font-noto-sans-kr",
 	// optional: 로드 중 폴백→웹폰트 스왑을 하지 않아 한글이 "쪼그라들었다 커지는" FOUT 제거.
 	// 빠른 회선은 폰트가 짧은 블록기간(~100ms) 내 도착해 Noto 즉시 표시, 느린 회선은
