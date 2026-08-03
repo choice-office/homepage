@@ -94,67 +94,55 @@ export const Button = ({
 };
 
 /* ── Card ── */
-// padding은 런타임 prop(호출부에서 clamp 등 전달) → 인라인 유지가 정확
+// 여백은 기본값을 유틸리티로 두고 호출부가 p-* 로 덮는다(cn=tailwind-merge 가 교체).
+// 인라인 style 을 쓰지 않는 이유: 인라인은 반응형 CSS 규칙까지 이겨버려 죽은 규칙을 만든다.
 export const Card = ({
 	children,
 	hover = true,
-	padding = "var(--space-6)",
-	style,
 	onClick,
 	className,
 }: {
 	children: ReactNode;
 	hover?: boolean;
-	padding?: string | number;
-	style?: Sx;
 	onClick?: () => void;
 	className?: string;
 }) => {
-	const cls = cn("ds-card", hover && "is-hover", className);
+	const cls = cn("ds-card", "p-[var(--space-6)]", hover && "is-hover", className);
 	// 카드 자체가 클릭 동작을 가지면 button(키보드/포커스 기본 지원), 아니면 div
 	if (onClick) {
+		// block 은 button 의 기본 inline-block 을 펴기 위한 것이므로 cls 보다 앞에 둔다.
+		// 뒤에 두면 tailwind-merge 가 호출부의 display 유틸(flex 등)을 지워버린다.
 		return (
-			<button
-				type="button"
-				className={cn(cls, "block")}
-				onClick={onClick}
-				style={{ padding, ...style }}
-			>
+			<button type="button" className={cn("block", cls)} onClick={onClick}>
 				{children}
 			</button>
 		);
 	}
-	return (
-		<div className={cls} style={{ padding, ...style }}>
-			{children}
-		</div>
-	);
+	return <div className={cls}>{children}</div>;
 };
 
-export const CardTitle = ({ children, style }: { children: ReactNode; style?: Sx }) => (
+// 줄높이는 leading-* 대신 [line-height:*] 임의 속성으로 둔다.
+// Tailwind v4 의 text-<size>/<leading> 문법 때문에 tailwind-merge 는 text-* 를
+// font-size+line-height 그룹으로 보고 leading-* 를 충돌로 지운다. 호출부가 text-* 를
+// 넘기는 순간 줄높이가 조용히 사라지고(biome 가 클래스를 정렬하므로 순서로도 못 막는다),
+// 카드 높이가 달라진다 — 실제로 블로그 27화면이 이 문제로 줄어들었다.
+export const CardTitle = ({ children, className }: { children: ReactNode; className?: string }) => (
 	<h3
-		className="m-0 font-bold text-[color:var(--text-heading)] text-[length:var(--text-h3)] leading-[var(--leading-snug)] tracking-[var(--tracking-tight)]"
-		style={style}
+		className={cn(
+			"m-0 font-bold text-[color:var(--text-heading)] text-[length:var(--text-h3)] tracking-[var(--tracking-tight)] [line-height:var(--leading-snug)]",
+			className,
+		)}
 	>
 		{children}
 	</h3>
 );
 
-export const CardBody = ({
-	children,
-	style,
-	className,
-}: {
-	children: ReactNode;
-	style?: Sx;
-	className?: string;
-}) => (
+export const CardBody = ({ children, className }: { children: ReactNode; className?: string }) => (
 	<p
 		className={cn(
-			"mt-[var(--space-3)] text-[color:var(--text-body)] text-[length:var(--text-base)] leading-[var(--leading-relaxed)]",
+			"mt-[var(--space-3)] text-[color:var(--text-body)] text-[length:var(--text-base)] [line-height:var(--leading-relaxed)]",
 			className,
 		)}
-		style={style}
 	>
 		{children}
 	</p>

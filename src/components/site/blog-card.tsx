@@ -11,7 +11,7 @@ export const BlogCard = ({ post, compact = false }: BlogCardProps) => {
 	const cover = post.cover;
 	return (
 		<Link className="lk block h-full" href={`/blog/${post.slug}`}>
-			<Card padding="0" className="flex h-full flex-col overflow-hidden">
+			<Card className="flex h-full flex-col overflow-hidden p-0">
 				<div className="relative aspect-[4/3] [background:linear-gradient(150deg,_var(--color-surface-alt),_var(--color-accent-soft))]">
 					{cover ? (
 						<Image
@@ -33,15 +33,19 @@ export const BlogCard = ({ post, compact = false }: BlogCardProps) => {
 						</span>
 					)}
 				</div>
-				<div className="flex flex-1 flex-col" style={{ padding: compact ? 18 : 24 }}>
+				<div className={cn("flex flex-1 flex-col", compact ? "p-[18px]" : "p-[24px]")}>
 					<div
-						className="flex items-center justify-between gap-3"
-						style={{ marginBottom: compact ? 10 : 12 }}
+						className={cn(
+							"flex items-center justify-between gap-3",
+							compact ? "mb-[10px]" : "mb-[12px]",
+						)}
 					>
 						<Badge>{post.category}</Badge>
 						<span
-							className="whitespace-nowrap text-[color:var(--text-muted)]"
-							style={{ fontSize: compact ? 12 : 13 }}
+							className={cn(
+								"whitespace-nowrap text-[color:var(--text-muted)]",
+								compact ? "text-[12px]" : "text-[13px]",
+							)}
 						>
 							{formatBlogDate(post.date)}
 						</span>
@@ -50,13 +54,12 @@ export const BlogCard = ({ post, compact = false }: BlogCardProps) => {
 					    카드에선 wrap(그리디)으로 오버라이드해 줄을 꽉 채운다.
 					    (text-wrap엔 normal이 무효값이라 무시됨 → wrap 사용) keep-all로 단어 중간은 안 끊음. */}
 					<CardTitle
-						style={{ fontSize: compact ? 16 : 18, wordBreak: "keep-all", textWrap: "wrap" }}
+						className={cn("break-keep [text-wrap:wrap]", compact ? "text-[16px]" : "text-[18px]")}
 					>
 						{post.title}
 					</CardTitle>
 					<CardBody
-						className={cn("blog-excerpt", "flex-1")}
-						style={{ fontSize: compact ? 13.5 : 15 }}
+						className={cn("blog-excerpt flex-1", compact ? "text-[13.5px]" : "text-[15px]")}
 					>
 						{post.excerpt}
 					</CardBody>

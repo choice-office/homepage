@@ -8,7 +8,7 @@ import { PageHero } from "./sections";
 import { useGo } from "./use-go";
 
 const Block = ({ icon, title, children }: { icon: string; title: string; children: ReactNode }) => (
-	<Card hover={false} padding="28px" style={{ height: "100%" }}>
+	<Card hover={false} className="h-full p-[28px]">
 		<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
 			<div
 				style={{
@@ -226,8 +226,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 						<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 							<Card
 								hover={false}
-								padding="28px"
-								style={{ background: "var(--color-primary)", color: "#fff", border: "none" }}
+								className="border-none bg-[var(--color-primary)] p-[28px] text-white"
 							>
 								<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
 									<Icon
@@ -250,11 +249,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 									{s.periodNote}
 								</p>
 							</Card>
-							<Card
-								hover={false}
-								padding="28px"
-								style={{ display: "flex", flexDirection: "column", gap: 14 }}
-							>
+							<Card hover={false} className="flex flex-col gap-[14px] p-[28px]">
 								<h3 className="svc-cta-title">{s.ctaSubject} 상담이 필요하신가요?</h3>
 								<p style={{ fontSize: 15, color: "var(--text-body)", lineHeight: 1.7 }}>
 									가능 여부와 준비 방향을 안내해 드립니다.
@@ -300,7 +295,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 								}}
 							/>
 						</div>
-						<Card hover={false} padding="4px 4px">
+						<Card hover={false} className="p-[4px]">
 							{faqs.map((f, i) => (
 								<div
 									key={f.q}
@@ -347,13 +342,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 						{others.slice(0, 4).map((o) => (
 							<Card
 								key={o.id}
-								padding="26px"
-								style={{
-									cursor: "pointer",
-									display: "flex",
-									flexDirection: "column",
-									background: "var(--surface-card)",
-								}}
+								className="flex cursor-pointer flex-col bg-[var(--surface-card)] p-[26px]"
 								onClick={() => {
 									go("service", o.id);
 									window.scrollTo({ top: 0 });
@@ -385,10 +374,8 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 									</div>
 									<Badge>{o.code}</Badge>
 								</div>
-								<CardTitle style={{ fontSize: 18 }}>{o.title}</CardTitle>
-								<CardBody className="svc-other-desc" style={{ fontSize: 14.5, flex: 1 }}>
-									{o.summary}
-								</CardBody>
+								<CardTitle className="text-[18px]">{o.title}</CardTitle>
+								<CardBody className="svc-other-desc flex-1 text-[14.5px]">{o.summary}</CardBody>
 								<span
 									style={{
 										display: "inline-flex",

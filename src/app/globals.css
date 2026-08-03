@@ -4245,10 +4245,8 @@
 	.blog-grid .ds-card > div:nth-child(2) {
 		flex: 1 1 auto;
 		min-width: 0;
-		padding: 12px 14px;
 	}
 	.blog-grid .ds-card h3 {
-		font-size: 14.5px;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		line-clamp: 2;
@@ -4358,18 +4356,11 @@
 		grid-template-columns: 1fr;
 		gap: 14px;
 	}
-	.svc-grid .ds-card {
-		padding: 20px 18px;
-	}
+	/* 아래 값들은 인라인 style 에 눌려 적용된 적이 없다(scripts/visual/audit.mjs 로 확인).
+	   인라인을 유틸리티로 바꾸면 이 규칙이 살아나 모바일 크기가 바뀌므로,
+	   현재 렌더를 유지하기 위해 죽은 선언을 제거한다. */
 	.svc-grid .ds-card > div:first-of-type {
 		margin-bottom: 14px;
-	}
-	.svc-grid .ds-card h3 {
-		font-size: 16.5px;
-	}
-	.svc-grid .ds-card p {
-		font-size: 13.5px;
-		line-height: 1.6;
 	}
 	.svc-grid .svc-more {
 		margin-top: 14px;

@@ -620,8 +620,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 					{SERVICES.map((s) => (
 						<Card
 							key={s.id}
-							padding="28px"
-							style={{ cursor: "pointer", display: "flex", flexDirection: "column" }}
+							className="flex cursor-pointer flex-col p-[28px]"
 							onClick={() => go("service", s.id)}
 						>
 							<div
@@ -637,8 +636,8 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 								</span>
 								<Badge>{s.code}</Badge>
 							</div>
-							<CardTitle style={{ fontSize: 20 }}>{s.title}</CardTitle>
-							<CardBody style={{ fontSize: 16, lineHeight: 1.7, flex: 1 }}>{s.summary}</CardBody>
+							<CardTitle className="text-[20px]">{s.title}</CardTitle>
+							<CardBody className="flex-1 text-[16px] [line-height:1.7]">{s.summary}</CardBody>
 							<span
 								className="svc-more"
 								style={{
@@ -1067,8 +1066,7 @@ export const ContactForm = () => {
 	return (
 		<Card
 			hover={false}
-			padding="clamp(28px, 4vw, 36px) clamp(18px, 5vw, 36px)"
-			className="contact-form-card"
+			className="contact-form-card px-[clamp(18px,5vw,36px)] py-[clamp(28px,4vw,36px)]"
 		>
 			{sent ? (
 				<div style={{ textAlign: "center", padding: "40px 0" }}>
@@ -1090,7 +1088,7 @@ export const ContactForm = () => {
 					<p style={{ fontSize: 16, color: "var(--text-body)", marginTop: 12, lineHeight: 1.7 }}>
 						빠른 시일 내에 행정사가 직접 연락드리겠습니다.
 					</p>
-					<Button variant="outline" style={{ marginTop: 24 }} onClick={() => setSent(false)}>
+					<Button variant="outline" className="mt-6" onClick={() => setSent(false)}>
 						다시 작성하기
 					</Button>
 				</div>
