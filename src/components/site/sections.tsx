@@ -4,6 +4,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import Link from "next/link";
 import { type FormEvent, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { submitContact, submitQuickConsult } from "@/app/actions/contact";
 import {
 	Select,
@@ -12,7 +13,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import type { BlogPost } from "@/lib/blog";
+import type { BlogPostCard } from "@/lib/blog";
 import {
 	CHANNELS,
 	CONTACT,
@@ -94,6 +95,7 @@ export const PageHero = ({
 	crumbs,
 	image,
 	imagePosition,
+	soft = false,
 }: {
 	eyebrow?: string;
 	title: string;
@@ -101,6 +103,7 @@ export const PageHero = ({
 	crumbs?: Crumb[];
 	image?: string; // 페이지별 히어로 배경(미지정 시 공통 HERO_IMG)
 	imagePosition?: string; // object-position(미지정 시 center). 피사체가 상·하단에 치우친 이미지 크롭 보정용
+	soft?: boolean; // 원본 색이 진한 사진 — 채도·농도를 낮춰 톤을 눌러준다
 }) => {
 	const go = useGo();
 	return (
@@ -120,7 +123,12 @@ export const PageHero = ({
 				fill
 				priority
 				sizes="100vw"
-				style={{ objectFit: "cover", objectPosition: imagePosition ?? "center", opacity: 0.72 }}
+				style={{
+					objectFit: "cover",
+					objectPosition: imagePosition ?? "center",
+					opacity: soft ? 0.6 : 0.72,
+					filter: soft ? "saturate(0.78) brightness(1.06)" : undefined,
+				}}
 			/>
 			{/* 좌측(텍스트 영역)만 충분히 어둡게, 우측으로 갈수록 이미지가 밝게 드러나도록 그라디언트 완화 */}
 			<div
@@ -247,7 +255,7 @@ export const Hero = () => {
 		>
 			<Image
 				src={HOME_HERO_IMG}
-				alt="출입국·비자·체류자격 전문 초이스 행정사 사무소"
+				alt="출입국·비자·체류자격 전문 초이스 행정사사무소"
 				fill
 				priority
 				sizes="100vw"
@@ -310,9 +318,12 @@ export const Hero = () => {
 						대표 행정사가 상담부터 전 과정을 직접 진행합니다.
 					</p>
 					<div style={{ display: "flex", gap: 12, marginTop: 40, flexWrap: "wrap" }}>
+						{/* 히어로 주 CTA — 빛 사선 스윕(.shine)으로 첫 화면에서 눈이 먼저 가게 */}
 						<Button
 							variant="primary"
 							size="lg"
+							className="shine"
+							style={{ fontWeight: 800 }}
 							onClick={() => go("contact")}
 							iconEnd={<Icon n="arrow-right" style={{ width: 18, height: 18 }} />}
 						>
@@ -827,7 +838,7 @@ export const VideoSection = () => (
 	</section>
 );
 
-export const BlogPreview = ({ posts }: { posts: BlogPost[] }) => (
+export const BlogPreview = ({ posts }: { posts: BlogPostCard[] }) => (
 	<section className="section" style={{ background: "var(--surface-subtle)" }}>
 		<div className="container">
 			<div
@@ -888,7 +899,7 @@ export const ReviewsPreview = ({ images }: { images: ReviewImage[] }) => {
 				>
 					<SectionHead
 						title="의뢰인이 직접 전한 후기"
-						sub={"실제 의뢰인분들이 보내주신\n소중한 후기입니다."}
+						sub="실제 의뢰인분들이 보내주신 소중한 후기입니다."
 						align="left"
 					/>
 					<button
@@ -951,7 +962,7 @@ export const CTABand = () => {
 					className="cta-title"
 					style={{ fontSize: "clamp(20px,3.4vw,32px)", color: "#fff", wordBreak: "keep-all" }}
 				>
-					혼자 고민하지 마세요. 경험이 결과를 바꿉니다.
+					혼자 고민하지 마세요. 경험이 결과를 만듭니다.
 				</h2>
 				<p
 					className="cta-sub"
@@ -979,6 +990,7 @@ export const CTABand = () => {
 						variant="secondary"
 						size="lg"
 						className="shine"
+						style={{ fontWeight: 800 }}
 						onClick={() => go("contact")}
 						iconEnd={<Icon n="arrow-right" style={{ width: 18, height: 18 }} />}
 					>
@@ -992,7 +1004,11 @@ export const CTABand = () => {
 							color: "#fff",
 							border: "1px solid rgba(255,255,255,.4)",
 						}}
-						iconStart={<Icon n="phone" style={{ width: 17, height: 17 }} />}
+						iconStart={
+							<span className="consult-ring" aria-hidden="true">
+								<Icon n="phone" style={{ width: 17, height: 17 }} />
+							</span>
+						}
 					>
 						{CONTACT.phone.display}
 					</Button>
@@ -1005,7 +1021,7 @@ export const CTABand = () => {
 /* 상담 희망 분야 드롭다운 — 인테이크 명시(업무분야 8종과 별개의 7종) */
 const CONSULT_FIELDS = [
 	{ v: "short", label: "단기초청 (C3비자·C4비자)" },
-	{ v: "resident", label: "주재원·고위임원 (D7비자·D8비자)" },
+	{ v: "resident", label: "주재원·임원 (D7비자·D8비자)" },
 	{ v: "e6", label: "외국인 연예인 비자 (E6비자)" },
 	{ v: "e7", label: "외국인 취업비자 (E7비자)" },
 	{ v: "f4", label: "재외동포·거소증 (F4비자)" },
@@ -1217,7 +1233,8 @@ export const ContactForm = () => {
 						variant="primary"
 						size="lg"
 						disabled={pending}
-						style={{ width: "100%", marginTop: 20 }}
+						className="shine"
+						style={{ width: "100%", marginTop: 20, fontSize: 18, fontWeight: 800 }}
 					>
 						{pending ? "접수 중…" : "상담 신청"}
 					</Button>
@@ -1227,9 +1244,74 @@ export const ContactForm = () => {
 	);
 };
 
+// 카톡·위챗 QR 모달 — 둘 다 ID 딥링크가 없어 QR/아이디로 안내한다.
+// 문의 페이지 채널 목록과 모바일 하단 상담바에서 공용으로 쓴다.
+const QR_INFO = {
+	kakao: {
+		title: "카카오톡",
+		src: "/contact/kakao-qr.jpeg",
+		alt: "초이스 행정사사무소 카카오톡 QR 코드",
+		scan: "카카오톡 > 코드스캔",
+		icon: "message-circle",
+		handle: CONTACT.kakao.handle,
+	},
+	wechat: {
+		title: "微信(WeChat)",
+		src: "/contact/wechat-qr.png",
+		alt: "초이스 행정사사무소 위챗 QR 코드",
+		scan: "위챗 > 스캔",
+		icon: "message-square",
+		handle: CONTACT.wechat.handle,
+	},
+} as const;
+
+type QrKind = keyof typeof QR_INFO;
+const QR_KINDS: QrKind[] = ["kakao", "wechat"];
+
+const QrDialog = ({ kind, onClose }: { kind: QrKind; onClose: () => void }) => {
+	const info = QR_INFO[kind];
+	// Esc 로도 닫는다(바깥 클릭은 아래 scrim 버튼이 처리)
+	useEffect(() => {
+		const onKey = (e: KeyboardEvent) => {
+			if (e.key === "Escape") onClose();
+		};
+		window.addEventListener("keydown", onKey);
+		return () => window.removeEventListener("keydown", onKey);
+	}, [onClose]);
+	// body로 포털 — 스크롤 리빌 래퍼(.contact-col)의 will-change가 fixed 컨테이닝 블록을 만들어
+	// 제자리에 두면 오버레이가 뷰포트가 아니라 그 래퍼 기준으로 잘린다.
+	return createPortal(
+		<div
+			className="consult-qr"
+			role="dialog"
+			aria-modal="true"
+			aria-label={`${info.title} QR 코드`}
+		>
+			{/* 바깥(어두운 영역) 클릭 시 닫기 — 드로어 scrim 과 동일하게 button 으로 둬 키보드도 지원 */}
+			<button type="button" className="consult-qr-scrim" onClick={onClose} aria-label="닫기" />
+			<div className="consult-qr-card">
+				<button type="button" className="consult-qr-close" onClick={onClose} aria-label="닫기">
+					<Icon n="x" style={{ width: 18, height: 18 }} />
+				</button>
+				<Image src={info.src} alt={info.alt} width={200} height={200} unoptimized />
+				<p className="consult-qr-title">{info.title}</p>
+				<p className="consult-qr-desc">
+					QR을 캡처해 {info.scan} &gt; 앨범에서 선택하거나, 아이디 <strong>{info.handle}</strong> 로
+					검색해 추가해 주세요.
+				</p>
+			</div>
+		</div>,
+		document.body,
+	);
+};
+
+// CHANNELS의 "카카오톡 & 微信(WeChat)" 합본 행 — 여기서는 반반으로 나눠 각각 QR을 띄운다.
+const MESSAGING_LABEL = "카카오톡 & 微信(WeChat)";
+
 export const ContactInfo = ({ tone = "light" }: { tone?: "light" | "dark" }) => {
+	const [qr, setQr] = useState<QrKind | null>(null);
 	const rows = [
-		...CHANNELS.map((c) => ({
+		...CHANNELS.filter((c) => c.label !== MESSAGING_LABEL).map((c) => ({
 			key: c.label,
 			icon: c.icon,
 			label: c.note ? `${c.label} · ${c.note}` : c.label,
@@ -1238,38 +1320,68 @@ export const ContactInfo = ({ tone = "light" }: { tone?: "light" | "dark" }) => 
 		})),
 		{ key: "addr", icon: "map-pin", label: "주소", value: CONTACT.address, href: null },
 	];
+	// 메신저 행은 이메일 앞(= CHANNELS 원래 순서)에 끼워 넣는다.
+	const messagingAt = CHANNELS.findIndex((c) => c.label === MESSAGING_LABEL);
 	return (
-		<ul className="contact-info" data-tone={tone}>
-			{rows.map((r) => {
-				const inner = (
-					<>
-						<span className="contact-info-icon" aria-hidden="true">
-							<Icon n={r.icon} style={{ width: 20, height: 20 }} />
-						</span>
-						<span className="contact-info-text">
-							<span className="contact-info-label">{r.label}</span>
-							<span className="contact-info-value">{r.value}</span>
-						</span>
-					</>
-				);
-				return (
-					<li className="contact-info-row" key={r.key}>
-						{r.href ? (
-							<a
-								className="contact-info-link"
-								href={r.href}
-								target={r.href.startsWith("http") ? "_blank" : undefined}
-								rel="noopener noreferrer"
-							>
-								{inner}
-							</a>
-						) : (
-							<div className="contact-info-static">{inner}</div>
-						)}
-					</li>
-				);
-			})}
-		</ul>
+		<>
+			{qr && <QrDialog kind={qr} onClose={() => setQr(null)} />}
+			<ul className="contact-info" data-tone={tone}>
+				{rows.map((r, i) => {
+					const inner = (
+						<>
+							<span className="contact-info-icon" aria-hidden="true">
+								<Icon n={r.icon} style={{ width: 20, height: 20 }} />
+							</span>
+							<span className="contact-info-text">
+								<span className="contact-info-label">{r.label}</span>
+								<span className="contact-info-value">{r.value}</span>
+							</span>
+						</>
+					);
+					return (
+						<Fragment key={r.key}>
+							{/* 카카오톡·위챗은 한 줄씩. 행 오른쪽 끝의 'QR 보기'만 버튼이다. */}
+							{i === messagingAt &&
+								QR_KINDS.map((k) => (
+									<li className="contact-info-row" key={k}>
+										<div className="contact-info-static">
+											<span className="contact-info-icon" aria-hidden="true">
+												<Icon n={QR_INFO[k].icon} style={{ width: 20, height: 20 }} />
+											</span>
+											<span className="contact-info-text">
+												<span className="contact-info-label">{QR_INFO[k].title}</span>
+												<span className="contact-info-value">{QR_INFO[k].handle}</span>
+											</span>
+											<button
+												type="button"
+												className="contact-qr-btn"
+												onClick={() => setQr(k)}
+												aria-haspopup="dialog"
+											>
+												QR 보기
+											</button>
+										</div>
+									</li>
+								))}
+							<li className="contact-info-row">
+								{r.href ? (
+									<a
+										className="contact-info-link"
+										href={r.href}
+										target={r.href.startsWith("http") ? "_blank" : undefined}
+										rel="noopener noreferrer"
+									>
+										{inner}
+									</a>
+								) : (
+									<div className="contact-info-static">{inner}</div>
+								)}
+							</li>
+						</Fragment>
+					);
+				})}
+			</ul>
+		</>
 	);
 };
 
@@ -1298,7 +1410,16 @@ export const MapBlock = ({ height = 320 }: { height?: number }) => (
 );
 
 /* 오시는 길 — 프리미엄·미니멀 레이아웃 (주소 우선 + 구분선 행 + 큰 지도) */
-const LOCATION_ROWS: { icon: string; label: string; value: string; href: string | null }[] = [
+// 카카오톡·위챗은 딥링크가 없어 각각 QR 모달로 연다(qr). 나머지는 일반 링크(href).
+type LocationRow = {
+	icon: string;
+	label: string;
+	value: string;
+	href?: string | null;
+	qr?: QrKind;
+};
+
+const LOCATION_ROWS: LocationRow[] = [
 	{
 		icon: "phone",
 		label: "전화",
@@ -1308,149 +1429,189 @@ const LOCATION_ROWS: { icon: string; label: string; value: string; href: string 
 	{ icon: "mail", label: "이메일", value: CONTACT.email, href: `mailto:${CONTACT.email}` },
 	{
 		icon: "message-circle",
-		label: "카카오톡 & 微信(WeChat)",
+		label: "카카오톡",
 		value: CONTACT.kakao.handle,
-		href: CONTACT.kakao.href,
+		qr: "kakao",
 	},
-	{ icon: "clock", label: "업무 시간", value: CONTACT.hours, href: null },
+	{
+		icon: "message-square",
+		label: "微信(WeChat)",
+		value: CONTACT.wechat.handle,
+		qr: "wechat",
+	},
+	{ icon: "clock", label: "업무 시간", value: CONTACT.hours },
 ];
 
-export const LocationDetail = () => (
-	<div className="contact-grid container">
-		<div>
-			<div style={{ borderTop: "1px solid var(--border-default)" }}>
-				<div
-					className="loc-row"
-					style={{
-						display: "flex",
-						alignItems: "flex-start",
-						gap: 16,
-						padding: "16px 0",
-						borderBottom: "1px solid var(--border-default)",
-					}}
-				>
-					<span
-						className="loc-row-label"
+export const LocationDetail = () => {
+	const [qr, setQr] = useState<QrKind | null>(null);
+	return (
+		<div className="contact-grid container">
+			{qr && <QrDialog kind={qr} onClose={() => setQr(null)} />}
+			<div>
+				<div style={{ borderTop: "1px solid var(--border-default)" }}>
+					<div
+						className="loc-row"
 						style={{
-							display: "inline-flex",
-							alignItems: "center",
-							gap: 10,
-							width: 192,
-							flex: "0 0 192px",
-							color: "var(--text-muted)",
-							fontSize: 14,
+							display: "flex",
+							alignItems: "flex-start",
+							gap: 16,
+							padding: "16px 0",
+							borderBottom: "1px solid var(--border-default)",
 						}}
 					>
-						<span className="loc-row-ic" aria-hidden="true">
-							<Icon n="map-pin" style={{ width: 18, height: 18, color: "var(--color-primary)" }} />
-						</span>
-						주소
-					</span>
-					<span
-						className="loc-row-val"
-						style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}
-					>
-						{CONTACT.address}
 						<span
+							className="loc-row-label"
 							style={{
-								display: "block",
-								marginTop: 4,
-								fontSize: 13,
-								fontWeight: 400,
+								display: "inline-flex",
+								alignItems: "center",
+								gap: 10,
+								width: 192,
+								flex: "0 0 192px",
 								color: "var(--text-muted)",
+								fontSize: 14,
 							}}
 						>
-							{/* 지하철 안내를 노선별로 줄바꿈(" · " 기준) → 각 노선 안내가 한 줄에 오게 */}
-							{CONTACT.addressNote.split(" · ").map((line) => (
-								<span key={line} style={{ display: "block" }}>
-									{line}
-								</span>
-							))}
+							<span className="loc-row-ic" aria-hidden="true">
+								<Icon
+									n="map-pin"
+									style={{ width: 18, height: 18, color: "var(--color-primary)" }}
+								/>
+							</span>
+							주소
 						</span>
-					</span>
-				</div>
-				{LOCATION_ROWS.map((r) => {
-					const body = (
-						<>
+						<span
+							className="loc-row-val"
+							style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}
+						>
+							{CONTACT.address}
 							<span
-								className="loc-row-label"
 								style={{
-									display: "inline-flex",
-									alignItems: "center",
-									gap: 10,
-									width: 192,
-									flex: "0 0 192px",
+									display: "block",
+									marginTop: 4,
+									fontSize: 13,
+									fontWeight: 400,
 									color: "var(--text-muted)",
-									fontSize: 14,
 								}}
 							>
-								<span className="loc-row-ic" aria-hidden="true">
-									<Icon
-										n={r.icon}
-										style={{ width: 18, height: 18, color: "var(--color-primary)" }}
-									/>
+								{/* 지하철 안내를 노선별로 줄바꿈(" · " 기준) → 각 노선 안내가 한 줄에 오게 */}
+								{CONTACT.addressNote.split(" · ").map((line) => (
+									<span key={line} style={{ display: "block" }}>
+										{line}
+									</span>
+								))}
+							</span>
+						</span>
+					</div>
+					{LOCATION_ROWS.map((r) => {
+						const body = (
+							<>
+								<span
+									className="loc-row-label"
+									style={{
+										display: "inline-flex",
+										alignItems: "center",
+										gap: 10,
+										width: 192,
+										flex: "0 0 192px",
+										color: "var(--text-muted)",
+										fontSize: 14,
+									}}
+								>
+									<span className="loc-row-ic" aria-hidden="true">
+										<Icon
+											n={r.icon}
+											style={{ width: 18, height: 18, color: "var(--color-primary)" }}
+										/>
+									</span>
+									{r.label}
 								</span>
-								{r.label}
-							</span>
-							<span
-								className="loc-row-val"
-								style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}
+								<span
+									className="loc-row-val"
+									style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}
+								>
+									{r.value}
+								</span>
+							</>
+						);
+						const rowStyle = {
+							display: "flex",
+							alignItems: "center",
+							gap: 16,
+							padding: "16px 0",
+							borderBottom: "1px solid var(--border-default)",
+						} as const;
+						if (r.qr) {
+							return (
+								<button
+									key={r.label}
+									type="button"
+									className="loc-row"
+									onClick={() => setQr(r.qr as QrKind)}
+									aria-haspopup="dialog"
+									// border 축약형 금지 — 스프레드로 이미 자리를 잡은 borderBottom 을 뒤에서 통째로
+									// 지워버려(객체 키 순서 규칙) 구분선이 사라진다. 지울 변만 개별 지정한다.
+									style={{
+										...rowStyle,
+										width: "100%",
+										borderTop: "none",
+										borderLeft: "none",
+										borderRight: "none",
+										background: "none",
+										font: "inherit",
+										textAlign: "left",
+										cursor: "pointer",
+										color: "var(--text-body)",
+									}}
+								>
+									{body}
+								</button>
+							);
+						}
+						return r.href ? (
+							<a
+								key={r.label}
+								className="loc-row"
+								href={r.href}
+								target={r.href.startsWith("http") ? "_blank" : undefined}
+								rel="noopener noreferrer"
+								style={{ ...rowStyle, color: "var(--text-body)" }}
 							>
-								{r.value}
-							</span>
-						</>
-					);
-					const rowStyle = {
-						display: "flex",
+								{body}
+							</a>
+						) : (
+							<div key={r.label} className="loc-row" style={rowStyle}>
+								{body}
+							</div>
+						);
+					})}
+				</div>
+
+				<a
+					className="lk"
+					href="https://map.naver.com/p/search/서울파이낸스센터"
+					target="_blank"
+					rel="noopener noreferrer"
+					style={{
+						marginTop: 20,
+						display: "inline-flex",
 						alignItems: "center",
-						gap: 16,
-						padding: "16px 0",
-						borderBottom: "1px solid var(--border-default)",
-					} as const;
-					return r.href ? (
-						<a
-							key={r.label}
-							className="loc-row"
-							href={r.href}
-							target={r.href.startsWith("http") ? "_blank" : undefined}
-							rel="noopener noreferrer"
-							style={{ ...rowStyle, color: "var(--text-body)" }}
-						>
-							{body}
-						</a>
-					) : (
-						<div key={r.label} className="loc-row" style={rowStyle}>
-							{body}
-						</div>
-					);
-				})}
+						gap: 6,
+						fontSize: 14,
+						fontWeight: 600,
+						color: "var(--color-primary)",
+					}}
+				>
+					지도 앱에서 길찾기 <Icon n="external-link" style={{ width: 14, height: 14 }} />
+				</a>
+
+				<p style={{ marginTop: 18, fontSize: 13, lineHeight: 1.7, color: "var(--text-muted)" }}>
+					외부 출장이 많은 관계로 내방상담을 원하시는 분들은 반드시 사전에 연락주시기 바랍니다.
+				</p>
 			</div>
-
-			<a
-				className="lk"
-				href="https://map.naver.com/p/search/서울파이낸스센터"
-				target="_blank"
-				rel="noopener noreferrer"
-				style={{
-					marginTop: 20,
-					display: "inline-flex",
-					alignItems: "center",
-					gap: 6,
-					fontSize: 14,
-					fontWeight: 600,
-					color: "var(--color-primary)",
-				}}
-			>
-				지도 앱에서 길찾기 <Icon n="external-link" style={{ width: 14, height: 14 }} />
-			</a>
-
-			<p style={{ marginTop: 18, fontSize: 13, lineHeight: 1.7, color: "var(--text-muted)" }}>
-				외부 출장이 많은 관계로 내방상담을 원하시는 분들은 반드시 사전에 연락주시기 바랍니다.
-			</p>
+			<MapBlock height={520} />
 		</div>
-		<MapBlock height={520} />
-	</div>
-);
+	);
+};
 
 /* 홈 하단 — 오시는 길(주소 + 지도). 로어스 CONTACT US 대응 */
 export const LocationSection = () => (
@@ -1552,7 +1713,7 @@ export const FAQ_ = ({
 
 export const ConsultBar = () => {
 	const [visible, setVisible] = useState(false);
-	const [qr, setQr] = useState(false); // 모바일 위챗 QR 팝업(위챗은 ID 딥링크 불가 → QR 안내)
+	const [qr, setQr] = useState<QrKind | null>(null); // 모바일 카톡·위챗 QR 팝업
 	const [svc, setSvc] = useState("");
 	const [phone, setPhone] = useState("");
 	const [name, setName] = useState("");
@@ -1614,7 +1775,8 @@ export const ConsultBar = () => {
 		on();
 		return () => window.removeEventListener("scroll", on);
 	}, []);
-	// 모바일 하단 바 — 전화상담 + 소셜 4개(카톡·위챗·블로그·유튜브). 카톡/위챗은 바로 연결.
+	// 모바일 하단 바 — 전화상담 + 소셜 4개(카톡·인스타·블로그·유튜브).
+	// 카톡은 딥링크가 없어 QR 모달로 안내한다(위챗은 PC 레일·문의 페이지에서만 노출).
 	// img(브랜드 svg)가 있으면 이미지, 없으면 lucide(icon). href면 <a>, onClick이면 <button>.
 	const mobileItems: {
 		label: string;
@@ -1630,8 +1792,8 @@ export const ConsultBar = () => {
 				window.location.href = CONTACT.phone.href;
 			},
 		},
-		{ img: "/icons/kakao.svg", label: "카톡", href: CONTACT.kakao.href ?? undefined },
-		{ img: "/icons/wechat.svg", label: "위챗", onClick: () => setQr(true) },
+		{ img: "/icons/kakao.svg", label: "카톡", onClick: () => setQr("kakao") },
+		{ img: "/icons/instagram.svg", label: "인스타", href: INSTAGRAM },
 		{ img: "/icons/blog.svg", label: "블로그", href: NAVER_BLOG },
 		{ img: "/icons/youtube.svg", label: "유튜브", href: YOUTUBE_CHANNEL },
 	];
@@ -1651,32 +1813,7 @@ export const ConsultBar = () => {
 					</span>
 				</div>
 			)}
-			{qr && (
-				<div className="consult-qr" role="dialog" aria-modal="true" aria-label="위챗 QR 코드">
-					<div className="consult-qr-card">
-						<button
-							type="button"
-							className="consult-qr-close"
-							onClick={() => setQr(false)}
-							aria-label="닫기"
-						>
-							<Icon n="x" style={{ width: 18, height: 18 }} />
-						</button>
-						<Image
-							src="/contact/wechat-qr.png"
-							alt="초이스 행정사 사무소 위챗 QR 코드"
-							width={200}
-							height={200}
-							unoptimized
-						/>
-						<p className="consult-qr-title">위챗(WeChat)</p>
-						<p className="consult-qr-desc">
-							QR을 캡처해 위챗 &gt; 스캔 &gt; 앨범에서 선택하거나, 아이디{" "}
-							<strong>koreavisa8</strong> 로 검색해 추가해 주세요.
-						</p>
-					</div>
-				</div>
-			)}
+			{qr && <QrDialog kind={qr} onClose={() => setQr(null)} />}
 			<div
 				className="consult-desktop"
 				style={{
@@ -1694,15 +1831,18 @@ export const ConsultBar = () => {
 			>
 				<div className="consult-bar-inner container" style={{ padding: "24px 24px", gap: 20 }}>
 					<div style={{ display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap" }}>
-						<Icon
-							n="phone-call"
-							style={{ width: 22, height: 22, color: "var(--color-accent-soft)" }}
-						/>
+						{/* 전화 아이콘 — 벨 울리듯 살짝 흔들려 시선을 끈다(PC 레일과 동일 모션) */}
+						<span className="consult-ring" aria-hidden="true">
+							<Icon
+								n="phone-call"
+								style={{ width: 22, height: 22, color: "var(--color-accent-soft)" }}
+							/>
+						</span>
 						<div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
 							<span
 								style={{
 									fontSize: 12.5,
-									fontWeight: 600,
+									fontWeight: 800,
 									color: "var(--color-accent-soft)",
 									letterSpacing: ".02em",
 								}}
@@ -1711,7 +1851,7 @@ export const ConsultBar = () => {
 							</span>
 							<a
 								href={CONTACT.phone.href}
-								style={{ fontSize: 20, fontWeight: 700, color: "#fff", letterSpacing: "-.01em" }}
+								style={{ fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: "-.01em" }}
 							>
 								{CONTACT.phone.display}
 							</a>
@@ -1813,11 +1953,13 @@ export const ConsultBar = () => {
 								동의
 							</span>
 						</label>
+						{/* PC 상담바 CTA도 모바일 전화상담 셀처럼 빛 사선 스윕(.shine)으로 시선을 끈다 */}
 						<Button
 							type="submit"
 							variant="secondary"
 							disabled={sending}
-							style={{ whiteSpace: "nowrap", minWidth: 132 }}
+							className="shine"
+							style={{ whiteSpace: "nowrap", minWidth: 132, fontWeight: 800 }}
 						>
 							{sending ? "신청 중..." : "상담신청"}
 						</Button>
@@ -1867,7 +2009,9 @@ export const ConsultBar = () => {
 									style={{ width: 20, height: 20, color: "var(--color-accent-soft)" }}
 								/>
 							)}
-							<span style={{ fontSize: 12, fontWeight: 600 }}>{it.label}</span>
+							<span style={{ fontSize: 12, fontWeight: 600, whiteSpace: "nowrap" }}>
+								{it.label}
+							</span>
 						</>
 					);
 					// 전화상담 셀만 PC 레일 전화패널처럼 빛 사선 스윕(반짝임) 부여
@@ -1923,9 +2067,7 @@ export const FloatRail = () => {
 					<Image
 						src={isKakao ? "/contact/kakao-qr.jpeg" : "/contact/wechat-qr.png"}
 						alt={
-							isKakao
-								? "초이스 행정사 사무소 카카오톡 QR 코드"
-								: "초이스 행정사 사무소 위챗 QR 코드"
+							isKakao ? "초이스 행정사사무소 카카오톡 QR 코드" : "초이스 행정사사무소 위챗 QR 코드"
 						}
 						width={188}
 						height={188}
@@ -2018,7 +2160,7 @@ const AFFILIATIONS: Affiliation[] = [
 		h: 50,
 		// 이 락업은 내용이 캔버스를 꽉 채워(여백 0) 기본 높이면 시험행정사회(내용 51%)보다 커 보임 →
 		// boxH로 렌더 내용 높이를 시험행정사회(≈29px)에 근접하게 축소(눈높이 미세조정: 36)
-		boxH: 36,
+		boxH: 43,
 	},
 	{
 		kind: "logo",
@@ -2026,7 +2168,7 @@ const AFFILIATIONS: Affiliation[] = [
 		alt: "한국시험행정사회",
 		w: 800,
 		h: 200,
-		boxH: 56,
+		boxH: 67,
 	},
 ];
 
@@ -2043,9 +2185,9 @@ export const Affiliations = () => (
 										<Image
 											src={a.emblem}
 											alt=""
-											width={46}
-											height={46}
-											style={{ width: 46, height: 46, objectFit: "contain" }}
+											width={56}
+											height={56}
+											style={{ width: 56, height: 56, objectFit: "contain" }}
 										/>
 									</span>
 									<span className="affiliation-name">{a.name}</span>
@@ -2090,23 +2232,18 @@ export const Footer = () => {
 						gap: 16,
 					}}
 				>
-					<button
-						type="button"
-						className="lk"
-						onClick={() => go("home")}
-						aria-label="초이스 행정사 사무소 홈"
-						style={{ background: "none", border: "none", padding: 0 }}
-					>
+					{/* 실제 링크(<Link>)로 둔다 — 커서·새 탭 열기·크롤러 모두 정상 동작 */}
+					<Link href="/" className="lk" aria-label="초이스 행정사사무소 홈">
 						<span className="footer-logo">
 							<Image
 								src="/brand/logo-dark.png"
-								alt="초이스 행정사 사무소"
+								alt="초이스 행정사사무소"
 								width={531}
 								height={127}
 								className="footer-logo-img"
 							/>
 						</span>
-					</button>
+					</Link>
 					<nav
 						style={{ display: "flex", columnGap: 22, rowGap: 6, fontSize: 14, flexWrap: "wrap" }}
 					>
@@ -2163,7 +2300,7 @@ export const Footer = () => {
 						</Link>
 					</p>
 					<p style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, marginTop: 12 }}>
-						© 2026 초이스 행정사 사무소. ALL RIGHTS RESERVED.
+						© 2026 초이스 행정사사무소. ALL RIGHTS RESERVED.
 					</p>
 				</div>
 			</div>
