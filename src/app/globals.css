@@ -2005,80 +2005,88 @@
 	background: var(--surface-card);
 }
 
-/* DS Button — hover를 JS state 대신 CSS로 처리(리렌더/객체할당 제거) */
-.ds-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 8px;
-	font-family: var(--font-sans);
-	font-weight: 500;
-	border-radius: var(--radius);
-	border: 1px solid transparent;
-	cursor: pointer;
-	white-space: nowrap;
-	text-decoration: none;
-	user-select: none;
-	transition:
-		background-color 0.18s ease,
-		color 0.18s ease,
-		border-color 0.18s ease;
-}
-.ds-btn-primary {
-	background: var(--action-primary);
-	color: var(--color-on-primary);
-}
-.ds-btn-primary:hover {
-	background: var(--action-primary-hover);
-}
-.ds-btn-outline {
-	background: var(--surface-card);
-	color: var(--text-heading);
-	border-color: var(--border-default);
-}
-.ds-btn-outline:hover {
-	background: var(--surface-subtle);
-}
-.ds-btn-secondary {
-	background: var(--color-accent-soft);
-	color: var(--color-primary-dark);
-}
-.ds-btn-secondary:hover {
-	background: #d6c9b3;
-}
-.ds-btn-ghost {
-	background: transparent;
-	color: var(--text-body);
-}
-.ds-btn-ghost:hover {
-	background: var(--surface-subtle);
-}
-.ds-btn.is-disabled {
-	opacity: 0.5;
-	pointer-events: none;
-}
+/* ── 디자인시스템 프리미티브 ───────────────────────────────────────────────
+ * @layer components 안에 둔다 = 호출부의 Tailwind 유틸리티가 이 기본값을 덮을 수 있다.
+ * (레이어 밖 CSS 는 특정성과 무관하게 utilities 레이어를 항상 이긴다. 그래서 예전엔
+ *  호출부에서 인라인 style 로만 덮을 수 있었고, 그게 반응형 규칙까지 죽이고 있었다.)
+ * 이동 시 뒤집히는 지점이 없음을 scripts/visual/ds-risk.mjs 로 확인했다(0종).
+ * ─────────────────────────────────────────────────────────────────────── */
+@layer components {
+	/* DS Button — hover를 JS state 대신 CSS로 처리(리렌더/객체할당 제거) */
+	.ds-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		font-family: var(--font-sans);
+		font-weight: 500;
+		border-radius: var(--radius);
+		border: 1px solid transparent;
+		cursor: pointer;
+		white-space: nowrap;
+		text-decoration: none;
+		user-select: none;
+		transition:
+			background-color 0.18s ease,
+			color 0.18s ease,
+			border-color 0.18s ease;
+	}
+	.ds-btn-primary {
+		background: var(--action-primary);
+		color: var(--color-on-primary);
+	}
+	.ds-btn-primary:hover {
+		background: var(--action-primary-hover);
+	}
+	.ds-btn-outline {
+		background: var(--surface-card);
+		color: var(--text-heading);
+		border-color: var(--border-default);
+	}
+	.ds-btn-outline:hover {
+		background: var(--surface-subtle);
+	}
+	.ds-btn-secondary {
+		background: var(--color-accent-soft);
+		color: var(--color-primary-dark);
+	}
+	.ds-btn-secondary:hover {
+		background: #d6c9b3;
+	}
+	.ds-btn-ghost {
+		background: transparent;
+		color: var(--text-body);
+	}
+	.ds-btn-ghost:hover {
+		background: var(--surface-subtle);
+	}
+	.ds-btn.is-disabled {
+		opacity: 0.5;
+		pointer-events: none;
+	}
 
-/* DS Field(Input/Textarea) — focus를 CSS로 처리 */
-.ds-field {
-	width: 100%;
-	box-sizing: border-box;
-	font-family: var(--font-sans);
-	font-size: 16px;
-	color: var(--text-body);
-	background: var(--surface-card);
-	border: 1px solid var(--border-default);
-	border-radius: var(--radius);
-	outline: none;
-	transition:
-		border-color 0.15s ease,
-		box-shadow 0.15s ease;
-}
-.ds-field:focus {
-	border-color: var(--color-primary);
-	box-shadow: 0 0 0 3px rgba(108, 93, 76, 0.18);
-}
-.ds-field.is-invalid {
-	border-color: #b4452f;
+	/* DS Field(Input/Textarea) — focus를 CSS로 처리 */
+	.ds-field {
+		width: 100%;
+		box-sizing: border-box;
+		font-family: var(--font-sans);
+		font-size: 16px;
+		color: var(--text-body);
+		background: var(--surface-card);
+		border: 1px solid var(--border-default);
+		border-radius: var(--radius);
+		outline: none;
+		transition:
+			border-color 0.15s ease,
+			box-shadow 0.15s ease;
+	}
+	.ds-field:focus {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 3px rgba(108, 93, 76, 0.18);
+	}
+	.ds-field.is-invalid {
+		border-color: #b4452f;
+	}
 }
 
 /* ── 문의하기 — 프리미엄 2패널(다크 연락 패널 + 라이트 폼) + 대형 지도 ─────────── */
@@ -2143,8 +2151,11 @@
 }
 .contact-form-card {
 	flex: 1;
-	border-radius: 0;
-	box-shadow: 0 34px 64px -46px rgba(34, 28, 22, 0.42);
+	/* box-shadow 를 두었지만 적용된 적이 없다 — 소스에서 뒤에 오는 .ds-card 의
+	   box-shadow: var(--shadow-xs) 가 이기고 있었다(둘 다 레이어 밖 → 나중 것 승).
+	   .ds-card 를 @layer components 로 옮기니 이 그림자가 살아나 화면이 바뀌었으므로,
+	   현재 렌더(=--shadow-xs)를 유지하기 위해 죽은 선언을 제거한다.
+	   border-radius: 0 도 --radius 가 0 이라 값이 같아 무의미했다. */
 }
 .contact-map {
 	margin-top: 40px;
@@ -2273,28 +2284,36 @@
 	}
 }
 
-/* DS Card — hover lift을 JS state 대신 CSS로 처리(접근성/성능) */
-.ds-card {
-	background: var(--surface-card);
-	border: 1px solid var(--border-default);
-	border-radius: var(--radius);
-	box-shadow: var(--shadow-xs);
-	transition:
-		box-shadow 0.2s ease,
-		transform 0.2s ease,
-		border-color 0.2s ease;
-}
-.ds-card.is-hover:hover {
-	box-shadow: var(--shadow-card-hover);
-	transform: translateY(-2px);
-}
-button.ds-card {
-	font: inherit;
-	color: inherit;
-	width: 100%;
-	text-align: left;
-	cursor: pointer;
-	appearance: none;
+/* ── 디자인시스템 프리미티브 ───────────────────────────────────────────────
+ * @layer components 안에 둔다 = 호출부의 Tailwind 유틸리티가 이 기본값을 덮을 수 있다.
+ * (레이어 밖 CSS 는 특정성과 무관하게 utilities 레이어를 항상 이긴다. 그래서 예전엔
+ *  호출부에서 인라인 style 로만 덮을 수 있었고, 그게 반응형 규칙까지 죽이고 있었다.)
+ * 이동 시 뒤집히는 지점이 없음을 scripts/visual/ds-risk.mjs 로 확인했다(0종).
+ * ─────────────────────────────────────────────────────────────────────── */
+@layer components {
+	/* DS Card — hover lift을 JS state 대신 CSS로 처리(접근성/성능) */
+	.ds-card {
+		background: var(--surface-card);
+		border: 1px solid var(--border-default);
+		border-radius: var(--radius);
+		box-shadow: var(--shadow-xs);
+		transition:
+			box-shadow 0.2s ease,
+			transform 0.2s ease,
+			border-color 0.2s ease;
+	}
+	.ds-card.is-hover:hover {
+		box-shadow: var(--shadow-card-hover);
+		transform: translateY(-2px);
+	}
+	button.ds-card {
+		font: inherit;
+		color: inherit;
+		width: 100%;
+		text-align: left;
+		cursor: pointer;
+		appearance: none;
+	}
 }
 
 /* ── 진행 절차 — 넘버 타임라인(라인 드로우 + 스텝 스태거) ──────────── */
