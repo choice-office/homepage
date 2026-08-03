@@ -7,6 +7,8 @@ export const HOME_HERO_IMG = "/home/home-hero.png";
 
 /* 인사말 사무소 전경 이미지 */
 export const OFFICE_IMG = "/greeting/office.png";
+// 특허청 상표등록증 — 등록번호·주소 등 개인정보는 원본에서 가려진 상태로 게재
+export const TRADEMARK_IMG = "/greeting/상표등록증.jpeg";
 
 export type NavItem = {
 	label: string;
@@ -53,8 +55,9 @@ export const STRENGTH_SLIDES: StrengthSlide[] = [
 		title: "수많은 경험이 쌓이면,\n해결 방법도 달라집니다.",
 		lines: [
 			"출입국 업무는 같은 비자를 준비하더라도",
-			"개인의 상황에 따라 결과가 달라질 수 있습니다.",
-			"초이스 행정사 사무소는",
+			// 모바일 줄바꿈 제어 — NBSP로 "달라질 수"를 묶어 "있습니다." 앞에서 끊기게 한다.
+			"개인의 상황에 따라 결과가 달라질\u00a0수 있습니다.",
+			"초이스 행정사사무소는",
 			"다년간의 업무 경험을 바탕으로",
 			"의뢰인에게 가장 적합한 방향을 찾아드립니다.",
 		],
@@ -110,7 +113,7 @@ export type Member = {
 /* 구성원 — 인원이 늘어도 자연스러운 구조(1명 → 2~3명 확장) */
 export const TEAM: Member[] = [
 	{
-		name: "대표 행정사",
+		name: "최서연 대표 행정사",
 		title: "대표 행정사",
 		lead: true,
 		summary: "상담부터 접수까지 직접 책임지는 시험 출신 행정사",
@@ -124,7 +127,7 @@ export const TEAM: Member[] = [
 		],
 		career: [
 			{ icon: "graduation-cap", text: "숙명여자대학교 졸업" },
-			{ icon: "building-2", text: "외국계기업 6년 근무" },
+			{ icon: "building-2", text: "외국계기업 6년 근무(금융/제약)" },
 			{ icon: "award", text: "제6회 행정사 시험 합격" },
 			{ icon: "badge-check", text: "한국시험행정사회 자문위원" },
 		],
@@ -136,7 +139,7 @@ export const TEAM: Member[] = [
 				items: [
 					"現 초이스 행정사사무소 대표 행정사",
 					"前 출입국업무 전문 행정사사무소 근무",
-					"前 외국계기업 6년 근무",
+					"前 외국계기업 6년 근무(금융/제약)",
 				],
 			},
 			{
@@ -287,7 +290,7 @@ export const SERVICES: Service[] = [
 		id: "resident",
 		icon: "briefcase",
 		code: "D7비자 · D8비자",
-		title: "주재원 · 고위임원",
+		title: "주재원 · 임원",
 		summary: "기업 주재원·투자기업 임직원의 체류자격 신청 및 연장 대행.",
 		target: [
 			"해외 본사에서 국내 지점·법인으로 파견되는 주재원",
@@ -307,7 +310,7 @@ export const SERVICES: Service[] = [
 		],
 		period: "약 6주~8주",
 		periodNote: "의뢰인의 상황과 재외공관 및 출입국사무소의 심사 일정에 따라 달라질 수 있습니다.",
-		ctaSubject: "주재원 · 고위임원 비자",
+		ctaSubject: "주재원 · 임원 비자",
 	},
 	{
 		id: "e6",
@@ -699,7 +702,7 @@ export const FAQ = [
 	},
 	{
 		q: "행정사님께서 직접 상담해 주시나요?",
-		a: "초이스 행정사 사무소는 사무장 없는 사무소로, 상담부터 전 과정을 행정사가 직접 진행합니다.",
+		a: "초이스 행정사사무소는 사무장 없는 사무소로, 상담부터 전 과정을 행정사가 직접 진행합니다.",
 	},
 	{
 		q: "비자·출입국 업무 경험이 많으신가요?",
@@ -711,7 +714,7 @@ export const FAQ = [
 	},
 	{
 		q: "출입국사무소에 직접 방문하지 않아도 진행이 가능한가요?",
-		a: "초이스 행정사 사무소는 법무부에 정식으로 등록된 출입국민원 대행기관으로, 의뢰인이 출입국사무소에 방문하지 않아도 행정사 대행으로 접수가 가능합니다. (관련 법령에 따라 일부 업무 제외)",
+		a: "초이스 행정사사무소는 법무부에 정식으로 등록된 출입국민원 대행기관으로, 의뢰인이 출입국사무소에 방문하지 않아도 행정사 대행으로 접수가 가능합니다. (관련 법령에 따라 일부 업무 제외)",
 	},
 ];
 
