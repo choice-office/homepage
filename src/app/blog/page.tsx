@@ -161,6 +161,8 @@ export default async function BlogPage({
 				title="출입국·비자 칼럼"
 				sub="자주 묻는 절차와 요건을, 사례 중심으로 알기 쉽게 정리합니다."
 				crumbs={[{ label: "홈", route: "home" }, { label: "블로그" }]}
+				image="/블로그-hero.png"
+				imagePosition="object-[center_72%]"
 			/>
 			<section className={cn("section", "bg-(--surface-page)")}>
 				<div className="blog-layout wrap">
