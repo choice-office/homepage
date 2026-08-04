@@ -871,13 +871,24 @@ export const ContactForm = () => {
 							에 동의합니다.
 						</span>
 					</label>
-					<p className="mt-[8px] text-[12.5px] text-[color:var(--text-muted)] [line-height:1.6]">
-						{CONSENT_NOTICE.map((item) => (
-							<span key={item} className="block">
-								{item}
-							</span>
-						))}
-					</p>
+					{/* 기본은 접어 두고 한 번의 탭으로 펼친다. 접혀 있어도 DOM 에 그대로 있어
+					    크롤러·스크린리더는 읽고, 법정 4요소는 동의 시점에 확인 가능하다. */}
+					<details className="mt-[8px]">
+						<summary className="flex w-fit cursor-pointer list-none items-center gap-[5px] text-[12.5px] text-[color:var(--text-muted)] underline underline-offset-[3px] [&::-webkit-details-marker]:hidden">
+							수집·이용 항목 자세히
+							<Icon
+								n="chevron-down"
+								className="size-[13px] transition-transform duration-200 ease-[ease] [[open]_&]:rotate-180"
+							/>
+						</summary>
+						<div className="mt-[7px] text-[12.5px] text-[color:var(--text-muted)] [line-height:1.6]">
+							{CONSENT_NOTICE.map((item) => (
+								<span key={item} className="block">
+									{item}
+								</span>
+							))}
+						</div>
+					</details>
 					{error ? (
 						<p className="mt-[14px] text-[14px] text-[color:var(--color-danger,_#d92d20)] [line-height:1.6]">
 							{error}
