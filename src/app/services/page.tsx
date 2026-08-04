@@ -16,7 +16,6 @@ export default function ServicesPage() {
 				sub="출입국·비자 전 분야를 시험 출신 행정사가 직접 다룹니다. 분야를 선택하면 대상·서류·절차·기간을 안내해 드립니다."
 				crumbs={[{ label: "홈", route: "home" }, { label: "업무분야" }]}
 				image="/업무분야-hero.png"
-				soft
 				imagePosition="object-[center_62%]"
 			/>
 			<ServicesGrid heading={false} />
