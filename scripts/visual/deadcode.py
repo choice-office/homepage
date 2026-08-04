@@ -22,7 +22,9 @@ CSS = SRC / "app" / "globals.css"
 PUBLIC = Path("public")
 
 # 블로그 본문(HTML)은 Supabase 에 있고 네이버 원고 마크업을 그대로 쓴다 → 소스에 안 보여도 살아 있다
-EXTERNAL_PREFIXES = ("se-", "prose")
+# 외부/관리자가 만드는 HTML 에 붙는 클래스 — 소스에 문자열로 없어도 살아 있다.
+# se-*: 네이버 원고 마크업 · file-embed-link: 관리자 에디터(FileEmbed)의 저장 HTML
+EXTERNAL_PREFIXES = ("se-", "prose", "file-embed")
 # 라이브러리·프레임워크가 붙이는 클래스(우리 소스에 문자열로 없어도 살아 있음)
 FRAMEWORK = {"dark", "group", "peer", "sr-only", "is-visible", "reveal-ready", "page-enter"}
 
