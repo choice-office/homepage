@@ -832,6 +832,12 @@
 		opacity: 1;
 	}
 }
+@keyframes rvSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 @keyframes rvZoom {
 	from {
 		transform: scale(0.96);
@@ -3840,6 +3846,40 @@
 		margin-bottom: 12px;
 		text-align: center;
 	}
+	/* 흰 매트·테두리·그림자는 프레임이 갖는다. 로드 전에는 프레임이 최소 크기를 유지하며
+	   스피너를 보여주고(빈 img 가 작은 흰 사각형으로 보이던 문제), 로드되면 이미지 크기로 줄어든다. */
+	.rv-lb-frame {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #fff;
+		padding: 10px;
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+		animation: rvZoom 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+		min-width: min(72vw, 420px);
+		min-height: min(46vh, 320px);
+	}
+	.rv-lb-frame[data-loaded="true"] {
+		min-width: 0;
+		min-height: 0;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.rv-lb-frame,
+		.rv-lb-spinner {
+			animation: none;
+		}
+	}
+	.rv-lb-spinner {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		border: 3px solid rgba(34, 28, 22, 0.14);
+		border-top-color: var(--color-primary);
+		animation: rvSpin 0.8s linear infinite;
+	}
 	/* 이메일 캡처는 가로가 매우 긴 원본(최대 4400×1271)이라 640px 상한에서는 글씨가 안 읽힌다.
    폭 상한을 넓혀 가로형은 화면폭까지 커지고, 세로형(카톡)은 max-height 에서 먼저 걸려 기존과 동일하게 보인다. */
 	.rv-lb-img {
@@ -3848,11 +3888,12 @@
 		max-width: min(94vw, 1400px);
 		max-height: 78vh;
 		object-fit: contain;
-		background: #fff;
-		padding: 10px;
-		border: 1px solid rgba(255, 255, 255, 0.14);
-		box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
-		animation: rvZoom 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+		transition: opacity 0.25s ease;
+	}
+	/* 로드 전 이미지는 자리를 차지하지 않게 빼둔다 — 프레임의 최소 크기가 스켈레톤 역할 */
+	.rv-lb-frame[data-loaded="false"] .rv-lb-img {
+		position: absolute;
+		opacity: 0;
 	}
 	.rv-lb-cap {
 		margin-top: 16px;

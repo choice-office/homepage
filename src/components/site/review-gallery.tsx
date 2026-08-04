@@ -24,6 +24,9 @@ type ReviewImageGalleryProps = {
 export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImageGalleryProps) => {
 	const items = images;
 	const [open, setOpen] = useState<number | null>(null);
+	// 라이트박스 이미지 로드 여부 — 로드 전에는 스켈레톤 프레임 + 스피너를 보여준다
+	// (예전에는 흰 배경만 있는 빈 img 가 작은 흰 사각형으로 잠깐 보였다)
+	const [loaded, setLoaded] = useState(false);
 	const [page, setPage] = useState(1);
 	const topRef = useRef<HTMLDivElement>(null);
 
@@ -43,10 +46,17 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 	};
 
 	const close = useCallback(() => setOpen(null), []);
+	const openAt = useCallback((i: number) => {
+		setLoaded(false);
+		setOpen(i);
+	}, []);
 	// items는 prop이라 길이가 바뀔 수 있어 length를 의존성에 포함(라이트박스 순환 범위)
 	const total = items.length;
 	const step = useCallback(
-		(dir: number) => setOpen((cur) => (cur === null ? cur : (cur + dir + total) % total)),
+		(dir: number) => {
+			setLoaded(false);
+			setOpen((cur) => (cur === null ? cur : (cur + dir + total) % total));
+		},
 		[total],
 	);
 
@@ -73,7 +83,7 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 			type="button"
 			key={key}
 			className="rv-card"
-			onClick={() => setOpen(index)}
+			onClick={() => openAt(index)}
 			aria-label={`${r.tag} 후기 전체 보기`}
 		>
 			<span className="rv-tag">
@@ -176,14 +186,18 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 						</button>
 						<figure className="rv-lb-figure">
 							<span className="rv-lb-tag">{active.tag}</span>
-							<Image
-								src={active.src}
-								alt={`${active.tag} 의뢰인 후기 전체`}
-								width={active.w}
-								height={active.h}
-								className="rv-lb-img"
-								sizes="(max-width: 700px) 96vw, (max-width: 1490px) 94vw, 1400px"
-							/>
+							<div className="rv-lb-frame" data-loaded={loaded}>
+								{!loaded && <span className="rv-lb-spinner" aria-hidden="true" />}
+								<Image
+									src={active.src}
+									alt={`${active.tag} 의뢰인 후기 전체`}
+									width={active.w}
+									height={active.h}
+									className="rv-lb-img"
+									sizes="(max-width: 700px) 96vw, (max-width: 1490px) 94vw, 1400px"
+									onLoad={() => setLoaded(true)}
+								/>
+							</div>
 							<figcaption className="rv-lb-cap">
 								“{active.quote}”<span>— {active.meta}</span>
 							</figcaption>
