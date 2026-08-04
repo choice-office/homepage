@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { ReviewImage } from "@/lib/site-data";
 import { Icon } from "./icon";
@@ -186,7 +186,15 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 						</button>
 						<figure className="rv-lb-figure">
 							<span className="rv-lb-tag">{active.tag}</span>
-							<div className="rv-lb-frame" data-loaded={loaded}>
+							{/* --rv-ar 는 이미지 가로/세로 비(숫자) — 스켈레톤이 최종 이미지와 같은 크기를 미리
+							    차지하게 해서 '작은 흰 사각형 → 확대' 점프를 없앤다. 항목마다 다른 데이터라
+							    유틸리티로는 표현할 수 없어 CSS 변수로만 인라인 전달한다.
+							    (calc 안에서 나누려면 '1200 / 2000' 같은 토큰이 아니라 숫자여야 한다) */}
+							<div
+								className="rv-lb-frame"
+								data-loaded={loaded}
+								style={{ "--rv-ar": (active.w / active.h).toFixed(4) } as CSSProperties}
+							>
 								{!loaded && <span className="rv-lb-spinner" aria-hidden="true" />}
 								<Image
 									src={active.src}
