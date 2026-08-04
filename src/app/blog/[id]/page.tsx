@@ -132,7 +132,7 @@ export default async function BlogDetailPage({ params }: Params) {
 				precedence="default"
 				href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap"
 			/>
-			<header className={cn("section", "bg-[var(--surface-page)] pt-32 pb-0")}>
+			<header className={cn("section", "bg-[var(--surface-page)]")}>
 				<div className="blog-prose wrap">
 					<nav
 						aria-label="경로"
@@ -151,8 +151,10 @@ export default async function BlogDetailPage({ params }: Params) {
 
 					<Badge>{post.category}</Badge>
 					<h1
-						className={cn("blog-h1", "mt-4 text-[color:var(--text-heading)] leading-[1.35]")}
-						style={{ fontSize: "clamp(23px, 3.2vw, 31px)" }}
+						className={cn(
+							"blog-h1",
+							"mt-4 text-[clamp(23px,_3.2vw,_31px)] text-[color:var(--text-heading)] leading-[1.35]",
+						)}
 					>
 						{post.title}
 					</h1>
@@ -169,7 +171,7 @@ export default async function BlogDetailPage({ params }: Params) {
 				</div>
 			</header>
 
-			<article className={cn("section", "bg-[var(--surface-page)] pt-8")}>
+			<article className={cn("section", "bg-[var(--surface-page)]")}>
 				<div className="blog-prose wrap">
 					{post.cover && (
 						<div className="relative mb-9 aspect-video w-full overflow-hidden rounded-[var(--radius)] bg-[var(--surface-sunken)]">
@@ -279,9 +281,7 @@ export default async function BlogDetailPage({ params }: Params) {
 			{related.length > 0 && (
 				<section className={cn("section", "bg-[var(--surface-subtle)]")}>
 					<div className="wrap">
-						<h2 className="mb-7" style={{ fontSize: "clamp(22px, 3vw, 28px)" }}>
-							관련 글
-						</h2>
+						<h2 className="mb-7 text-[clamp(22px,_3vw,_28px)]">관련 글</h2>
 						<div className="grid-3">
 							{related.map((p) => (
 								<BlogCard key={p.slug} post={p} />

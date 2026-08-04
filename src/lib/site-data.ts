@@ -675,7 +675,7 @@ export const PROCESS = [
 	{
 		icon: "file-check-2",
 		title: "서류 작성 · 준비",
-		desc: "필요한 서류를 안내드리고, 신청 서류를 정확하게 작성·준비해 드립니다.",
+		desc: "필요한 서류를 안내드리고, 신청 서류를\n정확하게 작성·준비해 드립니다.",
 	},
 	{
 		icon: "stamp",

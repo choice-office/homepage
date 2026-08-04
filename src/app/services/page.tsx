@@ -17,7 +17,7 @@ export default function ServicesPage() {
 				crumbs={[{ label: "홈", route: "home" }, { label: "업무분야" }]}
 				image="/업무분야-hero.png"
 				soft
-				imagePosition="center 62%"
+				imagePosition="object-[center_62%]"
 			/>
 			<ServicesGrid heading={false} />
 			<Process />

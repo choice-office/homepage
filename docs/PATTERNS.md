@@ -18,7 +18,7 @@ import { Button, Card, CardTitle, CardBody, Badge, Input, Textarea, Label } from
 ## 아이콘 — `components/site/icon.tsx`
 ```tsx
 import { Icon } from "@/components/site/icon";
-<Icon n="phone-call" style={{ width: 20, height: 20 }} />
+<Icon n="phone-call" className="size-[20px]" />
 ```
 `n` 값은 `icon.tsx`에 등록된 lucide 키만 가능. 없으면 `icon.tsx`에 추가.
 
@@ -49,10 +49,17 @@ import { routePath } from "@/lib/site-data";
 - `sections.tsx`에 `export const XxxSection = () => (...)` 추가(현 구조 유지). 정적이면 hook 쓰지 말 것.
 - 데이터는 컴포넌트 상단 상수 또는 `site-data.ts`에서. 마크업 반복은 `.map()`.
 - 등장 애니메이션: 최상위에 `data-reveal`(개별) 또는 `data-stagger`(자식 순차) 부여.
-- 레이아웃은 `.container`/`.section`/`.grid-3` 클래스 + 인라인 style.
+- 레이아웃은 `.wrap`/`.section`/`.grid-3` 클래스 + **Tailwind 유틸리티**. 인라인 `style` 은 쓰지 않는다.
 
 ## 그리드/레이아웃 클래스 (globals.css)
-`.container`(중앙 1152) · `.section`(상하 패딩) · `.grid-2/3/4` · `.contact-grid`(2열, 모바일 1열). 반응형은 globals.css의 미디어쿼리에서 이미 처리.
+`.wrap`(중앙 정렬 컨테이너) · `.section`(상하 패딩) · `.grid-2/3/4` · `.contact-grid`(2열, 모바일 1열). 반응형은 globals.css의 미디어쿼리에서 이미 처리.
+
+## CSS 를 건드릴 때 (필독)
+- `globals.css` 는 전체가 `@layer components` 안에 있다. **새 규칙도 그 안에** 넣는다(밖에 두면 호출부 Tailwind 유틸리티가 조용히 무시된다).
+- 반대로 호출부 유틸리티를 **이겨야 하는** 문맥 오버라이드는 `!important` + `biome-ignore lint/complexity/noImportantStyles` 주석. biome 자동수정이 `!important` 를 지워 회귀시킨 전례가 있다.
+- 이름 유틸리티의 의미를 확인하고 쓴다. 예: `grid-cols-2` 는 `repeat(2, minmax(0,1fr))` 라 열이 항상 균등하고, `grid-cols-[1fr_1fr]` 은 자동 최소폭이 있어 내용이 넓은 열이 더 넓어진다 — 문의 폼이 실제로 이 차이로 어긋났다.
+- `cn()`(tailwind-merge)은 `text-*` 가 오면 앞의 `leading-*` 를 지운다. 줄높이를 지키려면 `[line-height:…]` 임의 속성으로 쓴다(`ds.tsx` 참고).
+- 바꾼 뒤 확인: `NEXT_DIST_DIR=.next-visual pnpm build` → `next start -p 3001` → `node scripts/visual/capture.mjs after` → `python scripts/visual/diff.py`.
 
 ## 폼 + Server Action
 - 액션: `app/actions/<name>.ts`, 첫 줄 `"use server"`, 반환 `{ success: boolean; error?: string }`, `useActionState` 호환 시그니처 `(prev, formData) => Promise<Result>`.

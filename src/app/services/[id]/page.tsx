@@ -96,13 +96,11 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 			{related.length > 0 && (
 				<section className={cn("section", "bg-[var(--surface-page)]")}>
 					<div className="wrap">
-						<div style={{ marginBottom: 28 }}>
+						<div className="mb-[28px]">
 							<span className="font-bold text-[13px] text-[color:var(--color-accent)] uppercase tracking-[.12em]">
 								Related
 							</span>
-							<h2 className="mt-3" style={{ fontSize: "clamp(21px,3vw,30px)" }}>
-								{s.title} 관련 글·사례
-							</h2>
+							<h2 className="mt-3 text-[clamp(21px,3vw,30px)]">{s.title} 관련 글·사례</h2>
 							<span className="mt-[18px] block h-[3px] w-12 bg-[var(--color-accent)]" />
 						</div>
 						<div className="grid-3">

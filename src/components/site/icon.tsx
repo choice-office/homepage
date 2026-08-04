@@ -49,7 +49,6 @@ import {
 	Users,
 	X,
 } from "lucide-react";
-import type { CSSProperties } from "react";
 
 const MAP: Record<string, LucideIcon> = {
 	"arrow-right": ArrowRight,
@@ -102,16 +101,8 @@ const MAP: Record<string, LucideIcon> = {
 	x: X,
 };
 
-export const Icon = ({
-	n,
-	style,
-	className,
-}: {
-	n: string;
-	style?: CSSProperties;
-	className?: string;
-}) => {
+export const Icon = ({ n, className }: { n: string; className?: string }) => {
 	const Cmp = MAP[n];
 	if (!Cmp) return null;
-	return <Cmp strokeWidth={1.75} style={style} className={className} />;
+	return <Cmp strokeWidth={1.75} className={className} />;
 };

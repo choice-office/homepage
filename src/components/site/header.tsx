@@ -279,7 +279,7 @@ function MobileDrawer({
 		onClose();
 	};
 	return (
-		<div className={cn("drawer", open && "open")} style={{ pointerEvents: open ? "auto" : "none" }}>
+		<div className={cn("drawer", open && "open")}>
 			<button type="button" className="scrim" aria-label="메뉴 닫기" onClick={onClose} />
 			{/* data-lenis-prevent: Lenis가 stop된 동안에도 이 컨테이너 내부는 네이티브 스크롤 허용
 			    (없으면 lenis.stop()이 터치/휠 이벤트를 preventDefault해서 패널 스크롤이 막힘) */}
@@ -364,8 +364,7 @@ function MobileDrawer({
 						href={CONTACT.phone.href}
 						variant="primary"
 						size="lg"
-						className="shine"
-						style={{ width: "100%" }}
+						className="shine w-full"
 						iconStart={<Icon n="phone" className="size-[16px]" />}
 					>
 						{CONTACT.phone.display}

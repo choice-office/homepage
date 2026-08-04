@@ -1,9 +1,7 @@
 "use client";
 
-import type { CSSProperties, InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
+import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
-
-type Sx = CSSProperties;
 
 /* ── Badge ── */
 // variant 색은 arbitrary-value 유틸로(기존 CSS 변수 그대로 → 값 동일)
@@ -17,18 +15,15 @@ const badgeVariantClass: Record<string, string> = {
 export const Badge = ({
 	children,
 	variant = "default",
-	style,
 }: {
 	children: ReactNode;
 	variant?: string;
-	style?: Sx;
 }) => (
 	<span
 		className={cn(
 			"ds-badge inline-flex items-center gap-1.5 whitespace-nowrap rounded-none px-3 py-1.5 font-medium text-[13px] leading-none",
 			badgeVariantClass[variant],
 		)}
-		style={style}
 	>
 		{children}
 	</span>
@@ -53,7 +48,6 @@ export const Button = ({
 	iconEnd,
 	onClick,
 	type = "button",
-	style,
 	className: classNameProp,
 }: {
 	children?: ReactNode;
@@ -65,7 +59,6 @@ export const Button = ({
 	iconEnd?: ReactNode;
 	onClick?: () => void;
 	type?: "button" | "submit" | "reset";
-	style?: Sx;
 	className?: string;
 }) => {
 	const className = cn(
@@ -77,7 +70,7 @@ export const Button = ({
 	);
 	if (href) {
 		return (
-			<a href={href} onClick={onClick} className={className} style={style}>
+			<a href={href} onClick={onClick} className={className}>
 				{iconStart}
 				{children}
 				{iconEnd}
@@ -85,7 +78,7 @@ export const Button = ({
 		);
 	}
 	return (
-		<button type={type} onClick={onClick} disabled={disabled} className={className} style={style}>
+		<button type={type} onClick={onClick} disabled={disabled} className={className}>
 			{iconStart}
 			{children}
 			{iconEnd}
@@ -149,42 +142,38 @@ export const CardBody = ({ children, className }: { children: ReactNode; classNa
 );
 
 /* ── Forms (focus는 globals.css .ds-field:focus 로 처리) ── */
-export const Label = ({
-	children,
-	htmlFor,
-	style,
-}: {
-	children: ReactNode;
-	htmlFor?: string;
-	style?: Sx;
-}) => (
+export const Label = ({ children, htmlFor }: { children: ReactNode; htmlFor?: string }) => (
 	<label
 		htmlFor={htmlFor}
 		className="mb-2 block font-medium text-[14px] text-[color:var(--text-heading)]"
-		style={style}
 	>
 		{children}
 	</label>
 );
 
+// className 은 rest 에서 빼내 cn 으로 합친다 — 그대로 두면 호출부 className 이 ds-field 를 덮어써
+// 테두리·여백·배경이 통째로 사라진다(문의 폼 textarea 가 실제로 그렇게 깨졌다).
 export const Input = ({
 	invalid = false,
-	style,
+	className,
 	...rest
 }: InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean }) => (
-	<input className={cn("ds-field h-12 px-3.5", invalid && "is-invalid")} style={style} {...rest} />
+	<input className={cn("ds-field h-12 px-3.5", invalid && "is-invalid", className)} {...rest} />
 );
 
 export const Textarea = ({
 	invalid = false,
 	rows = 4,
-	style,
+	className,
 	...rest
 }: TextareaHTMLAttributes<HTMLTextAreaElement> & { invalid?: boolean }) => (
 	<textarea
-		className={cn("ds-field resize-y px-3.5 py-3 leading-[1.6]", invalid && "is-invalid")}
+		className={cn(
+			"ds-field resize-y px-3.5 py-3 leading-[1.6]",
+			invalid && "is-invalid",
+			className,
+		)}
 		rows={rows}
-		style={style}
 		{...rest}
 	/>
 );

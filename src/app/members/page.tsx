@@ -15,7 +15,8 @@ export const metadata: Metadata = {
 const ABOUT_CRUMB = { label: "사무소 소개", route: "greeting" };
 
 // 대표(lead) 인사말 — 사진 없이도 다크 플레이트를 의도적으로 채우는 서명형 메시지
-const LEAD_MESSAGE = "복잡하게 느껴지는 출입국 절차, 그 곁에서 길을 함께 찾겠습니다.";
+// 좁은 폭에선 문장 단위로 끊어 읽히게 한다(PC 는 기존 흐름 유지)
+const LEAD_MESSAGE = ["복잡하게 느껴지는 출입국 절차,", "그 곁에서 길을 함께 찾겠습니다."];
 
 // 구성원 1인 프로필 블록 — 인원이 늘면 좌우 교차(짝수/홀수)로 리듬을 준다.
 const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
@@ -41,7 +42,10 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 							n="quote"
 							className="size-[26px] text-[color:var(--color-accent-soft)] opacity-90"
 						/>
-						<p>{LEAD_MESSAGE}</p>
+						<p>
+							{LEAD_MESSAGE[0]}
+							<br className="sm:hidden" /> {LEAD_MESSAGE[1]}
+						</p>
 					</blockquote>
 				)}
 			</div>

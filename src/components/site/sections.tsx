@@ -39,7 +39,7 @@ import { ReviewImageGallery } from "./review-gallery";
 import { smoothScrollTo } from "./smooth-scroll";
 import { useGo } from "./use-go";
 
-const HERO_OVERLAY = 0.78;
+const _HERO_OVERLAY = 0.78;
 
 type Crumb = { label: string; route?: string; param?: string };
 
@@ -95,7 +95,9 @@ export const PageHero = ({
 	sub?: ReactNode;
 	crumbs?: Crumb[];
 	image?: string; // 페이지별 히어로 배경(미지정 시 공통 HERO_IMG)
-	imagePosition?: string; // object-position(미지정 시 center). 피사체가 상·하단에 치우친 이미지 크롭 보정용
+	// object-position 은 Tailwind 클래스로 받는다(예: "object-[66%_72%]").
+	// 클래스명을 동적으로 조립하면 Tailwind 가 스캔하지 못하므로 호출부가 정적 문자열로 넘긴다.
+	imagePosition?: string;
 	soft?: boolean; // 원본 색이 진한 사진 — 채도·농도를 낮춰 톤을 눌러준다
 }) => {
 	const go = useGo();
@@ -112,10 +114,9 @@ export const PageHero = ({
 				sizes="100vw"
 				className={cn(
 					"object-cover",
-					soft ? "opacity-60 saturate-[0.78] brightness-[1.06]" : "opacity-[0.72]",
+					imagePosition ?? "object-center",
+					soft ? "opacity-60 brightness-[1.06] saturate-[0.78]" : "opacity-[0.72]",
 				)}
-				// object-position 은 호출부가 임의 좌표를 넘기는 런타임 값이라 CSS 변수로 전달한다
-				style={{ objectPosition: imagePosition ?? "center" }}
 			/>
 			{/* 좌측(텍스트 영역)만 충분히 어둡게, 우측으로 갈수록 이미지가 밝게 드러나도록 그라디언트 완화 */}
 			<div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(28,22,16,0.72)_0%,rgba(45,37,28,0.42)_46%,rgba(70,58,44,0.12)_100%)]" />
@@ -162,18 +163,10 @@ export const PageHero = ({
 
 export const Hero = () => {
 	const go = useGo();
-	const overlay = HERO_OVERLAY;
 	return (
 		<section
 			data-hero-dark
-			className="home-hero-full"
-			style={{
-				position: "relative",
-				display: "flex",
-				alignItems: "center",
-				overflow: "hidden",
-				background: "#1a1612",
-			}}
+			className="home-hero-full relative flex items-center overflow-hidden bg-[#1a1612]"
 		>
 			<Image
 				src={HOME_HERO_IMG}
@@ -181,55 +174,22 @@ export const Hero = () => {
 				fill
 				priority
 				sizes="100vw"
-				style={{ objectFit: "cover" }}
+				className="object-cover"
 			/>
-			<div
-				style={{
-					position: "absolute",
-					inset: 0,
-					background: `linear-gradient(90deg, rgba(20,16,13,${overlay}) 0%, rgba(20,16,13,${overlay * 0.72}) 42%, rgba(20,16,13,0.18) 78%, rgba(20,16,13,0.05) 100%)`,
-				}}
-			/>
-			<div
-				className="home-hero-inner wrap"
-				style={{ position: "relative", zIndex: 2, width: "100%", paddingTop: 80 }}
-			>
-				<div style={{ maxWidth: 640, color: "#fff" }}>
-					<span
-						style={{
-							display: "inline-flex",
-							alignItems: "center",
-							gap: 12,
-							color: "var(--color-accent-soft)",
-							fontSize: 15,
-							fontWeight: 500,
-							letterSpacing: ".02em",
-						}}
-					>
-						<span style={{ height: 1, width: 32, background: "var(--color-accent-soft)" }} />
+			<div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(20,16,13,0.78)_0%,rgba(20,16,13,0.5616)_42%,rgba(20,16,13,0.18)_78%,rgba(20,16,13,0.05)_100%)]" />
+			<div className="home-hero-inner wrap relative z-[2] w-full pt-[80px]">
+				<div className="max-w-[640px] text-white">
+					<span className="inline-flex items-center gap-3 font-medium text-[15px] text-[color:var(--color-accent-soft)] tracking-[.02em]">
+						<span className="h-px w-8 bg-[var(--color-accent-soft)]" />
 						법무부 등록 출입국민원 대행기관
 					</span>
-					<h1
-						style={{
-							marginTop: 24,
-							fontSize: "clamp(26px, 5vw, 50px)",
-							lineHeight: 1.18,
-							color: "#fff",
-						}}
-					>
+					<h1 className="mt-6 text-[clamp(26px,5vw,50px)] text-white [line-height:1.18]">
 						출입국 업무는
 						<br />
-						<span style={{ color: "var(--color-accent-soft)" }}>경험이 결과를 만듭니다.</span>
+						<span className="text-[color:var(--color-accent-soft)]">경험이 결과를 만듭니다.</span>
 					</h1>
-					<p
-						style={{
-							marginTop: 24,
-							fontSize: "clamp(15px, 2vw, 18px)",
-							lineHeight: 1.7,
-							color: "rgba(255,255,255,0.86)",
-						}}
-					>
-						<strong style={{ color: "#fff", fontWeight: 700 }}>
+					<p className="mt-6 text-[clamp(15px,2vw,18px)] text-white/[.86] [line-height:1.7]">
+						<strong className="font-bold text-white">
 							좋은 결과는 실력 있는 전문가 선택에서 시작됩니다.
 						</strong>
 						<br />
@@ -239,13 +199,12 @@ export const Hero = () => {
 						<br />
 						대표 행정사가 상담부터 전 과정을 직접 진행합니다.
 					</p>
-					<div style={{ display: "flex", gap: 12, marginTop: 40, flexWrap: "wrap" }}>
+					<div className="mt-10 flex flex-wrap gap-3">
 						{/* 히어로 주 CTA — 빛 사선 스윕(.shine)으로 첫 화면에서 눈이 먼저 가게 */}
 						<Button
 							variant="primary"
 							size="lg"
-							className="shine"
-							style={{ fontWeight: 800 }}
+							className="shine font-extrabold"
 							onClick={() => go("contact")}
 							iconEnd={<Icon n="arrow-right" className="size-[18px]" />}
 						>
@@ -254,34 +213,16 @@ export const Hero = () => {
 						<Button
 							size="lg"
 							onClick={() => go("services")}
-							style={{
-								background: "rgba(255,255,255,0.12)",
-								color: "#fff",
-								border: "1px solid rgba(255,255,255,0.32)",
-							}}
+							className="border border-white/[.32] bg-white/[.12] text-white"
 						>
 							업무분야 보기
 						</Button>
 					</div>
 				</div>
 			</div>
-			<div
-				className="hide-mobile"
-				style={{
-					position: "absolute",
-					bottom: 28,
-					left: "50%",
-					transform: "translateX(-50%)",
-					zIndex: 2,
-					color: "rgba(255,255,255,.6)",
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: 6,
-					fontSize: 12,
-					letterSpacing: ".1em",
-				}}
-			>
+			{/* hide-mobile 클래스가 있었지만 인라인 display:flex 에 눌려 실제로 숨겨진 적이 없다.
+			    현재 렌더(모바일에도 SCROLL 노출)를 유지하기 위해 클래스를 떼고 flex 를 유틸리티로 둔다. */}
+			<div className="absolute bottom-[28px] left-1/2 z-[2] flex -translate-x-1/2 flex-col items-center gap-1.5 text-[12px] text-white/60 tracking-[.1em]">
 				SCROLL
 				<Icon n="chevron-down" className="size-[18px]" />
 			</div>
@@ -373,11 +314,7 @@ export const StrengthsCarousel = () => {
 	}, []);
 
 	return (
-		<section
-			ref={sectionRef}
-			className="section soft-bg str-section"
-			style={{ background: "var(--surface-subtle)" }}
-		>
+		<section ref={sectionRef} className="section soft-bg str-section bg-[var(--surface-subtle)]">
 			<div className="wrap">
 				<h2 className="str-title">초이스의 강점</h2>
 
@@ -406,9 +343,7 @@ export const StrengthsCarousel = () => {
 											{s.no}
 											<span className="str-no-total"> / 0{total}</span>
 										</span>
-										<h3 className="str-headline" style={{ whiteSpace: "pre-line" }}>
-											{s.title}
-										</h3>
+										<h3 className="str-headline whitespace-pre-line">{s.title}</h3>
 										<p className="str-copy">
 											{s.lines.map((line, j) => (
 												<Fragment key={line}>
@@ -432,7 +367,7 @@ export const StrengthsCarousel = () => {
 												alt={s.tab}
 												fill
 												sizes="(max-width: 900px) 100vw, 45vw"
-												style={{ objectFit: "cover" }}
+												className="object-cover"
 											/>
 										</div>
 									</div>
@@ -473,7 +408,7 @@ export const StrengthsCarousel = () => {
 };
 
 export const StrengthsRow = () => (
-	<section className="section soft-bg" style={{ background: "var(--surface-page)" }}>
+	<section className="section soft-bg bg-[var(--surface-page)]">
 		<div className="wrap">
 			<SectionHead
 				title="상담부터 접수까지, 행정사가 직접 진행합니다."
@@ -506,50 +441,28 @@ export const StrengthsRow = () => (
 export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 	const go = useGo();
 	return (
-		<section className="section" style={{ background: "var(--surface-subtle)" }}>
+		<section className="section bg-[var(--surface-subtle)]">
 			<div className="wrap">
 				{heading && (
-					<div data-reveal="blur" style={{ maxWidth: 780, margin: "0 auto", textAlign: "center" }}>
-						<span
-							style={{
-								display: "inline-block",
-								fontSize: 13,
-								fontWeight: 700,
-								letterSpacing: ".14em",
-								color: "var(--color-accent)",
-							}}
-						>
+					<div data-reveal="blur" className="mx-auto max-w-[780px] text-center">
+						<span className="inline-block font-bold text-[13px] text-[color:var(--color-accent)] tracking-[.14em]">
 							업무분야
 						</span>
-						<h2
-							style={{
-								marginTop: 16,
-								fontSize: "clamp(19px, 2.8vw, 32px)",
-								lineHeight: 1.42,
-								color: "var(--text-heading)",
-							}}
-						>
+						<h2 className="mt-[16px] text-[clamp(19px,_2.8vw,_32px)] text-[color:var(--text-heading)] [line-height:1.42]">
 							출입국·비자 전 분야를
 							<br />
 							<span className="svc-hl">시험 출신 행정사</span>가 직접 책임집니다.
 						</h2>
 					</div>
 				)}
-				<div data-stagger className="grid-4 svc-grid" style={{ marginTop: heading ? 56 : 0 }}>
+				<div data-stagger className={cn("grid-4 svc-grid", heading ? "mt-[56px]" : "mt-0")}>
 					{SERVICES.map((s) => (
 						<Card
 							key={s.id}
 							className="flex cursor-pointer flex-col p-[28px]"
 							onClick={() => go("service", s.id)}
 						>
-							<div
-								style={{
-									display: "flex",
-									justifyContent: "space-between",
-									alignItems: "center",
-									marginBottom: 22,
-								}}
-							>
+							<div className="mb-[22px] flex items-center justify-between">
 								<span className="svc-icon" aria-hidden="true">
 									<Icon n={s.icon} className="size-[26px]" />
 								</span>
@@ -557,18 +470,7 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 							</div>
 							<CardTitle className="text-[20px]">{s.title}</CardTitle>
 							<CardBody className="flex-1 text-[16px] [line-height:1.7]">{s.summary}</CardBody>
-							<span
-								className="svc-more"
-								style={{
-									display: "inline-flex",
-									alignItems: "center",
-									gap: 6,
-									marginTop: 22,
-									fontSize: 15,
-									fontWeight: 600,
-									color: "var(--color-primary)",
-								}}
-							>
+							<span className="svc-more mt-[22px] inline-flex items-center gap-[6px] font-semibold text-[15px] text-[color:var(--color-primary)]">
 								자세히 보기 <Icon n="arrow-right" className="size-[16px]" />
 							</span>
 						</Card>
@@ -580,43 +482,23 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 };
 
 export const Process = () => (
-	<section className="section" style={{ background: "var(--surface-page)" }}>
+	<section className="section bg-[var(--surface-page)]">
 		<div className="wrap">
 			<SectionHead
 				title="진행 절차"
 				sub="상담부터 결과 안내까지, 모든 과정을 행정사가 직접 챙깁니다."
 			/>
-			<div data-stagger="tilt" className="grid-4" style={{ marginTop: 48 }}>
+			<div data-stagger="tilt" className="grid-4 mt-[48px]">
 				{PROCESS.map((p, i) => (
 					<div key={p.title}>
-						<div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-							<span
-								style={{
-									fontSize: 14,
-									fontWeight: 700,
-									color: "#fff",
-									background: "var(--color-primary)",
-									width: 32,
-									height: 32,
-									borderRadius: "50%",
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-								}}
-							>
+						<div className="mb-[16px] flex items-center gap-[12px]">
+							<span className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-[var(--color-primary)] font-bold text-[14px] text-white">
 								{i + 1}
 							</span>
 							<Icon n={p.icon} className="size-[24px] text-[color:var(--color-primary)]" />
 						</div>
-						<h3 style={{ fontSize: 18, marginBottom: 8 }}>{p.title}</h3>
-						<p
-							style={{
-								fontSize: 15,
-								color: "var(--text-body)",
-								lineHeight: 1.7,
-								whiteSpace: "pre-line",
-							}}
-						>
+						<h3 className="mb-[8px] text-[18px]">{p.title}</h3>
+						<p className="whitespace-pre-line text-[15px] text-[color:var(--text-body)] [line-height:1.7]">
 							{p.desc}
 						</p>
 					</div>
@@ -630,45 +512,25 @@ export const Process = () => (
 const STAT_ICONS = ["award", "clipboard-list", "badge-check", "user-check"];
 
 export const Stats = () => (
-	<section
-		className="stats-section"
-		style={{ background: "var(--color-primary)", padding: "72px 0" }}
-	>
-		<div data-stagger="scale" className="grid-4 stats-grid wrap" style={{ gap: 24 }}>
+	<section className="stats-section bg-[var(--color-primary)] px-[0px] py-[72px]">
+		<div data-stagger="scale" className="grid-4 stats-grid wrap gap-[24px]">
 			{STATS.map((s, i) => (
 				<div
 					key={s.l}
-					className="stat-cell"
-					style={{
-						textAlign: "center",
-						color: "#fff",
-						// 항목 사이 세로 구분선(마지막 제외). 모바일 2×2는 globals.css가 별도 처리.
-						borderRight: i < STATS.length - 1 ? "1px solid rgba(255,255,255,0.16)" : undefined,
-					}}
+					// 항목 사이 세로 구분선(마지막 제외). 모바일 2×2는 globals.css가 별도 처리.
+					className={cn(
+						"stat-cell text-center text-white",
+						i < STATS.length - 1 && "border-r border-r-white/[.16]",
+					)}
 				>
 					<Icon
 						n={STAT_ICONS[i]}
-						style={{
-							width: 34,
-							height: 34,
-							display: "block",
-							margin: "0 auto 14px",
-							color: "rgba(255,255,255,0.8)",
-						}}
+						className="mx-[auto] mt-[0px] mb-[14px] block h-[34px] w-[34px] text-[rgba(255,255,255,0.8)]"
 					/>
-					<div
-						className="stat-value"
-						style={{
-							fontSize: "clamp(24px,4.2vw,38px)",
-							fontWeight: 700,
-							letterSpacing: "-0.02em",
-						}}
-					>
+					<div className="stat-value font-bold text-[clamp(24px,4.2vw,38px)] tracking-[-0.02em]">
 						{s.v}
 					</div>
-					<div className="stat-label" style={{ fontSize: 16, fontWeight: 500, marginTop: 8 }}>
-						{s.l}
-					</div>
+					<div className="stat-label mt-[8px] font-medium text-[16px]">{s.l}</div>
 				</div>
 			))}
 		</div>
@@ -702,7 +564,7 @@ const ShortEmbed = ({ id }: { id: string }) => {
 				alt="초이스 행정사 유튜브 쇼츠 썸네일"
 				fill
 				sizes="(max-width: 640px) 90vw, 340px"
-				style={{ objectFit: "cover" }}
+				className="object-cover"
 			/>
 			<span className="short-play" aria-hidden="true">
 				<Icon n="play" className="size-[24px]" />
@@ -712,40 +574,24 @@ const ShortEmbed = ({ id }: { id: string }) => {
 };
 
 export const VideoSection = () => (
-	<section className="section" style={{ background: "var(--surface-page)" }}>
+	<section className="section bg-[var(--surface-page)]">
 		<div className="wrap">
-			<div
-				style={{
-					display: "flex",
-					justifyContent: "space-between",
-					alignItems: "flex-end",
-					flexWrap: "wrap",
-					gap: 16,
-				}}
-			>
+			<div className="flex flex-wrap items-end justify-between gap-[16px]">
 				<SectionHead
 					title="영상으로 보는 비자 정보"
 					sub="유튜브 ‘초이스 행정사’에서 최신 비자 정보와 실제 허가 사례까지 확인해 보세요."
 					align="left"
 				/>
 				<a
-					className="lk"
+					className="lk inline-flex items-center gap-[8px] whitespace-nowrap font-semibold text-[color:var(--color-primary)]"
 					href={YOUTUBE_CHANNEL}
 					target="_blank"
 					rel="noopener noreferrer"
-					style={{
-						display: "inline-flex",
-						alignItems: "center",
-						gap: 8,
-						fontWeight: 600,
-						color: "var(--color-primary)",
-						whiteSpace: "nowrap",
-					}}
 				>
 					채널 바로가기 <Icon n="external-link" className="size-[16px]" />
 				</a>
 			</div>
-			<div data-stagger="blur" className="shorts-grid" style={{ marginTop: 48 }}>
+			<div data-stagger="blur" className="shorts-grid mt-[48px]">
 				{SHORTS.map((id) => (
 					<div className="short-embed" key={id}>
 						<ShortEmbed id={id} />
@@ -757,42 +603,22 @@ export const VideoSection = () => (
 );
 
 export const BlogPreview = ({ posts }: { posts: BlogPostCard[] }) => (
-	<section className="section" style={{ background: "var(--surface-subtle)" }}>
+	<section className="section bg-[var(--surface-subtle)]">
 		<div className="wrap">
-			<div
-				style={{
-					display: "flex",
-					justifyContent: "space-between",
-					alignItems: "flex-end",
-					flexWrap: "wrap",
-					gap: 16,
-				}}
-			>
+			<div className="flex flex-wrap items-end justify-between gap-[16px]">
 				<SectionHead
 					title="비자 정보 · 소식"
 					sub="절차·요건을 사례 중심으로 알기 쉽게 정리해 전해드립니다."
 					align="left"
 				/>
 				<Link
-					className="lk"
+					className="lk inline-flex items-center gap-[8px] whitespace-nowrap font-semibold text-[color:var(--color-primary)]"
 					href="/blog"
-					style={{
-						display: "inline-flex",
-						alignItems: "center",
-						gap: 8,
-						fontWeight: 600,
-						color: "var(--color-primary)",
-						whiteSpace: "nowrap",
-					}}
 				>
 					블로그 전체보기 <Icon n="arrow-right" className="size-[16px]" />
 				</Link>
 			</div>
-			<div
-				data-stagger
-				className="grid-4 blog-grid home-blog-grid"
-				style={{ marginTop: "clamp(20px, 5vw, 48px)" }}
-			>
+			<div data-stagger className="grid-4 blog-grid home-blog-grid mt-[clamp(20px,_5vw,_48px)]">
 				{posts.slice(0, 4).map((p) => (
 					<BlogCard key={p.slug} post={p} compact />
 				))}
@@ -804,17 +630,9 @@ export const BlogPreview = ({ posts }: { posts: BlogPostCard[] }) => (
 export const ReviewsPreview = ({ images }: { images: ReviewImage[] }) => {
 	const go = useGo();
 	return (
-		<section className="section" style={{ background: "var(--surface-page)" }}>
+		<section className="section bg-[var(--surface-page)]">
 			<div className="wrap">
-				<div
-					style={{
-						display: "flex",
-						justifyContent: "space-between",
-						alignItems: "flex-end",
-						flexWrap: "wrap",
-						gap: 16,
-					}}
-				>
+				<div className="flex flex-wrap items-end justify-between gap-[16px]">
 					<SectionHead
 						title="의뢰인이 직접 전한 후기"
 						sub="실제 의뢰인분들이 보내주신 소중한 후기입니다."
@@ -822,39 +640,19 @@ export const ReviewsPreview = ({ images }: { images: ReviewImage[] }) => {
 					/>
 					<button
 						type="button"
-						className="lk"
+						className="lk inline-flex items-center gap-[8px] whitespace-nowrap border-none bg-none p-[0px] font-semibold text-[color:var(--color-primary)]"
 						onClick={() => go("reviews")}
-						style={{
-							background: "none",
-							border: "none",
-							padding: 0,
-							font: "inherit",
-							display: "inline-flex",
-							alignItems: "center",
-							gap: 8,
-							fontWeight: 600,
-							color: "var(--color-primary)",
-							whiteSpace: "nowrap",
-						}}
 					>
 						후기 전체보기 <Icon n="arrow-right" className="size-[16px]" />
 					</button>
 				</div>
 			</div>
 			{/* 마퀴는 전체 폭으로 흐르게(컨테이너 밖) — 좌우 마스크 페이드로 자연스럽게 사라짐 */}
-			<div style={{ marginTop: 44 }}>
+			<div className="mt-[44px]">
 				<ReviewImageGallery variant="marquee" images={images} />
 			</div>
 			<div className="wrap">
-				<p
-					style={{
-						textAlign: "center",
-						marginTop: 28,
-						fontSize: 13,
-						color: "var(--text-muted)",
-						wordBreak: "keep-all",
-					}}
-				>
+				<p className="mt-[28px] break-keep text-center text-[13px] text-[color:var(--text-muted)]">
 					※ 실제 의뢰인이 보내주신 내용이며,
 					<br />
 					개인정보 보호를 위해 일부 정보는 비공개 처리하였습니다.
@@ -867,48 +665,19 @@ export const ReviewsPreview = ({ images }: { images: ReviewImage[] }) => {
 export const CTABand = () => {
 	const go = useGo();
 	return (
-		<section
-			className="cta-band"
-			style={{
-				background:
-					"linear-gradient(160deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)",
-				padding: "80px 0",
-			}}
-		>
-			<div data-reveal="scale" className="wrap" style={{ textAlign: "center", color: "#fff" }}>
-				<h2
-					className="cta-title"
-					style={{ fontSize: "clamp(20px,3.4vw,32px)", color: "#fff", wordBreak: "keep-all" }}
-				>
+		<section className="cta-band bg-[linear-gradient(160deg,_var(--color-primary)_0%,_var(--color-primary-dark)_100%)] px-[0px] py-[80px]">
+			<div data-reveal="scale" className="wrap text-center text-white">
+				<h2 className="cta-title break-keep text-[clamp(20px,3.4vw,32px)] text-white">
 					혼자 고민하지 마세요. 경험이 결과를 만듭니다.
 				</h2>
-				<p
-					className="cta-sub"
-					style={{
-						fontSize: 17,
-						color: "rgba(255,255,255,.82)",
-						marginTop: 16,
-						lineHeight: 1.7,
-						wordBreak: "keep-all",
-					}}
-				>
+				<p className="cta-sub mt-[16px] break-keep text-[17px] text-[rgba(255,255,255,.82)] [line-height:1.7]">
 					3,500건 이상의 업무 경험을 바탕으로 최적의 해결&nbsp;방향을 제시해 드립니다.
 				</p>
-				<div
-					className="cta-actions"
-					style={{
-						display: "flex",
-						gap: 12,
-						justifyContent: "center",
-						marginTop: 36,
-						flexWrap: "wrap",
-					}}
-				>
+				<div className="cta-actions mt-[36px] flex flex-wrap justify-center gap-[12px]">
 					<Button
 						variant="secondary"
 						size="lg"
-						className="shine"
-						style={{ fontWeight: 800 }}
+						className="shine font-extrabold"
 						onClick={() => go("contact")}
 						iconEnd={<Icon n="arrow-right" className="size-[18px]" />}
 					>
@@ -917,11 +686,7 @@ export const CTABand = () => {
 					<Button
 						href={CONTACT.phone.href}
 						size="lg"
-						style={{
-							background: "transparent",
-							color: "#fff",
-							border: "1px solid rgba(255,255,255,.4)",
-						}}
+						className="border border-[rgba(255,255,255,.4)] bg-transparent text-white"
 						iconStart={
 							<span className="consult-ring" aria-hidden="true">
 								<Icon n="phone" className="size-[17px]" />
@@ -935,6 +700,16 @@ export const CTABand = () => {
 		</section>
 	);
 };
+
+/* 개인정보 수집·이용 고지 — 「개인정보 보호법」 제15조·제22조가 동의 시점에 알리도록 정한 4요소
+   (수집 항목 / 이용 목적 / 보유 기간 / 거부권과 그에 따른 불이익)는 그대로 두고 문장만 압축했다.
+   상세는 체크박스 라벨의 개인정보처리방침 링크가 담당. 항목마다 한 줄 — 한 문단으로 흘리면
+   라벨만 줄 끝에 남아 읽기 어색해진다. */
+const CONSENT_NOTICE = [
+	"항목: 성함·연락처·이메일·국적(필수), 체류자격·상담분야·문의내용(선택)",
+	"목적: 상담 접수·답변 · 보유: 처리 완료 후 3년",
+	"동의 거부 가능(거부 시 상담 접수 제한)",
+];
 
 /* 상담 희망 분야 드롭다운 — 인테이크 명시(업무분야 8종과 별개의 7종) */
 const CONSULT_FIELDS = [
@@ -988,23 +763,12 @@ export const ContactForm = () => {
 			className="contact-form-card px-[clamp(18px,5vw,36px)] py-[clamp(28px,4vw,36px)]"
 		>
 			{sent ? (
-				<div style={{ textAlign: "center", padding: "40px 0" }}>
-					<div
-						style={{
-							width: 64,
-							height: 64,
-							borderRadius: "50%",
-							background: "var(--color-accent-soft)",
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							margin: "0 auto 20px",
-						}}
-					>
+				<div className="px-[0px] py-[40px] text-center">
+					<div className="mx-[auto] mt-[0px] mb-[20px] flex h-[64px] w-[64px] items-center justify-center rounded-full bg-[var(--color-accent-soft)]">
 						<Icon n="check" className="size-[30px] text-[color:var(--color-primary-dark)]" />
 					</div>
-					<h3 style={{ fontSize: 22 }}>상담 신청이 접수되었습니다</h3>
-					<p style={{ fontSize: 16, color: "var(--text-body)", marginTop: 12, lineHeight: 1.7 }}>
+					<h3 className="text-[22px]">상담 신청이 접수되었습니다</h3>
+					<p className="mt-[12px] text-[16px] text-[color:var(--text-body)] [line-height:1.7]">
 						빠른 시일 내에 행정사가 직접 연락드리겠습니다.
 					</p>
 					<Button variant="outline" className="mt-6" onClick={() => setSent(false)}>
@@ -1020,12 +784,9 @@ export const ContactForm = () => {
 						tabIndex={-1}
 						autoComplete="off"
 						aria-hidden="true"
-						style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+						className="absolute left-[-9999px] h-[1px] w-[1px] opacity-0"
 					/>
-					<div
-						className="contact-form-grid"
-						style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}
-					>
+					<div className="contact-form-grid grid grid-cols-[1fr_1fr] gap-[18px]">
 						<div>
 							<Label htmlFor="cn">성함</Label>
 							<Input id="cn" name="name" placeholder="홍길동" required />
@@ -1065,7 +826,7 @@ export const ContactForm = () => {
 							>
 								<SelectTrigger
 									id="cf"
-									style={{ height: 48, width: "100%", fontSize: 16, borderRadius: "var(--radius)" }}
+									className="h-[48px]! w-full rounded-[var(--radius)] text-[16px]/[1.42857]"
 								>
 									<SelectValue placeholder="분야를 선택해 주세요" />
 								</SelectTrigger>
@@ -1078,27 +839,18 @@ export const ContactForm = () => {
 								</SelectContent>
 							</Select>
 						</div>
-						<div style={{ gridColumn: "1 / -1" }}>
+						<div className="col-span-full">
 							<Label htmlFor="cm">문의 내용</Label>
 							<Textarea
 								id="cm"
 								name="message"
 								rows={4}
 								placeholder="상담하고 싶은 내용을 간단히 적어 주세요."
-								style={{ height: 140, resize: "none" }}
+								className="h-[140px] resize-none"
 							/>
 						</div>
 					</div>
-					<label
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: 8,
-							marginTop: 16,
-							fontSize: 14,
-							color: "var(--text-muted)",
-						}}
-					>
+					<label className="mt-[16px] flex items-center gap-[8px] text-[14px] text-[color:var(--text-muted)]">
 						<input
 							type="checkbox"
 							name="privacyConsent"
@@ -1110,38 +862,22 @@ export const ContactForm = () => {
 								href="/privacy"
 								target="_blank"
 								rel="noopener noreferrer"
-								style={{
-									color: "var(--color-primary)",
-									textDecoration: "underline",
-									textUnderlineOffset: 2,
-								}}
+								className="text-[color:var(--color-primary)] underline underline-offset-[2px]"
 							>
 								개인정보 수집·이용
 							</a>
 							에 동의합니다.
 						</span>
 					</label>
-					<p
-						style={{
-							marginTop: 8,
-							fontSize: 12.5,
-							color: "var(--text-muted)",
-							lineHeight: 1.6,
-						}}
-					>
-						수집 항목: 성함·연락처·이메일·국적(필수), 현재 체류자격·상담 분야·문의 내용(선택) · 이용
-						목적: 상담 문의 접수 및 답변 · 보유 기간: 처리 완료 후 3년 · 동의를 거부할 수 있으며, 이
-						경우 상담 접수가 제한될 수 있습니다.
+					<p className="mt-[8px] text-[12.5px] text-[color:var(--text-muted)] [line-height:1.6]">
+						{CONSENT_NOTICE.map((item) => (
+							<span key={item} className="block">
+								{item}
+							</span>
+						))}
 					</p>
 					{error ? (
-						<p
-							style={{
-								marginTop: 14,
-								fontSize: 14,
-								color: "var(--color-danger, #d92d20)",
-								lineHeight: 1.6,
-							}}
-						>
+						<p className="mt-[14px] text-[14px] text-[color:var(--color-danger,_#d92d20)] [line-height:1.6]">
 							{error}
 						</p>
 					) : null}
@@ -1150,8 +886,7 @@ export const ContactForm = () => {
 						variant="primary"
 						size="lg"
 						disabled={pending}
-						className="shine"
-						style={{ width: "100%", marginTop: 20, fontSize: 18, fontWeight: 800 }}
+						className="shine mt-[20px] w-full font-extrabold text-[18px]"
 					>
 						{pending ? "접수 중…" : "상담 신청"}
 					</Button>
@@ -1306,22 +1041,19 @@ export const ContactInfo = ({ tone = "light" }: { tone?: "light" | "dark" }) => 
 const MAP_QUERY = CONTACT.address;
 const MAP_EMBED_SRC = `https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&z=16&hl=ko&output=embed`;
 
-export const MapBlock = ({ height = 320 }: { height?: number }) => (
+export const MapBlock = ({ className = "h-[320px]" }: { className?: string }) => (
 	<div
-		style={{
-			height,
-			borderRadius: "var(--radius)",
-			border: "1px solid var(--border-default)",
-			background: "var(--surface-sunken)",
-			overflow: "hidden",
-		}}
+		className={cn(
+			"overflow-hidden rounded-[var(--radius)] border border-[var(--border-default)] bg-[var(--surface-sunken)]",
+			className,
+		)}
 	>
 		<iframe
 			src={MAP_EMBED_SRC}
 			title="서울파이낸스센터 위치 지도"
 			loading="lazy"
 			referrerPolicy="no-referrer-when-downgrade"
-			style={{ border: 0, width: "100%", height: "100%", display: "block" }}
+			className="block h-full w-full border-none"
 		/>
 	</div>
 );
@@ -1365,51 +1097,26 @@ export const LocationDetail = () => {
 		<div className="contact-grid wrap">
 			{qr && <QrDialog kind={qr} onClose={() => setQr(null)} />}
 			<div>
-				<div style={{ borderTop: "1px solid var(--border-default)" }}>
-					<div
-						className="loc-row"
-						style={{
-							display: "flex",
-							alignItems: "flex-start",
-							gap: 16,
-							padding: "16px 0",
-							borderBottom: "1px solid var(--border-default)",
-						}}
-					>
-						<span
-							className="loc-row-label"
-							style={{
-								display: "inline-flex",
-								alignItems: "center",
-								gap: 10,
-								width: 192,
-								flex: "0 0 192px",
-								color: "var(--text-muted)",
-								fontSize: 14,
-							}}
-						>
+				<div className="border-t border-t-[var(--border-default)]">
+					<div className="loc-row flex items-start gap-[16px] border-b border-b-[var(--border-default)] px-[0px] py-[16px]">
+						<span className="loc-row-label inline-flex w-[192px] flex-[0_0_192px] items-center gap-[10px] text-[14px] text-[color:var(--text-muted)] max-sm:text-[13px]">
 							<span className="loc-row-ic" aria-hidden="true">
-								<Icon n="map-pin" className="size-[18px] text-[color:var(--color-primary)]" />
+								<Icon
+									n="map-pin"
+									className="size-[18px] text-[color:var(--color-primary)] max-sm:size-[20px]"
+								/>
 							</span>
 							주소
 						</span>
-						<span
-							className="loc-row-val"
-							style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}
-						>
-							{CONTACT.address}
-							<span
-								style={{
-									display: "block",
-									marginTop: 4,
-									fontSize: 13,
-									fontWeight: 400,
-									color: "var(--text-muted)",
-								}}
-							>
+						<span className="loc-row-val font-semibold text-[16px] text-[color:var(--text-heading)]">
+							{/* 건물명 이후("서울파이낸스센터 3층 (우)…")를 한 줄로 내린다 — 푸터와 같은 분리 규칙 */}
+							{CONTACT.address.split(", ")[0]},
+							<br />
+							{CONTACT.address.split(", ").slice(1).join(", ")}
+							<span className="mt-[4px] block font-normal text-[13px] text-[color:var(--text-muted)]">
 								{/* 지하철 안내를 노선별로 줄바꿈(" · " 기준) → 각 노선 안내가 한 줄에 오게 */}
 								{CONTACT.addressNote.split(" · ").map((line) => (
-									<span key={line} style={{ display: "block" }}>
+									<span key={line} className="block">
 										{line}
 									</span>
 								))}
@@ -1419,78 +1126,50 @@ export const LocationDetail = () => {
 					{LOCATION_ROWS.map((r) => {
 						const body = (
 							<>
-								<span
-									className="loc-row-label"
-									style={{
-										display: "inline-flex",
-										alignItems: "center",
-										gap: 10,
-										width: 192,
-										flex: "0 0 192px",
-										color: "var(--text-muted)",
-										fontSize: 14,
-									}}
-								>
+								<span className="loc-row-label inline-flex w-[192px] flex-[0_0_192px] items-center gap-[10px] text-[14px] text-[color:var(--text-muted)] max-sm:text-[13px]">
 									<span className="loc-row-ic" aria-hidden="true">
-										<Icon n={r.icon} className="size-[18px] text-[color:var(--color-primary)]" />
+										<Icon
+											n={r.icon}
+											className="size-[18px] text-[color:var(--color-primary)] max-sm:size-[20px]"
+										/>
 									</span>
 									{r.label}
 								</span>
-								<span
-									className="loc-row-val"
-									style={{ fontSize: 16, fontWeight: 600, color: "var(--text-heading)" }}
-								>
+								<span className="loc-row-val font-semibold text-[16px] text-[color:var(--text-heading)]">
 									{r.value}
 								</span>
 							</>
 						);
-						const rowStyle = {
-							display: "flex",
-							alignItems: "center",
-							gap: 16,
-							padding: "16px 0",
-							borderBottom: "1px solid var(--border-default)",
-						} as const;
+						const rowCls = "flex items-center gap-4 border-b border-b-[var(--border-default)] py-4";
+						// 카카오톡·위챗은 행 전체가 아니라 오른쪽 끝 'QR 보기'만 버튼(문의하기와 동일).
 						if (r.qr) {
 							return (
-								<button
-									key={r.label}
-									type="button"
-									className="loc-row"
-									onClick={() => setQr(r.qr as QrKind)}
-									aria-haspopup="dialog"
-									// border 축약형 금지 — 스프레드로 이미 자리를 잡은 borderBottom 을 뒤에서 통째로
-									// 지워버려(객체 키 순서 규칙) 구분선이 사라진다. 지울 변만 개별 지정한다.
-									style={{
-										...rowStyle,
-										width: "100%",
-										borderTop: "none",
-										borderLeft: "none",
-										borderRight: "none",
-										background: "none",
-										font: "inherit",
-										textAlign: "left",
-										cursor: "pointer",
-										color: "var(--text-body)",
-									}}
-								>
+								<div key={r.label} className={cn("loc-row", rowCls)}>
 									{body}
-								</button>
+									<button
+										type="button"
+										className="contact-qr-btn self-center"
+										onClick={() => setQr(r.qr as QrKind)}
+										aria-haspopup="dialog"
+										aria-label="QR 보기"
+									>
+										QR 보기
+									</button>
+								</div>
 							);
 						}
 						return r.href ? (
 							<a
 								key={r.label}
-								className="loc-row"
 								href={r.href}
 								target={r.href.startsWith("http") ? "_blank" : undefined}
 								rel="noopener noreferrer"
-								style={{ ...rowStyle, color: "var(--text-body)" }}
+								className={cn("loc-row", rowCls, "text-[color:var(--text-body)]")}
 							>
 								{body}
 							</a>
 						) : (
-							<div key={r.label} className="loc-row" style={rowStyle}>
+							<div key={r.label} className={cn("loc-row", rowCls)}>
 								{body}
 							</div>
 						);
@@ -1498,39 +1177,31 @@ export const LocationDetail = () => {
 				</div>
 
 				<a
-					className="lk"
+					className="lk mt-[20px] inline-flex items-center gap-[6px] font-semibold text-[14px] text-[color:var(--color-primary)]"
 					href="https://map.naver.com/p/search/서울파이낸스센터"
 					target="_blank"
 					rel="noopener noreferrer"
-					style={{
-						marginTop: 20,
-						display: "inline-flex",
-						alignItems: "center",
-						gap: 6,
-						fontSize: 14,
-						fontWeight: 600,
-						color: "var(--color-primary)",
-					}}
 				>
 					지도 앱에서 길찾기 <Icon n="external-link" className="size-[14px]" />
 				</a>
 
-				<p style={{ marginTop: 18, fontSize: 13, lineHeight: 1.7, color: "var(--text-muted)" }}>
-					외부 출장이 많은 관계로 내방상담을 원하시는 분들은 반드시 사전에 연락주시기 바랍니다.
+				<p className="mt-[18px] text-[13px] text-[color:var(--text-muted)] [line-height:1.7]">
+					외부 출장이 많은 관계로 내방상담을 원하시는 분들은
+					반드시&nbsp;사전에&nbsp;연락주시기&nbsp;바랍니다.
 				</p>
 			</div>
-			<MapBlock height={520} />
+			<MapBlock className="h-[520px]" />
 		</div>
 	);
 };
 
 /* 홈 하단 — 오시는 길(주소 + 지도). 로어스 CONTACT US 대응 */
 export const LocationSection = () => (
-	<section className="section soft-bg" style={{ background: "var(--surface-page)" }}>
+	<section className="section soft-bg bg-[var(--surface-page)]">
 		<div className="wrap">
 			<SectionHead align="left" title="오시는 길" />
 		</div>
-		<div style={{ marginTop: "clamp(36px, 4vw, 52px)" }}>
+		<div className="mt-[clamp(36px,_4vw,_52px)]">
 			<LocationDetail />
 		</div>
 	</section>
@@ -1546,70 +1217,33 @@ export const FAQ_ = ({
 	const [open, setOpen] = useState(0);
 	return (
 		<section
-			className="section"
-			style={{ background: banded ? "var(--surface-subtle)" : "var(--surface-page)" }}
+			className={cn("section", banded ? "bg-[var(--surface-subtle)]" : "bg-[var(--surface-page)]")}
 		>
-			<div className="wrap" style={{ maxWidth: 820 }}>
+			<div className="wrap max-w-[820px]">
 				{showHead && <SectionHead title="자주 묻는 질문" />}
-				<div
-					style={{
-						marginTop: showHead ? 40 : 0,
-						display: "flex",
-						flexDirection: "column",
-						gap: 12,
-					}}
-				>
+				<div className={cn("flex flex-col gap-3", showHead ? "mt-10" : "mt-0")}>
 					{FAQ.map((f, i) => {
 						const isOpen = open === i;
 						return (
 							<div
 								key={f.q}
-								style={{
-									background: "var(--surface-card)",
-									border: "1px solid var(--border-default)",
-									borderRadius: "var(--radius)",
-									overflow: "hidden",
-								}}
+								className="overflow-hidden rounded-[var(--radius)] border border-[var(--border-default)] bg-[var(--surface-card)]"
 							>
 								<button
 									type="button"
-									className="lk"
+									className="lk flex w-full items-center justify-between gap-[16px] border-none bg-none px-[24px] py-[20px] text-left font-[family-name:var(--font-sans)]"
 									onClick={() => setOpen(isOpen ? -1 : i)}
-									style={{
-										width: "100%",
-										display: "flex",
-										justifyContent: "space-between",
-										alignItems: "center",
-										gap: 16,
-										padding: "20px 24px",
-										background: "none",
-										border: "none",
-										textAlign: "left",
-										fontFamily: "var(--font-sans)",
-									}}
 								>
-									<span style={{ fontSize: 17, fontWeight: 600, color: "var(--text-heading)" }}>
+									<span className="font-semibold text-[17px] text-[color:var(--text-heading)]">
 										{f.q}
 									</span>
 									<Icon
 										n={isOpen ? "minus" : "plus"}
-										style={{
-											width: 20,
-											height: 20,
-											color: "var(--color-primary)",
-											flex: "0 0 auto",
-										}}
+										className="h-[20px] w-[20px] flex-none text-[color:var(--color-primary)]"
 									/>
 								</button>
 								{isOpen && (
-									<p
-										style={{
-											padding: "0 24px 22px",
-											fontSize: 16,
-											lineHeight: 1.8,
-											color: "var(--text-body)",
-										}}
-									>
+									<p className="px-[24px] pt-[0px] pb-[22px] text-[16px] text-[color:var(--text-body)] [line-height:1.8]">
 										{f.a}
 									</p>
 								)}
@@ -1715,7 +1349,7 @@ export const ConsultBar = () => {
 					<span className="consult-toast-ic" aria-hidden="true">
 						<Icon
 							n={toast.kind === "ok" ? "check" : "x"}
-							style={toast.kind === "ok" ? { width: 19, height: 19 } : { width: 14, height: 14 }}
+							className={toast.kind === "ok" ? "size-[19px]" : "size-[14px]"}
 						/>
 					</span>
 					<span className="consult-toast-txt">
@@ -1726,80 +1360,40 @@ export const ConsultBar = () => {
 			)}
 			{qr && <QrDialog kind={qr} onClose={() => setQr(null)} />}
 			<div
-				className="consult-desktop"
-				style={{
-					position: "fixed",
-					left: 0,
-					right: 0,
-					bottom: 0,
-					zIndex: 40,
-					background: "var(--color-primary-dark)",
-					color: "#fff",
-					transform: visible ? "translateY(0)" : "translateY(100%)",
-					transition: "transform .35s ease",
-					boxShadow: "0 -4px 20px rgba(34,34,34,.18)",
-				}}
+				className={cn(
+					"consult-desktop",
+					"fixed inset-x-0 bottom-0 z-40 bg-[var(--color-primary-dark)] text-white shadow-[0_-4px_20px_rgba(34,34,34,.18)] transition-transform duration-[350ms]",
+					visible ? "translate-y-0" : "translate-y-full",
+				)}
 			>
-				<div className="consult-bar-inner wrap" style={{ padding: "24px 24px", gap: 20 }}>
-					<div style={{ display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap" }}>
+				<div className="wrap flex items-center justify-center gap-[20px] px-[24px] py-[24px]">
+					<div className="flex items-center gap-[12px] whitespace-nowrap">
 						{/* 전화 아이콘 — 벨 울리듯 살짝 흔들려 시선을 끈다(PC 레일과 동일 모션) */}
 						<span className="consult-ring" aria-hidden="true">
 							<Icon n="phone-call" className="size-[22px] text-[color:var(--color-accent-soft)]" />
 						</span>
-						<div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
-							<span
-								style={{
-									fontSize: 12.5,
-									fontWeight: 800,
-									color: "var(--color-accent-soft)",
-									letterSpacing: ".02em",
-								}}
-							>
+						<div className="flex flex-col [line-height:1.15]">
+							<span className="font-extrabold text-[12.5px] text-[color:var(--color-accent-soft)] tracking-[.02em]">
 								신속 상담
 							</span>
 							<a
 								href={CONTACT.phone.href}
-								style={{ fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: "-.01em" }}
+								className="font-extrabold text-[20px] text-white tracking-[-.01em]"
 							>
 								{CONTACT.phone.display}
 							</a>
 						</div>
 					</div>
-					<form
-						className="consult-form"
-						onSubmit={submitQuick}
-						style={{ flex: "0 1 1060px", gap: 10 }}
-					>
+					<form className="flex flex-[0_1_1060px] items-center gap-[10px]" onSubmit={submitQuick}>
 						<input
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							aria-label="성함"
 							placeholder="성함"
-							style={{
-								height: 44,
-								padding: "0 14px",
-								borderRadius: "var(--radius)",
-								border: "none",
-								background: "#fff",
-								fontFamily: "var(--font-sans)",
-								fontSize: 15,
-								color: "var(--text-body)",
-								flex: "0 1 210px",
-								minWidth: 0,
-							}}
+							className="h-[44px] min-w-[0px] flex-[0_1_210px] rounded-[var(--radius)] border-none bg-white px-[14px] py-[0px] font-[family-name:var(--font-sans)] text-[15px] text-[color:var(--text-body)]"
 						/>
 						<Select items={CONSULT_FIELD_ITEMS} value={svc} onValueChange={(v) => setSvc(v ?? "")}>
-							<SelectTrigger
-								className="border-none"
-								style={{
-									height: 44,
-									flex: "0 1 175px",
-									background: "#fff",
-									borderRadius: "var(--radius)",
-									fontSize: 15,
-									color: "var(--text-body)",
-								}}
-							>
+							<SelectTrigger className="h-[44px]! flex-[0_1_175px] rounded-[var(--radius)] border-none bg-white text-[15px]/[1.42857] text-[color:var(--text-body)]!">
 								<SelectValue placeholder="상담분야 선택" />
 							</SelectTrigger>
 							<SelectContent align="start" alignItemWithTrigger={false}>
@@ -1816,32 +1410,9 @@ export const ConsultBar = () => {
 							inputMode="tel"
 							aria-label="연락처"
 							placeholder="010-0000-0000"
-							style={{
-								height: 44,
-								padding: "0 14px",
-								borderRadius: "var(--radius)",
-								border: "none",
-								background: "#fff",
-								fontFamily: "var(--font-sans)",
-								fontSize: 15,
-								color: "var(--text-body)",
-								flex: "0 1 340px",
-								maxWidth: 340,
-								minWidth: 0,
-							}}
+							className="h-[44px] min-w-[0px] max-w-[340px] flex-[0_1_340px] rounded-[var(--radius)] border-none bg-white px-[14px] py-[0px] font-[family-name:var(--font-sans)] text-[15px] text-[color:var(--text-body)]"
 						/>
-						<label
-							style={{
-								display: "flex",
-								alignItems: "center",
-								gap: 6,
-								flex: "0 0 auto",
-								whiteSpace: "nowrap",
-								fontSize: 13,
-								color: "rgba(255,255,255,0.82)",
-								cursor: "pointer",
-							}}
-						>
+						<label className="flex flex-none cursor-pointer items-center gap-[6px] whitespace-nowrap text-[13px] text-[rgba(255,255,255,0.82)]">
 							<input
 								type="checkbox"
 								checked={agree}
@@ -1854,7 +1425,7 @@ export const ConsultBar = () => {
 									target="_blank"
 									rel="noopener noreferrer"
 									onClick={(e) => e.stopPropagation()}
-									style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: 2 }}
+									className="text-[inherit] underline underline-offset-[2px]"
 								>
 									개인정보 수집·이용
 								</a>{" "}
@@ -1866,8 +1437,7 @@ export const ConsultBar = () => {
 							type="submit"
 							variant="secondary"
 							disabled={sending}
-							className="shine"
-							style={{ whiteSpace: "nowrap", minWidth: 132, fontWeight: 800 }}
+							className="shine min-w-[132px] whitespace-nowrap font-extrabold"
 						>
 							{sending ? "신청 중..." : "상담신청"}
 						</Button>
@@ -1876,50 +1446,35 @@ export const ConsultBar = () => {
 			</div>
 
 			<div
-				className="consult-mobile"
-				style={{
-					position: "fixed",
-					left: 0,
-					right: 0,
-					bottom: 0,
-					zIndex: 40,
-					background: "var(--color-primary-dark)",
-					boxShadow: "0 -4px 20px rgba(34,34,34,.22)",
-					paddingBottom: "env(safe-area-inset-bottom, 0px)",
-					transform: visible ? "translateY(0)" : "translateY(100%)",
-					transition: "transform .35s ease",
-				}}
+				className={cn(
+					"consult-mobile",
+					"fixed inset-x-0 bottom-0 z-40 bg-[var(--color-primary-dark)] pb-[env(safe-area-inset-bottom,0px)] shadow-[0_-4px_20px_rgba(34,34,34,.22)] transition-transform duration-[350ms]",
+					visible ? "translate-y-0" : "translate-y-full",
+				)}
 			>
 				{mobileItems.map((it, i) => {
-					const cellStyle = {
-						flex: 1,
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-						justifyContent: "center",
-						gap: 5,
-						padding: "12px 2px",
-						minHeight: 60,
-						background: "none",
-						border: "none",
-						borderLeft: i ? "1px solid rgba(255,255,255,0.14)" : "none",
-						color: "#fff",
-						fontFamily: "var(--font-sans)",
-						textDecoration: "none",
-					} as const;
+					// 셀 사이 세로 구분선은 첫 칸만 제외. 테두리 초기값은 preflight(border:0)로 이미 0.
+					const cellCls = cn(
+						"flex min-h-[60px] flex-1 flex-col items-center justify-center gap-[5px] bg-transparent px-[2px] py-[12px] font-[family-name:var(--font-sans)] text-white no-underline",
+						i && "border-l border-l-[rgba(255,255,255,0.14)]",
+					);
 					const inner = (
 						<>
 							{it.img ? (
 								<Image src={it.img} alt="" width={21} height={21} unoptimized />
 							) : (
-								<Icon
-									n={it.icon as string}
-									className="size-[20px] text-[color:var(--color-accent-soft)]"
-								/>
+								// 전화상담만 벨 울리듯 흔들린다(PC 레일·상담바와 동일 모션)
+								<span
+									className={it.label === "전화상담" ? "consult-ring" : undefined}
+									aria-hidden="true"
+								>
+									<Icon
+										n={it.icon as string}
+										className="size-[20px] text-[color:var(--color-accent-soft)]"
+									/>
+								</span>
 							)}
-							<span style={{ fontSize: 12, fontWeight: 600, whiteSpace: "nowrap" }}>
-								{it.label}
-							</span>
+							<span className="whitespace-nowrap font-semibold text-[12px]">{it.label}</span>
 						</>
 					);
 					// 전화상담 셀만 PC 레일 전화패널처럼 빛 사선 스윕(반짝임) 부여
@@ -1927,22 +1482,15 @@ export const ConsultBar = () => {
 					return it.href ? (
 						<a
 							key={it.label}
-							className={cls}
+							className={cn(cls, cellCls)}
 							href={it.href}
 							target="_blank"
 							rel="noopener noreferrer"
-							style={cellStyle}
 						>
 							{inner}
 						</a>
 					) : (
-						<button
-							key={it.label}
-							type="button"
-							className={cls}
-							onClick={it.onClick}
-							style={cellStyle}
-						>
+						<button key={it.label} type="button" className={cn(cls, cellCls)} onClick={it.onClick}>
 							{inner}
 						</button>
 					);
@@ -2053,7 +1601,7 @@ export const FloatRail = () => {
 /* 법무부는 문양(crest)만 제공 → 문양+명칭 표기, 협회 2곳은 공식 로고 락업(가로형)을 그대로 노출 */
 type Affiliation =
 	| { kind: "emblem"; emblem: string; name: string }
-	| { kind: "logo"; logo: string; alt: string; w: number; h: number; boxH?: number };
+	| { kind: "logo"; logo: string; alt: string; w: number; h: number; boxCls?: string };
 const AFFILIATIONS: Affiliation[] = [
 	{
 		kind: "emblem",
@@ -2067,8 +1615,8 @@ const AFFILIATIONS: Affiliation[] = [
 		w: 191,
 		h: 50,
 		// 이 락업은 내용이 캔버스를 꽉 채워(여백 0) 기본 높이면 시험행정사회(내용 51%)보다 커 보임 →
-		// boxH로 렌더 내용 높이를 시험행정사회(≈29px)에 근접하게 축소(눈높이 미세조정: 36)
-		boxH: 43,
+		// 높이를 시험행정사회(≈29px)에 근접하게 축소(눈높이 미세조정)
+		boxCls: "h-[43px]",
 	},
 	{
 		kind: "logo",
@@ -2076,7 +1624,7 @@ const AFFILIATIONS: Affiliation[] = [
 		alt: "한국시험행정사회",
 		w: 800,
 		h: 200,
-		boxH: 67,
+		boxCls: "h-[67px]",
 	},
 ];
 
@@ -2102,12 +1650,11 @@ export const Affiliations = () => (
 								</>
 							) : (
 								<Image
-									className="affiliation-lockup"
+									className={cn("w-auto object-contain", a.boxCls ?? "h-[62px]")}
 									src={a.logo}
 									alt={a.alt}
 									width={a.w}
 									height={a.h}
-									style={a.boxH ? { height: a.boxH } : undefined}
 								/>
 							)}
 						</span>
@@ -2121,25 +1668,9 @@ export const Affiliations = () => (
 export const Footer = () => {
 	const go = useGo();
 	return (
-		<footer
-			style={{
-				background: "var(--color-primary-dark)",
-				color: "rgba(255,255,255,0.72)",
-				paddingBottom: 88,
-			}}
-		>
-			<div className="wrap" style={{ padding: "56px 24px 32px" }}>
-				<div
-					style={{
-						display: "flex",
-						justifyContent: "space-between",
-						alignItems: "center",
-						borderBottom: "1px solid rgba(255,255,255,0.15)",
-						paddingBottom: 28,
-						flexWrap: "wrap",
-						gap: 16,
-					}}
-				>
+		<footer className="bg-[var(--color-primary-dark)] pb-[88px] text-[rgba(255,255,255,0.72)]">
+			<div className="wrap px-[24px] pt-[56px] pb-[32px]">
+				<div className="flex flex-wrap items-center justify-between gap-[16px] border-b border-b-[rgba(255,255,255,0.15)] pb-[28px]">
 					{/* 실제 링크(<Link>)로 둔다 — 커서·새 탭 열기·크롤러 모두 정상 동작 */}
 					<Link href="/" className="lk" aria-label="초이스 행정사사무소 홈">
 						<span className="footer-logo">
@@ -2152,24 +1683,15 @@ export const Footer = () => {
 							/>
 						</span>
 					</Link>
-					<nav
-						style={{ display: "flex", columnGap: 22, rowGap: 6, fontSize: 14, flexWrap: "wrap" }}
-					>
+					<nav className="flex flex-wrap gap-x-[22px] gap-y-[6px] text-[14px]">
 						{NAV.map((n) => (
 							<Fragment key={n.label}>
 								{/* 모바일에서 '블로그'부터 다음 줄로 내리는 강제 줄바꿈(데스크톱은 CSS로 미표시) */}
 								{n.label === "블로그" && <span className="footer-nav-break" aria-hidden="true" />}
 								<button
 									type="button"
-									className="lk"
+									className="lk border-none bg-none p-[0px] text-[rgba(255,255,255,0.8)]"
 									onClick={() => go(n.route)}
-									style={{
-										background: "none",
-										border: "none",
-										padding: 0,
-										font: "inherit",
-										color: "rgba(255,255,255,0.8)",
-									}}
 								>
 									{n.label}
 								</button>
@@ -2177,10 +1699,10 @@ export const Footer = () => {
 						))}
 					</nav>
 				</div>
-				<div className="footer-info" style={{ marginTop: 28, fontSize: 14, lineHeight: 1.9 }}>
+				<div className="footer-info mt-[28px] text-[14px] [line-height:1.9]">
 					{/* 라벨(고정폭)+값 2열 → 콜론 정렬 + 주소 줄바꿈 시 둘째 줄이 값 시작선에 맞춰짐.
 					    PC(≥961px)에선 아래 CSS로 블록 전체를 오른쪽 정렬. */}
-					<p style={{ wordBreak: "keep-all" }}>
+					<p className="break-keep">
 						주소 : {CONTACT.address.split(", ")[0]}
 						{", "}
 						{/* 모바일에서만 건물명부터 줄바꿈, PC(≥961px)에선 br 숨겨 한 줄로 */}
@@ -2191,23 +1713,15 @@ export const Footer = () => {
 						전화 : {CONTACT.phone.display}, {CONTACT.mobile.display}
 					</p>
 					<p>이메일 : {CONTACT.email}</p>
-					<p
-						style={{
-							marginTop: 14,
-							display: "flex",
-							gap: 16,
-							flexWrap: "wrap",
-							justifyContent: "flex-end",
-						}}
-					>
-						<Link href="/privacy" style={{ color: "#fff", fontWeight: 600 }}>
+					<p className="mt-[14px] flex flex-wrap justify-end gap-[16px]">
+						<Link href="/privacy" className="font-semibold text-white">
 							개인정보처리방침
 						</Link>
-						<Link href="/terms" style={{ color: "rgba(255,255,255,0.8)" }}>
+						<Link href="/terms" className="text-[rgba(255,255,255,0.8)]">
 							이용약관
 						</Link>
 					</p>
-					<p style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, marginTop: 12 }}>
+					<p className="mt-[12px] text-[13px] text-[rgba(255,255,255,0.45)]">
 						© 2026 초이스 행정사사무소. ALL RIGHTS RESERVED.
 					</p>
 				</div>

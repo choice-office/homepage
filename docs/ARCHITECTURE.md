@@ -4,7 +4,7 @@
 
 ## 스택
 - Next.js 16 (App Router) · React 19 (stable) · TypeScript
-- 스타일: **인라인 style 객체 + CSS 변수(oklch) + `globals.css` 손수 작성 클래스**. Tailwind v4가 설치돼 있지만 `components/site/`에서는 거의 쓰지 않는다(아래 "스타일 모델" 참고).
+- 스타일: **Tailwind v4 유틸리티 + CSS 변수(oklch) + `globals.css`의 컴포넌트 클래스**. 인라인 `style` 은 소스에서 **0개**다(아래 "스타일 모델" 참고).
 - shadcn(base-ui) `components/ui/*` — 실제로는 **Select만** 사이트에서 사용.
 - 애니메이션: **CSS only**(Framer Motion 없음).
 - 패키지: pnpm · Lint/Format: Biome · git hook: lefthook · 타입검사: tsgo · 배포: Vercel(GitHub 연동, `main` push → 자동 배포)
@@ -59,8 +59,13 @@ src/
 - 헤더(`header.tsx`)는 로고(좌) · **동일 너비 메뉴**(중앙, 캐럿 없음) · 전화+무료상담 CTA(우, 데스크탑) 구성. 하위메뉴는 **JS 상태(`openMega`)** 로 연다: hover/focus open, 클릭 시 이동+즉시 닫힘+blur, 영역 이탈 시 180ms 지연 닫힘(hover-intent), Esc 닫힘. 패널은 **단일 공유 풀폭 슬라이드다운 시트**(`position:fixed; top:80px`, `nav` 자손이라 시트 hover 중 `mouseleave` 미발생)로, **활성 메뉴의 하위만** eyebrow 라벨 + 4열 그리드(`.mega-row`)로 보여준다. 투명 헤더(홈 최상단)는 열릴 때 `.mega-open` 으로 솔리드 전환. **헤더에 `backdrop-filter` 금지**(자손 fixed 시트 기준이 어긋남).
 
 ## 스타일 모델 (중요)
-- 색/간격은 `globals.css`의 **CSS 변수**(oklch). 컴포넌트는 인라인 `style={{ color: "var(--text-heading)" }}` 식으로 변수를 참조.
-- **레이아웃 유틸 클래스는 손수 정의**: `.container`(max 1152), `.section`, `.grid-2/3/4`, `.contact-grid` 등 — `globals.css`에 있음. Tailwind 유틸리티 대신 이걸 쓴다.
+- **인라인 `style` 금지.** 마크업의 스타일은 전부 Tailwind 유틸리티다(`text-[15px]`, `mt-[24px]`, `text-[color:var(--text-heading)]` …). 값은 여전히 CSS 변수를 참조한다.
+- **`globals.css` 전체가 `@layer components` 안에 있다.** 레이어 밖 CSS 는 특정성과 무관하게 Tailwind 유틸리티(`@layer utilities`)를 이기기 때문이다. 한 레이어에 모아두면 globals 규칙끼리의 우열은 그대로 두면서(특정성·순서) 호출부 유틸리티가 이긴다 = 예전 인라인 style 이 하던 역할.
+  - **새 CSS 는 반드시 그 블록 안에** 넣는다. 밖에 두면 유틸리티가 조용히 죽는다.
+  - 레이어 밖에 남는 것: `@theme`/`:root`/`.dark`(변수), `@layer base`, `@keyframes`, 전역 스크롤바, **`.prose` 계열**(본문 조판은 호출부 유틸리티를 이겨야 함).
+  - 컨테이너 문맥 오버라이드(`.blog-grid .ds-card` 처럼 "특정 컨테이너 안에서만 다르게")는 컴포넌트 유틸리티를 이겨야 하므로 `!important` + `biome-ignore` 주석을 쓴다. 파일 안 사례 참고.
+- **레이아웃 유틸 클래스는 손수 정의**: `.wrap`(max 1600 + 좌우 여백), `.section`, `.grid-2/3/4`, `.contact-grid` 등 — `globals.css`에 있음. 반복되는 레이아웃은 Tailwind 유틸리티 대신 이걸 쓴다.
+- 회귀 검증 도구: `scripts/visual/` — `capture.mjs`(17라우트×3뷰포트 전체 스크린샷) · `diff.py`(픽셀 비교) · `geom.mjs`(요소 rect 비교) · `styles.mjs`(계산 스타일 속성별 비교) · `audit.mjs`(죽은 선언·폰트 폴백 점검) · `layerize.py`(레이어 재구성). CSS 를 손대면 **기준 빌드와 픽셀 비교**로 확인한다.
 - **재사용 컴포넌트의 hover/focus/상태는 CSS 클래스로**: `.ds-btn(-primary/outline/secondary/ghost)`, `.ds-field`, `.ds-card`, `.nav-*`, `.mega-*`, `.prose`, `.page-enter`. (JS 상태로 hover 흉내내지 말 것 — 리렌더 유발)
 - 다크모드: `.dark` 변수는 정의돼 있으나 인라인에 하드코딩 색(`#fff`, `rgba(...)`)이 많아 **현재 완전 동작 안 함**. `providers.tsx`에서 light 고정. (docs/DECISIONS.md)
 

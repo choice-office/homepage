@@ -30,10 +30,15 @@ export default function FaqPage() {
 			/>
 			<PageHero
 				title="자주 묻는 질문"
-				sub="상담 전 자주 묻는 질문을 모았습니다. 더 궁금한 점은 편하게 문의해 주세요."
+				sub={
+					<>
+						상담 전 자주 묻는 질문을 모았습니다.
+						<br className="sm:hidden" /> 더 궁금한 점은 편하게 문의해 주세요.
+					</>
+				}
 				crumbs={[{ label: "홈", route: "home" }, { label: "자주 묻는 질문" }]}
 				image="/자주묻는질문-hero.png"
-				imagePosition="center 62%"
+				imagePosition="object-[center_62%]"
 			/>
 			<FAQ_ banded={false} showHead={false} />
 			<CTABand />

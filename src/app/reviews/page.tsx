@@ -35,20 +35,12 @@ export default async function ReviewsPage() {
 				crumbs={[{ label: "홈", route: "home" }, { label: "의뢰인 후기" }]}
 				image="/의뢰인후기-hero.png"
 				soft
-				imagePosition="68% 55%"
+				imagePosition="object-[68%_55%]"
 			/>
-			<section className="section" style={{ background: "var(--surface-page)" }}>
+			<section className="section bg-[var(--surface-page)]">
 				<div className="wrap">
 					<ReviewImageGallery images={images} />
-					<p
-						style={{
-							textAlign: "center",
-							marginTop: 36,
-							fontSize: 13,
-							color: "var(--text-muted)",
-							wordBreak: "keep-all",
-						}}
-					>
+					<p className="mt-[36px] break-keep text-center text-[13px] text-[color:var(--text-muted)]">
 						※ 실제 의뢰인이 보내주신 내용이며,
 						<br />
 						개인정보 보호를 위해 일부 정보는 비공개 처리하였습니다.
@@ -58,13 +50,11 @@ export default async function ReviewsPage() {
 			{posts.length > 0 && (
 				<section className={cn("section", "bg-[var(--surface-subtle)]")}>
 					<div className="wrap">
-						<div style={{ marginBottom: 28 }}>
+						<div className="mb-[28px]">
 							<span className="font-bold text-[13px] text-[color:var(--color-accent)] uppercase tracking-[.12em]">
 								Related
 							</span>
-							<h2 className="mt-3" style={{ fontSize: "clamp(21px,3vw,30px)" }}>
-								의뢰인 후기 관련 글·사례
-							</h2>
+							<h2 className="mt-3 text-[clamp(21px,3vw,30px)]">의뢰인 후기 관련 글·사례</h2>
 							<span className="mt-[18px] block h-[3px] w-12 bg-[var(--color-accent)]" />
 						</div>
 						<div className="grid-3">

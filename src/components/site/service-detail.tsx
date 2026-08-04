@@ -2,6 +2,7 @@
 
 import { type ReactNode, useState } from "react";
 import { SERVICE_SEO, SERVICES } from "@/lib/site-data";
+import { cn } from "@/lib/utils";
 import { Badge, Button, Card, CardBody, CardTitle } from "./ds";
 import { Icon } from "./icon";
 import { PageHero } from "./sections";
@@ -9,76 +10,31 @@ import { useGo } from "./use-go";
 
 const Block = ({ icon, title, children }: { icon: string; title: string; children: ReactNode }) => (
 	<Card hover={false} className="h-full p-[28px]">
-		<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-			<div
-				style={{
-					width: 40,
-					height: 40,
-					borderRadius: "var(--radius)",
-					background: "var(--color-accent-soft)",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-				}}
-			>
+		<div className="mb-[16px] flex items-center gap-[10px]">
+			<div className="flex h-[40px] w-[40px] items-center justify-center rounded-[var(--radius)] bg-[var(--color-accent-soft)]">
 				<Icon n={icon} className="size-[20px] text-[color:var(--color-primary-dark)]" />
 			</div>
-			<h3 style={{ fontSize: 19 }}>{title}</h3>
+			<h3 className="text-[19px]">{title}</h3>
 		</div>
 		{children}
 	</Card>
 );
 
 const List = ({ items, ordered }: { items: string[]; ordered?: boolean }) => (
-	<ol
-		style={{
-			margin: 0,
-			padding: 0,
-			listStyle: "none",
-			display: "flex",
-			flexDirection: "column",
-			gap: 12,
-		}}
-	>
+	<ol className="m-[0px] flex list-none flex-col gap-[12px] p-[0px]">
 		{items.map((t, i) => (
 			<li
 				key={t}
-				style={{
-					display: "flex",
-					gap: 12,
-					fontSize: 15,
-					lineHeight: 1.6,
-					color: "var(--text-body)",
-				}}
+				className="flex gap-[12px] text-[15px] text-[color:var(--text-body)] [line-height:1.6]"
 			>
 				{ordered ? (
-					<span
-						style={{
-							flex: "0 0 auto",
-							width: 24,
-							height: 24,
-							borderRadius: "50%",
-							background: "var(--color-primary)",
-							color: "#fff",
-							fontSize: 13,
-							fontWeight: 700,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-						}}
-					>
+					<span className="flex h-[24px] w-[24px] flex-none items-center justify-center rounded-full bg-[var(--color-primary)] font-bold text-[13px] text-white">
 						{i + 1}
 					</span>
 				) : (
 					<Icon
 						n="check"
-						style={{
-							width: 18,
-							height: 18,
-							color: "var(--color-primary)",
-							flex: "0 0 auto",
-							marginTop: 2,
-						}}
+						className="mt-[2px] h-[18px] w-[18px] flex-none text-[color:var(--color-primary)]"
 					/>
 				)}
 				<span>{t}</span>
@@ -92,24 +48,9 @@ const List = ({ items, ordered }: { items: string[]; ordered?: boolean }) => (
 const Eligibility = ({ title, items }: { title: string; items: string[] }) => {
 	const [open, setOpen] = useState(false);
 	return (
-		<details onToggle={(e) => setOpen(e.currentTarget.open)} style={{ marginTop: 24 }}>
-			<summary
-				style={{
-					listStyle: "none",
-					cursor: "pointer",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-between",
-					gap: 12,
-					padding: "18px 24px",
-					borderRadius: "var(--radius)",
-					border: "1px solid var(--border-default)",
-					background: "var(--surface-card)",
-					fontSize: 16,
-					fontWeight: 600,
-				}}
-			>
-				<span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+		<details onToggle={(e) => setOpen(e.currentTarget.open)} className="mt-[24px]">
+			<summary className="flex cursor-pointer list-none items-center justify-between gap-[12px] rounded-[var(--radius)] border border-[var(--border-default)] bg-[var(--surface-card)] px-[24px] py-[18px] font-semibold text-[16px]">
+				<span className="inline-flex items-center gap-[10px]">
 					<Icon
 						n="clipboard-list"
 						className="size-[20px] flex-none text-[color:var(--color-primary)]"
@@ -118,17 +59,13 @@ const Eligibility = ({ title, items }: { title: string; items: string[] }) => {
 				</span>
 				<Icon
 					n="chevron-down"
-					style={{
-						width: 20,
-						height: 20,
-						color: "var(--text-muted)",
-						flex: "0 0 auto",
-						transition: "transform .2s ease",
-						transform: open ? "rotate(180deg)" : "none",
-					}}
+					className={cn(
+						"size-[20px] flex-none text-[color:var(--text-muted)] transition-transform duration-200 ease-[ease]",
+						open && "rotate-180",
+					)}
 				/>
 			</summary>
-			<div style={{ padding: "20px 24px 4px" }}>
+			<div className="px-[24px] pt-[20px] pb-[4px]">
 				<List items={items} />
 			</div>
 		</details>
@@ -141,46 +78,20 @@ const FaqItem = ({ q, a }: { q: string; a: string }) => {
 	const [open, setOpen] = useState(false);
 	return (
 		<details onToggle={(e) => setOpen(e.currentTarget.open)}>
-			<summary
-				style={{
-					listStyle: "none",
-					cursor: "pointer",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-between",
-					gap: 12,
-					padding: "20px 24px",
-					fontSize: 16.5,
-					fontWeight: 600,
-					lineHeight: 1.5,
-				}}
-			>
-				<span style={{ display: "inline-flex", alignItems: "baseline", gap: 10 }}>
-					<span style={{ color: "var(--color-primary)", fontWeight: 700, flex: "0 0 auto" }}>
-						Q
-					</span>
+			<summary className="flex cursor-pointer list-none items-center justify-between gap-[12px] px-[24px] py-[20px] font-semibold text-[16.5px] [line-height:1.5]">
+				<span className="inline-flex items-baseline gap-[10px]">
+					<span className="flex-none font-bold text-[color:var(--color-primary)]">Q</span>
 					{q}
 				</span>
 				<Icon
 					n="chevron-down"
-					style={{
-						width: 20,
-						height: 20,
-						color: "var(--text-muted)",
-						flex: "0 0 auto",
-						transition: "transform .2s ease",
-						transform: open ? "rotate(180deg)" : "none",
-					}}
+					className={cn(
+						"size-[20px] flex-none text-[color:var(--text-muted)] transition-transform duration-200 ease-[ease]",
+						open && "rotate-180",
+					)}
 				/>
 			</summary>
-			<div
-				style={{
-					padding: "0 24px 22px 46px",
-					fontSize: 15,
-					lineHeight: 1.8,
-					color: "var(--text-body)",
-				}}
-			>
+			<div className="pt-[0px] pr-[24px] pb-[22px] pl-[46px] text-[15px] text-[color:var(--text-body)] [line-height:1.8]">
 				{a}
 			</div>
 		</details>
@@ -204,11 +115,11 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 					{ label: s.title },
 				]}
 				image="/업무분야-hero.png"
-				imagePosition="center 62%"
+				imagePosition="object-[center_62%]"
 			/>
-			<section className="section" style={{ background: "var(--surface-page)" }}>
+			<section className="section bg-[var(--surface-page)]">
 				<div className="wrap">
-					<div data-stagger="split" className="grid-2" style={{ gap: 24 }}>
+					<div data-stagger="split" className="grid-2 gap-[24px]">
 						<Block icon="users" title="이런 분께 권합니다">
 							<List items={s.target} />
 						</Block>
@@ -219,36 +130,27 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 					{s.eligibility && s.eligibility.length > 0 && (
 						<Eligibility title="단기상용·단기취업 대상 자세히 보기" items={s.eligibility} />
 					)}
-					<div data-stagger className="grid-2" style={{ gap: 24, marginTop: 24 }}>
+					<div data-stagger className="grid-2 mt-[24px] gap-[24px]">
 						<Block icon="route" title="업무 절차">
 							<List items={s.steps} ordered />
 						</Block>
-						<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+						<div className="flex flex-col gap-[24px]">
 							<Card
 								hover={false}
 								className="border-none bg-[var(--color-primary)] p-[28px] text-white"
 							>
-								<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+								<div className="flex items-center gap-[10px]">
 									<Icon n="clock" className="size-[22px] text-[color:var(--color-accent-soft)]" />
-									<h3 style={{ fontSize: 19, color: "#fff" }}>예상 소요 기간</h3>
+									<h3 className="text-[19px] text-white">예상 소요 기간</h3>
 								</div>
-								<p style={{ fontSize: 22, fontWeight: 700, marginTop: 16, lineHeight: 1.4 }}>
-									{s.period}
-								</p>
-								<p
-									style={{
-										fontSize: 14,
-										color: "rgba(255,255,255,.78)",
-										marginTop: 12,
-										lineHeight: 1.7,
-									}}
-								>
+								<p className="mt-[16px] font-bold text-[22px] [line-height:1.4]">{s.period}</p>
+								<p className="mt-[12px] text-[14px] text-[rgba(255,255,255,.78)] [line-height:1.7]">
 									{s.periodNote}
 								</p>
 							</Card>
 							<Card hover={false} className="flex flex-col gap-[14px] p-[28px]">
 								<h3 className="svc-cta-title">{s.ctaSubject} 상담이 필요하신가요?</h3>
-								<p style={{ fontSize: 15, color: "var(--text-body)", lineHeight: 1.7 }}>
+								<p className="text-[15px] text-[color:var(--text-body)] [line-height:1.7]">
 									가능 여부와 준비 방향을 안내해 드립니다.
 								</p>
 								<Button
@@ -265,39 +167,18 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 				</div>
 			</section>
 			{faqs.length > 0 && (
-				<section className="section" style={{ background: "var(--surface-page)", paddingTop: 8 }}>
+				<section className="section bg-[var(--surface-page)] pt-[8px]">
 					<div className="wrap">
-						<div style={{ marginBottom: 28 }}>
-							<span
-								style={{
-									fontSize: 13,
-									fontWeight: 700,
-									letterSpacing: ".12em",
-									textTransform: "uppercase",
-									color: "var(--color-accent)",
-								}}
-							>
+						<div className="mb-[28px]">
+							<span className="font-bold text-[13px] text-[color:var(--color-accent)] uppercase tracking-[.12em]">
 								FAQ
 							</span>
-							<h2 style={{ fontSize: "clamp(21px,3vw,30px)", marginTop: 12 }}>
-								{s.title} 자주 묻는 질문
-							</h2>
-							<span
-								style={{
-									display: "block",
-									width: 48,
-									height: 3,
-									background: "var(--color-accent)",
-									marginTop: 18,
-								}}
-							/>
+							<h2 className="mt-[12px] text-[clamp(21px,3vw,30px)]">{s.title} 자주 묻는 질문</h2>
+							<span className="mt-[18px] block h-[3px] w-[48px] bg-[var(--color-accent)]" />
 						</div>
 						<Card hover={false} className="p-[4px]">
 							{faqs.map((f, i) => (
-								<div
-									key={f.q}
-									style={{ borderTop: i > 0 ? "1px solid var(--border-default)" : "none" }}
-								>
+								<div key={f.q} className={cn(i > 0 && "border-t border-t-[var(--border-default)]")}>
 									<FaqItem q={f.q} a={f.a} />
 								</div>
 							))}
@@ -305,35 +186,18 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 					</div>
 				</section>
 			)}
-			<section className="section" style={{ background: "var(--surface-sunken)", paddingTop: 72 }}>
+			<section className="section bg-[var(--surface-sunken)] pt-[72px]">
 				<div className="wrap">
-					<div style={{ marginBottom: 36 }}>
-						<span
-							style={{
-								fontSize: 13,
-								fontWeight: 700,
-								letterSpacing: ".12em",
-								textTransform: "uppercase",
-								color: "var(--color-accent)",
-							}}
-						>
+					<div className="mb-[36px]">
+						<span className="font-bold text-[13px] text-[color:var(--color-accent)] uppercase tracking-[.12em]">
 							Other Services
 						</span>
-						<h2 style={{ fontSize: "clamp(21px,3vw,30px)", marginTop: 12 }}>다른 업무분야</h2>
-						<p style={{ fontSize: 16, color: "var(--text-muted)", marginTop: 12, lineHeight: 1.7 }}>
+						<h2 className="mt-[12px] text-[clamp(21px,3vw,30px)]">다른 업무분야</h2>
+						<p className="mt-[12px] text-[16px] text-[color:var(--text-muted)] [line-height:1.7]">
 							찾으시는 분야가 있다면 함께 살펴보세요. 분야를 선택하면 대상·서류·절차·기간을 안내해
 							드립니다.
 						</p>
-						<span
-							style={{
-								display: "block",
-								width: 48,
-								height: 3,
-								background: "var(--color-accent)",
-								borderRadius: 0,
-								marginTop: 18,
-							}}
-						/>
+						<span className="mt-[18px] block h-[3px] w-[48px] rounded-none bg-[var(--color-accent)]" />
 					</div>
 					<div data-stagger="scale" className="grid-4">
 						{others.slice(0, 4).map((o) => (
@@ -345,25 +209,8 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 									window.scrollTo({ top: 0 });
 								}}
 							>
-								<div
-									style={{
-										display: "flex",
-										justifyContent: "space-between",
-										alignItems: "flex-start",
-										marginBottom: 18,
-									}}
-								>
-									<div
-										style={{
-											width: 46,
-											height: 46,
-											borderRadius: "var(--radius)",
-											background: "var(--color-accent-soft)",
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center",
-										}}
-									>
+								<div className="mb-[18px] flex items-start justify-between">
+									<div className="flex h-[46px] w-[46px] items-center justify-center rounded-[var(--radius)] bg-[var(--color-accent-soft)]">
 										<Icon
 											n={o.icon}
 											className="size-[23px] text-[color:var(--color-primary-dark)]"
@@ -373,39 +220,19 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 								</div>
 								<CardTitle className="text-[18px]">{o.title}</CardTitle>
 								<CardBody className="svc-other-desc flex-1 text-[14.5px]">{o.summary}</CardBody>
-								<span
-									style={{
-										display: "inline-flex",
-										alignItems: "center",
-										gap: 6,
-										marginTop: 18,
-										fontSize: 14,
-										fontWeight: 600,
-										color: "var(--color-primary)",
-									}}
-								>
+								<span className="mt-[18px] inline-flex items-center gap-[6px] font-semibold text-[14px] text-[color:var(--color-primary)]">
 									자세히 보기 <Icon n="arrow-right" className="size-[15px]" />
 								</span>
 							</Card>
 						))}
 					</div>
-					<div style={{ textAlign: "center", marginTop: 40 }}>
+					<div className="mt-[40px] text-center">
 						<button
 							type="button"
-							className="lk"
+							className="lk inline-flex items-center gap-[8px] border-none bg-none font-semibold text-[16px] text-[color:var(--color-primary)]"
 							onClick={() => {
 								go("services");
 								window.scrollTo({ top: 0 });
-							}}
-							style={{
-								background: "none",
-								border: "none",
-								display: "inline-flex",
-								alignItems: "center",
-								gap: 8,
-								fontSize: 16,
-								fontWeight: 600,
-								color: "var(--color-primary)",
 							}}
 						>
 							업무분야 전체 보기 <Icon n="arrow-right" className="size-[17px]" />

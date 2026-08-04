@@ -45,6 +45,27 @@ const buildPageList = (current: number, total: number): (number | "…")[] => {
 	return out;
 };
 
+// 페이지 버튼 공통 골격 — 40x40 정사각(숫자는 좌우 여백 12px), 라디우스/폰트는 토큰 사용
+const CELL_CLS =
+	"inline-flex h-10 min-w-10 items-center justify-center rounded-[var(--radius)] text-[15px]";
+const numCls = (active: boolean) =>
+	cn(
+		CELL_CLS,
+		"lk border border-[var(--border-default)] px-3",
+		active
+			? "bg-[var(--color-primary)] font-bold text-[color:var(--color-primary-foreground,#fff)]"
+			: "bg-[var(--surface-card)] font-medium text-[color:var(--text-body)]",
+	);
+const arrowCls = (disabled: boolean) =>
+	cn(
+		CELL_CLS,
+		"lk border border-[var(--border-default)] bg-[var(--surface-card)] px-0",
+		disabled
+			? "pointer-events-none text-[color:var(--text-muted)] opacity-40"
+			: "text-[color:var(--text-body)] opacity-100",
+	);
+const ELLIPSIS_CLS = cn(CELL_CLS, "min-w-6 text-[color:var(--text-muted)]");
+
 const Pagination = ({
 	current,
 	totalPages,
@@ -56,39 +77,6 @@ const Pagination = ({
 }) => {
 	if (totalPages <= 1) return null;
 	const items = buildPageList(current, totalPages);
-	const base = {
-		display: "inline-flex",
-		alignItems: "center",
-		justifyContent: "center",
-		minWidth: 40,
-		height: 40,
-		borderRadius: "var(--radius)",
-		fontSize: 15,
-	} as const;
-	const numStyle = (active: boolean) =>
-		({
-			...base,
-			padding: "0 12px",
-			border: "1px solid var(--border-default)",
-			fontWeight: active ? 700 : 500,
-			background: active ? "var(--color-primary)" : "var(--surface-card)",
-			color: active ? "var(--color-primary-foreground, #fff)" : "var(--text-body)",
-		}) as const;
-	const arrowStyle = (disabled: boolean) =>
-		({
-			...base,
-			padding: 0,
-			border: "1px solid var(--border-default)",
-			background: "var(--surface-card)",
-			color: disabled ? "var(--text-muted)" : "var(--text-body)",
-			opacity: disabled ? 0.4 : 1,
-			pointerEvents: disabled ? "none" : "auto",
-		}) as const;
-	const ellipsisStyle = {
-		...base,
-		minWidth: 24,
-		color: "var(--text-muted)",
-	} as const;
 	const prevDisabled = current <= 1;
 	const nextDisabled = current >= totalPages;
 	return (
@@ -97,14 +85,13 @@ const Pagination = ({
 			className="mt-10 flex flex-wrap items-center justify-center gap-2"
 		>
 			{prevDisabled ? (
-				<span aria-disabled="true" style={arrowStyle(true)}>
+				<span aria-disabled="true" className={arrowCls(true)}>
 					<Icon n="chevron-left" className="size-[18px]" />
 				</span>
 			) : (
 				<Link
-					className="lk"
+					className={arrowCls(false)}
 					href={buildHref(current - 1, category)}
-					style={arrowStyle(false)}
 					rel="prev"
 					aria-label="이전 페이지"
 				>
@@ -114,30 +101,28 @@ const Pagination = ({
 			{items.map((item, i) =>
 				item === "…" ? (
 					// biome-ignore lint/suspicious/noArrayIndexKey: 정적 페이지 목록 — … 위치는 인덱스로 안정적
-					<span key={`gap-${i}`} style={ellipsisStyle} aria-hidden="true">
+					<span key={`gap-${i}`} className={ELLIPSIS_CLS} aria-hidden="true">
 						…
 					</span>
 				) : (
 					<Link
 						key={item}
-						className="lk"
+						className={numCls(item === current)}
 						href={buildHref(item, category)}
 						aria-current={item === current ? "page" : undefined}
-						style={numStyle(item === current)}
 					>
 						{item}
 					</Link>
 				),
 			)}
 			{nextDisabled ? (
-				<span aria-disabled="true" style={arrowStyle(true)}>
+				<span aria-disabled="true" className={arrowCls(true)}>
 					<Icon n="chevron-right" className="size-[18px]" />
 				</span>
 			) : (
 				<Link
-					className="lk"
+					className={arrowCls(false)}
 					href={buildHref(current + 1, category)}
-					style={arrowStyle(false)}
 					rel="next"
 					aria-label="다음 페이지"
 				>
