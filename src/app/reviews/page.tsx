@@ -34,7 +34,6 @@ export default async function ReviewsPage() {
 				sub="실제 의뢰인분들이 보내주신 소중한 후기입니다."
 				crumbs={[{ label: "홈", route: "home" }, { label: "의뢰인 후기" }]}
 				image="/의뢰인후기-hero.png"
-				soft
 				imagePosition="object-[68%_55%]"
 			/>
 			<section className="section bg-[var(--surface-page)]">

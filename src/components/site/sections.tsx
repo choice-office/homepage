@@ -88,7 +88,6 @@ export const PageHero = ({
 	crumbs,
 	image,
 	imagePosition,
-	soft = false,
 }: {
 	eyebrow?: string;
 	title: string;
@@ -98,7 +97,6 @@ export const PageHero = ({
 	// object-position 은 Tailwind 클래스로 받는다(예: "object-[66%_72%]").
 	// 클래스명을 동적으로 조립하면 Tailwind 가 스캔하지 못하므로 호출부가 정적 문자열로 넘긴다.
 	imagePosition?: string;
-	soft?: boolean; // 원본 색이 진한 사진 — 채도·농도를 낮춰 톤을 눌러준다
 }) => {
 	const go = useGo();
 	return (
@@ -112,11 +110,7 @@ export const PageHero = ({
 				fill
 				priority
 				sizes="100vw"
-				className={cn(
-					"object-cover",
-					imagePosition ?? "object-center",
-					soft ? "opacity-60 brightness-[1.06] saturate-[0.78]" : "opacity-[0.72]",
-				)}
+				className={cn("object-cover", imagePosition ?? "object-center", "opacity-[0.72]")}
 			/>
 			{/* 좌측(텍스트 영역)만 충분히 어둡게, 우측으로 갈수록 이미지가 밝게 드러나도록 그라디언트 완화 */}
 			<div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(28,22,16,0.72)_0%,rgba(45,37,28,0.42)_46%,rgba(70,58,44,0.12)_100%)]" />
