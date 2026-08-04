@@ -19,7 +19,7 @@ create index if not exists review_images_featured_idx
   on public.review_images (is_published, is_featured, sort_order, created_at desc);
 
 -- ── 초기 설정 ────────────────────────────────────────────────────────────
--- 지금 홈에서 돌아가던 노출본 중 앞쪽 10건을 대표로 지정한다(정렬은 사이트 표시 순서와 동일:
+-- 지금 홈에서 돌아가던 노출본 중 앞쪽 12건을 대표로 지정한다(정렬은 사이트 표시 순서와 동일:
 -- 등록일 최신 → 같은 날짜면 정렬값 오름차순). 이후에는 관리자에서 별표로 관리한다.
 update public.review_images
 set is_featured = true
@@ -28,5 +28,5 @@ where id in (
   from public.review_images
   where is_published = true
   order by created_at desc, sort_order asc
-  limit 10
+  limit 12
 );
