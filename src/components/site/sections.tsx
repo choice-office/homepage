@@ -786,7 +786,9 @@ export const ContactForm = () => {
 						aria-hidden="true"
 						className="absolute left-[-9999px] h-[1px] w-[1px] opacity-0"
 					/>
-					<div className="contact-form-grid grid grid-cols-[1fr_1fr] gap-[18px]">
+					{/* 폰에서는 한 줄에 하나 — 2열이면 왼쪽 칸이 눌려 placeholder 가 잘리고
+						    '현재 체류자격' 라벨이 두 줄로 접힌다. 세로 간격은 조금 좁혀 리듬을 잡는다. */}
+					<div className="contact-form-grid grid grid-cols-[1fr_1fr] gap-[18px] max-sm:grid-cols-1 max-sm:gap-[15px]">
 						<div>
 							<Label htmlFor="cn">성함</Label>
 							<Input id="cn" name="name" placeholder="홍길동" required />
