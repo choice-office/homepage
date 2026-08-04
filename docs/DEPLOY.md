@@ -32,3 +32,14 @@
 > ```bash
 > git config alias.deploy '!git commit --allow-empty --author="choice <lawforyou7@naver.com>" -m "chore: deploy" && git push'
 > ```
+
+## 함수 리전 — 서울(icn1)
+
+`vercel.json`의 `"regions": ["icn1"]`. Vercel 신규 프로젝트 기본값은 **iad1(미국 버지니아)**인데,
+이 프로젝트의 데이터는 전부 **Supabase ap-northeast-2(서울)**에 있어 매 쿼리가 태평양을 왕복했다.
+페이지 렌더·ISR 재생성·이미지 최적화·Server Action이 모두 함수 리전에서 돌기 때문에 영향이 컸다.
+
+- 정적/ISR 응답은 리전과 무관하게 방문자 최근접 CDN 엣지에서 나간다(리전은 "생성" 위치만 결정).
+- 단일 리전은 Hobby 플랜에서도 허용(여러 리전은 Pro 이상).
+- 되돌리려면 `regions` 키를 지우고 재배포하면 끝.
+- 확인: `curl -sID https://kvisa1345.com/blog | grep x-vercel-id` → `엣지::함수` 중 **함수**가 `icn1`이어야 한다.
