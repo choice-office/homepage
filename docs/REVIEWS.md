@@ -62,3 +62,17 @@ env: `SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` (공개 읽기).
 - 인라인 편집/삭제
 
 공개 렌더는 이 저장소, 작성/관리는 choice-admin으로 분리한다.
+
+## 반영 시간(관리자 → 사이트)
+
+| 관리 동작 | 반영 경로 | 측정/이론 |
+|---|---|---|
+| 후기 노출/숨김·삭제·별표 | `/`·`/reviews` ISR 60초 | **측정 10~71초** (캐시 만료 시점에 따라. 만료 직후면 60초 대기 + 다음 요청) |
+| 블로그 글·카테고리·대표글 | `unstable_cache 60초` + 페이지 ISR 60초 | 최대 ~120초(두 TTL이 겹칠 수 있음) |
+| sitemap.xml · feed.xml | `getPostRefs/getFeedPosts 300초` + route ISR 3600초 | 최대 ~1시간 |
+
+ISR은 "만료 후 첫 요청은 이전 화면을 주고 백그라운드에서 새로 만든다" → **그 다음 요청부터** 바뀐다.
+`unstable_cache`에 `tags: ["blog-posts"]`가 붙어 있지만 `revalidateTag`를 호출하는 코드가 없어
+현재는 태그가 사용되지 않는다. 즉시 반영이 필요하면 관리자에서 호출할 재검증 엔드포인트를 붙여야 한다.
+
+동기화 점검: `python3 scripts/sync-check.py` (DB 진실값 vs 배포된 HTML, 읽기 전용)
