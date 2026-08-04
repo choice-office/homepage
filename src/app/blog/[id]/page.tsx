@@ -132,7 +132,13 @@ export default async function BlogDetailPage({ params }: Params) {
 				precedence="default"
 				href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap"
 			/>
-			<header className={cn("section", "bg-[var(--surface-page)]")}>
+			<header
+				className={cn(
+					"section",
+					/* 고정 헤더(88px, ≤640px 64px) 아래로 내리고 본문과는 붙인다 */
+					"bg-[var(--surface-page)] pt-[132px] pb-0 max-sm:pt-[100px]",
+				)}
+			>
 				<div className="blog-prose wrap">
 					<nav
 						aria-label="경로"
@@ -171,7 +177,7 @@ export default async function BlogDetailPage({ params }: Params) {
 				</div>
 			</header>
 
-			<article className={cn("section", "bg-[var(--surface-page)]")}>
+			<article className={cn("section", "bg-[var(--surface-page)] pt-8 max-sm:pt-6")}>
 				<div className="blog-prose wrap">
 					{post.cover && (
 						<div className="relative mb-9 aspect-video w-full overflow-hidden rounded-[var(--radius)] bg-[var(--surface-sunken)]">
