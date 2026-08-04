@@ -22,6 +22,16 @@ const client = () => {
 	return createClient(url, key, { auth: { persistSession: false } });
 };
 
+const toImage = (r: Row): ReviewImage => ({
+	src: r.src,
+	w: r.w,
+	h: r.h,
+	tag: r.tag,
+	quote: r.quote,
+	meta: r.meta,
+});
+
+// 후기 목록(/reviews)용 — 노출본 전부
 export const getPublishedReviewImages = async (): Promise<ReviewImage[]> => {
 	const supabase = client();
 	if (!supabase) return [];
@@ -32,12 +42,22 @@ export const getPublishedReviewImages = async (): Promise<ReviewImage[]> => {
 		.order("sort_order", { ascending: true })
 		.order("created_at", { ascending: false });
 	if (error || !data || data.length === 0) return [];
-	return (data as Row[]).map((r) => ({
-		src: r.src,
-		w: r.w,
-		h: r.h,
-		tag: r.tag,
-		quote: r.quote,
-		meta: r.meta,
-	}));
+	return (data as Row[]).map(toImage);
+};
+
+// 홈 후기 섹션용 — 관리자가 별표로 고른 대표 후기만.
+// 대표 지정이 0건이거나(초기 상태) is_featured 컬럼이 아직 없으면 노출본 전체로 폴백한다.
+// 홈에서 후기 섹션이 통째로 비는 것보다 전체를 흘리는 편이 안전하다.
+export const getFeaturedReviewImages = async (): Promise<ReviewImage[]> => {
+	const supabase = client();
+	if (!supabase) return [];
+	const { data, error } = await supabase
+		.from("review_images")
+		.select("src,w,h,tag,quote,meta")
+		.eq("is_published", true)
+		.eq("is_featured", true)
+		.order("sort_order", { ascending: true })
+		.order("created_at", { ascending: false });
+	if (error || !data || data.length === 0) return getPublishedReviewImages();
+	return (data as Row[]).map(toImage);
 };
