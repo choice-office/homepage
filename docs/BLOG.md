@@ -18,7 +18,9 @@ type BlogPost = { slug; category; title; excerpt; author; date; content;
 ### 페이지 (모두 ISR `revalidate=60`)
 - 목록 `app/blog/page.tsx` — `getPublishedPosts()` → 9개/페이지, **페이지네이션 `searchParams.page`**.
 - 상세 `app/blog/[id]/page.tsx` — `getPostBySlug` (param명 `id`=slug). `generateStaticParams`=published slugs(빌드 시 fetch) + on-demand(신규글). 본문 `.prose dangerouslySetInnerHTML`. JSON-LD/구조 블록은 `docs/BLOG-SEO.md`.
-- 홈 `app/page.tsx`(async) — `getPublishedPosts()` → `<BlogPreview posts={...} />`(prop). 
+- 홈 `app/page.tsx`(async) — `getFeaturedPosts(4)` → `<BlogPreview posts={...} />`(prop).
+  - **대표글 규칙**: `is_featured` 글을 `featured_order` 순으로 최대 4개 → **모자라면 최신 발행글(`published_at` 내림차순)로 채워 항상 4칸**.
+  - 지정이 0개면 자연히 "최신 4개"가 된다 = 관리자의 **자동 모드**. 관리자(choice-admin)가 이 규칙을 그대로 화면에 보여주므로, 규칙을 바꾸면 `choice-admin/docs/ARCHITECTURE.md`(홈 대표글)도 함께 고친다.
 - `app/sitemap.ts`(async) — published 글 URL 포함.
 - 카드 `components/site/blog-card.tsx` — 내부 `<Link>`, 홈/관련글 재사용.
 

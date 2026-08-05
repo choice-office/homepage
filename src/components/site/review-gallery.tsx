@@ -154,34 +154,24 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 						{pageItems.map((r, i) => card(r, r.src, start + i))}
 					</div>
 					<nav className="pager" aria-label="후기 페이지 이동">
-						{block.reserveEdge && pagerArrow(block.showFirst, "chevrons-left", "첫 페이지", 1, goTo)}
+						{block.reserveEdge &&
+							pagerArrow(block.showFirst, "chevrons-left", "첫 페이지", 1, goTo)}
 						{block.reserveStep &&
 							pagerArrow(block.showPrev, "chevron-left", "이전 페이지", current - 1, goTo)}
 						{block.reserveStep && <span className="pager-gap" aria-hidden="true" />}
-						{block.slots.map(({ page, exists }) =>
-							exists ? (
-								<button
-									type="button"
-									key={page}
-									className="pager-num"
-									data-active={page === current}
-									data-hide-sm={!isMobilePage(page, current)}
-									aria-current={page === current ? "page" : undefined}
-									onClick={() => goTo(page)}
-								>
-									{page}
-								</button>
-							) : (
-								// 마지막 블록의 빈 칸 — 폭을 유지하려고 자리만 둔다.
-								<span
-									key={page}
-									className="pager-num"
-									data-empty="true"
-									data-hide-sm={!isMobilePage(page, current)}
-									aria-hidden="true"
-								/>
-							),
-						)}
+						{block.pages.map((p) => (
+							<button
+								type="button"
+								key={p}
+								className="pager-num"
+								data-active={p === current}
+								data-hide-sm={!isMobilePage(p, current)}
+								aria-current={p === current ? "page" : undefined}
+								onClick={() => goTo(p)}
+							>
+								{p}
+							</button>
+						))}
 						{block.reserveStep && <span className="pager-gap" aria-hidden="true" />}
 						{block.reserveStep &&
 							pagerArrow(block.showNext, "chevron-right", "다음 페이지", current + 1, goTo)}

@@ -77,27 +77,19 @@ const Pagination = ({
 	return (
 		<nav aria-label="블로그 페이지" className="mt-10 flex items-center justify-center gap-1">
 			{block.reserveEdge && arrow(block.showFirst, "chevrons-left", "첫 페이지", 1)}
-			{block.reserveStep && arrow(block.showPrev, "chevron-left", "이전 페이지", current - 1, "prev")}
+			{block.reserveStep &&
+				arrow(block.showPrev, "chevron-left", "이전 페이지", current - 1, "prev")}
 			{block.reserveStep && <span className={GAP_CLS} aria-hidden="true" />}
-			{block.slots.map(({ page, exists }) => {
-				const hideSm = !isMobilePage(page, current) && "max-sm:hidden";
-				// 마지막 블록의 빈 칸 — 폭을 유지하려고 자리만 둔다.
-				if (!exists) {
-					return (
-						<span key={page} className={cn(CELL_CLS, "invisible", hideSm)} aria-hidden="true" />
-					);
-				}
-				return (
-					<Link
-						key={page}
-						className={cn(numCls(page === current), hideSm)}
-						href={buildHref(page, category)}
-						aria-current={page === current ? "page" : undefined}
-					>
-						{page}
-					</Link>
-				);
-			})}
+			{block.pages.map((page) => (
+				<Link
+					key={page}
+					className={cn(numCls(page === current), !isMobilePage(page, current) && "max-sm:hidden")}
+					href={buildHref(page, category)}
+					aria-current={page === current ? "page" : undefined}
+				>
+					{page}
+				</Link>
+			))}
 			{block.reserveStep && <span className={GAP_CLS} aria-hidden="true" />}
 			{block.reserveStep &&
 				arrow(block.showNext, "chevron-right", "다음 페이지", current + 1, "next")}
@@ -157,8 +149,10 @@ export default async function BlogPage({
 						))}
 					</aside>
 					<div className="blog-main">
+						{/* blog-list: PC 에서는 게시글 목록(썸네일 좌 · 제목/내용 우) 한 행씩.
+						    태블릿·모바일은 기존 카드 규칙(.blog-grid) 유지. 홈 프리뷰와 구분하려고 별도 클래스. */}
 						{posts.length > 0 ? (
-							<div data-stagger className="grid-3 blog-grid">
+							<div data-stagger className="grid-3 blog-grid blog-list">
 								{posts.map((p) => (
 									<BlogCard key={p.slug} post={p} compact />
 								))}

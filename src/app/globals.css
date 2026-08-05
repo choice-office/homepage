@@ -2358,6 +2358,83 @@
 		appearance: none;
 	}
 
+	/* PC 목록 화면 — 카드 그리드 대신 게시글 목록(한 행: 썸네일 좌 · 제목/내용 우).
+	   양옆 여백을 넉넉히 두려고 레이아웃 폭을 좁히고, 행 사이는 헤어라인으로만 나눈다.
+	   홈 블로그 프리뷰(.home-blog-grid)는 카드 그리드를 유지하므로 .blog-list 로만 한정한다. */
+	@media (min-width: 961px) {
+		/* 양옆 여백을 넉넉히 — 플로팅 레일 여백 규칙(.wrap:not(.blog-prose), 특정성 0,2,0)을 이겨야 하므로
+		   클래스 3개로 특정성을 올린다(소스 순서와 무관하게 적용). 레일 자리(220px)는 그대로 지킨다. */
+		.blog-layout.wrap:not(.blog-prose) {
+			max-width: min(1040px, 100vw - 220px);
+		}
+		.blog-layout {
+			grid-template-columns: 180px 1fr;
+			gap: 40px;
+		}
+		.blog-list.grid-3 {
+			grid-template-columns: 1fr;
+			gap: 0;
+		}
+		.blog-list .ds-card {
+			/* 문맥 오버라이드 — BlogCard 의 flex-col·p-0 유틸리티를 이겨야 한다 */
+			/* biome-ignore lint/complexity/noImportantStyles: 문맥 오버라이드 — 컴포넌트 유틸리티를 이겨야 함(제거 시 PC 목록이 카드로 회귀) */
+			flex-direction: row !important;
+			align-items: flex-start;
+			gap: 22px;
+			/* biome-ignore lint/complexity/noImportantStyles: 문맥 오버라이드 — 컴포넌트 유틸리티를 이겨야 함 */
+			padding: 20px 2px !important;
+			border: 0;
+			border-bottom: 1px solid var(--border-default);
+			border-radius: 0;
+			background: transparent;
+			transition: background 0.15s ease;
+		}
+		.blog-list > a:first-child .ds-card {
+			border-top: 1px solid var(--border-default);
+		}
+		.blog-list a:hover .ds-card {
+			background: var(--surface-subtle);
+		}
+		/* 썸네일 — 3:2 고정 폭. 세로 카드용 aspect-[4/3] 유틸리티를 눌러야 한다. */
+		.blog-list .ds-card > div:first-child {
+			/* biome-ignore lint/complexity/noImportantStyles: 문맥 오버라이드 — 컴포넌트 유틸리티를 이겨야 함 */
+			flex: 0 0 176px !important;
+			/* biome-ignore lint/complexity/noImportantStyles: 문맥 오버라이드 — 컴포넌트 유틸리티를 이겨야 함 */
+			aspect-ratio: 3 / 2 !important;
+			border: 1px solid var(--border-default);
+		}
+		/* 텍스트 열 — 카드 내부 패딩 제거(행 패딩으로 대체) */
+		.blog-list .ds-card > div:nth-child(2) {
+			/* biome-ignore lint/complexity/noImportantStyles: 문맥 오버라이드 — 컴포넌트 유틸리티를 이겨야 함 */
+			flex: 1 1 auto !important;
+			min-width: 0;
+			/* biome-ignore lint/complexity/noImportantStyles: 문맥 오버라이드 — 컴포넌트 유틸리티를 이겨야 함 */
+			padding: 2px 0 0 !important;
+		}
+		.blog-list .ds-card > div:nth-child(2) > div:first-child {
+			margin-bottom: 7px;
+		}
+		.blog-list .ds-card h3 {
+			font-size: 17px;
+			line-height: 1.45;
+			display: -webkit-box;
+			-webkit-line-clamp: 1;
+			line-clamp: 1;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+		.blog-list .blog-excerpt {
+			margin-top: 7px;
+			font-size: 14px;
+			line-height: 1.7;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+	}
+
 	/* ── 진행 절차 — 넘버 타임라인(라인 드로우 + 스텝 스태거) ──────────── */
 	.proc-timeline {
 		position: relative;
@@ -3271,8 +3348,7 @@
 		font-weight: 700;
 		cursor: default;
 	}
-	/* 안 쓰이는 이동 버튼 · 마지막 블록의 빈 번호 — 자리만 차지한다(페이지를 넘겨도 줄이 밀리지 않게) */
-	.pager-num[data-empty="true"],
+	/* 안 쓰이는 이동 버튼 — 자리만 차지한다(블록이 넘어가도 버튼이 밀리지 않게) */
 	.pager-arrow[data-empty="true"] {
 		visibility: hidden;
 	}
