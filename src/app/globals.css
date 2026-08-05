@@ -3238,7 +3238,8 @@
 		justify-content: center;
 		min-width: 30px;
 		height: 30px;
-		padding: 0 7px;
+		/* 좌우 여백 없음 — 한 자리("1")와 두 자리("20") 칸 폭이 같아야 블록이 넘어가도 줄이 안 밀린다 */
+		padding: 0;
 		font-family: var(--font-sans);
 		font-size: 13.5px;
 		font-weight: 500;
@@ -3269,6 +3270,11 @@
 		color: var(--color-primary);
 		font-weight: 700;
 		cursor: default;
+	}
+	/* 안 쓰이는 이동 버튼 · 마지막 블록의 빈 번호 — 자리만 차지한다(페이지를 넘겨도 줄이 밀리지 않게) */
+	.pager-num[data-empty="true"],
+	.pager-arrow[data-empty="true"] {
+		visibility: hidden;
 	}
 	/* 이동 버튼 묶음과 숫자 사이 간격 */
 	.pager-gap {

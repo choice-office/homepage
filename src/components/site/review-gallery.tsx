@@ -10,6 +10,28 @@ import { Icon } from "./icon";
 // 그리드(/reviews)는 페이지당 6개씩 페이지네이션 — 1페이지여도 항상 페이저 표시
 const REVIEWS_PER_PAGE = 6;
 
+// 이동 버튼 — 안 쓰이는 버튼은 자리를 비워둔다(페이지를 넘겨도 버튼이 좌우로 밀리지 않게).
+const pagerArrow = (
+	show: boolean,
+	icon: string,
+	label: string,
+	target: number,
+	goTo: (p: number) => void,
+) =>
+	show ? (
+		<button
+			type="button"
+			key={label}
+			className="pager-arrow"
+			onClick={() => goTo(target)}
+			aria-label={label}
+		>
+			<Icon n={icon} className="size-[15px]" />
+		</button>
+	) : (
+		<span key={label} className="pager-arrow" data-empty="true" aria-hidden="true" />
+	);
+
 /**
  * 의뢰인 후기 이미지 갤러리 — 매트 프레임 카드(균일 4:5 크롭 + 하단 페이드) + 라이트박스.
  * 카톡/이메일 캡처를 크림 매트에 넣어 톤을 중화하고, 사건 태그·발췌 인용으로 증언처럼 큐레이션.
@@ -132,65 +154,39 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 						{pageItems.map((r, i) => card(r, r.src, start + i))}
 					</div>
 					<nav className="pager" aria-label="후기 페이지 이동">
-						{block.showFirst && (
-							<button
-								type="button"
-								className="pager-arrow"
-								onClick={() => goTo(1)}
-								aria-label="첫 페이지"
-							>
-								<Icon n="chevrons-left" className="size-[15px]" />
-							</button>
+						{block.reserveEdge && pagerArrow(block.showFirst, "chevrons-left", "첫 페이지", 1, goTo)}
+						{block.reserveStep &&
+							pagerArrow(block.showPrev, "chevron-left", "이전 페이지", current - 1, goTo)}
+						{block.reserveStep && <span className="pager-gap" aria-hidden="true" />}
+						{block.slots.map(({ page, exists }) =>
+							exists ? (
+								<button
+									type="button"
+									key={page}
+									className="pager-num"
+									data-active={page === current}
+									data-hide-sm={!isMobilePage(page, current)}
+									aria-current={page === current ? "page" : undefined}
+									onClick={() => goTo(page)}
+								>
+									{page}
+								</button>
+							) : (
+								// 마지막 블록의 빈 칸 — 폭을 유지하려고 자리만 둔다.
+								<span
+									key={page}
+									className="pager-num"
+									data-empty="true"
+									data-hide-sm={!isMobilePage(page, current)}
+									aria-hidden="true"
+								/>
+							),
 						)}
-						{block.showPrev && (
-							<button
-								type="button"
-								className="pager-arrow"
-								onClick={() => goTo(current - 1)}
-								aria-label="이전 페이지"
-							>
-								<Icon n="chevron-left" className="size-[15px]" />
-							</button>
-						)}
-						{(block.showFirst || block.showPrev) && (
-							<span className="pager-gap" aria-hidden="true" />
-						)}
-						{block.pages.map((p) => (
-							<button
-								type="button"
-								key={p}
-								className="pager-num"
-								data-active={p === current}
-								data-hide-sm={!isMobilePage(p, current)}
-								aria-current={p === current ? "page" : undefined}
-								onClick={() => goTo(p)}
-							>
-								{p}
-							</button>
-						))}
-						{(block.showNext || block.showLast) && (
-							<span className="pager-gap" aria-hidden="true" />
-						)}
-						{block.showNext && (
-							<button
-								type="button"
-								className="pager-arrow"
-								onClick={() => goTo(current + 1)}
-								aria-label="다음 페이지"
-							>
-								<Icon n="chevron-right" className="size-[15px]" />
-							</button>
-						)}
-						{block.showLast && (
-							<button
-								type="button"
-								className="pager-arrow"
-								onClick={() => goTo(totalPages)}
-								aria-label="마지막 페이지"
-							>
-								<Icon n="chevrons-right" className="size-[15px]" />
-							</button>
-						)}
+						{block.reserveStep && <span className="pager-gap" aria-hidden="true" />}
+						{block.reserveStep &&
+							pagerArrow(block.showNext, "chevron-right", "다음 페이지", current + 1, goTo)}
+						{block.reserveEdge &&
+							pagerArrow(block.showLast, "chevrons-right", "마지막 페이지", totalPages, goTo)}
 					</nav>
 				</div>
 			)}

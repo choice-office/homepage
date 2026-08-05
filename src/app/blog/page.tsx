@@ -30,12 +30,13 @@ const buildHref = (page: number, category?: string) => {
 };
 
 // 페이지 버튼 공통 골격 — 30x30, 숫자는 테두리 없이 글자만 / 이동 버튼만 테두리 상자
+// 좌우 여백을 두지 않아 한 자리("1")와 두 자리("20") 칸 폭이 같다 → 블록이 넘어가도 줄 폭 불변.
 const CELL_CLS =
-	"inline-flex h-[30px] min-w-[30px] items-center justify-center text-[13.5px] leading-none";
+	"inline-flex h-[30px] min-w-[30px] items-center justify-center px-0 text-[13.5px] leading-none";
 const numCls = (active: boolean) =>
 	cn(
 		CELL_CLS,
-		"lk px-[7px]",
+		"lk",
 		active
 			? "font-bold text-[color:var(--color-primary)]"
 			: "font-medium text-[color:var(--text-body)]",
@@ -57,58 +58,50 @@ const Pagination = ({
 	category?: string;
 }) => {
 	if (totalPages <= 1) return null;
-	const { pages, showFirst, showPrev, showNext, showLast } = buildPageBlock(current, totalPages);
+	const block = buildPageBlock(current, totalPages);
+	// 안 쓰이는 이동 버튼은 자리를 비워둔다(invisible) — 페이지를 넘겨도 버튼이 좌우로 밀리지 않게.
+	const arrow = (show: boolean, icon: string, label: string, page: number, rel?: string) =>
+		show ? (
+			<Link
+				className={ARROW_CLS}
+				href={buildHref(page, category)}
+				rel={rel}
+				aria-label={label}
+				key={label}
+			>
+				<Icon n={icon} className="size-[15px]" />
+			</Link>
+		) : (
+			<span className={cn(ARROW_CLS, "invisible")} aria-hidden="true" key={label} />
+		);
 	return (
-		<nav
-			aria-label="블로그 페이지"
-			className="mt-10 flex flex-wrap items-center justify-center gap-1"
-		>
-			{showFirst && (
-				<Link className={ARROW_CLS} href={buildHref(1, category)} aria-label="첫 페이지">
-					<Icon n="chevrons-left" className="size-[15px]" />
-				</Link>
-			)}
-			{showPrev && (
-				<Link
-					className={ARROW_CLS}
-					href={buildHref(current - 1, category)}
-					rel="prev"
-					aria-label="이전 페이지"
-				>
-					<Icon n="chevron-left" className="size-[15px]" />
-				</Link>
-			)}
-			{(showFirst || showPrev) && <span className={GAP_CLS} aria-hidden="true" />}
-			{pages.map((n) => (
-				<Link
-					key={n}
-					className={cn(numCls(n === current), !isMobilePage(n, current) && "max-sm:hidden")}
-					href={buildHref(n, category)}
-					aria-current={n === current ? "page" : undefined}
-				>
-					{n}
-				</Link>
-			))}
-			{(showNext || showLast) && <span className={GAP_CLS} aria-hidden="true" />}
-			{showNext && (
-				<Link
-					className={ARROW_CLS}
-					href={buildHref(current + 1, category)}
-					rel="next"
-					aria-label="다음 페이지"
-				>
-					<Icon n="chevron-right" className="size-[15px]" />
-				</Link>
-			)}
-			{showLast && (
-				<Link
-					className={ARROW_CLS}
-					href={buildHref(totalPages, category)}
-					aria-label="마지막 페이지"
-				>
-					<Icon n="chevrons-right" className="size-[15px]" />
-				</Link>
-			)}
+		<nav aria-label="블로그 페이지" className="mt-10 flex items-center justify-center gap-1">
+			{block.reserveEdge && arrow(block.showFirst, "chevrons-left", "첫 페이지", 1)}
+			{block.reserveStep && arrow(block.showPrev, "chevron-left", "이전 페이지", current - 1, "prev")}
+			{block.reserveStep && <span className={GAP_CLS} aria-hidden="true" />}
+			{block.slots.map(({ page, exists }) => {
+				const hideSm = !isMobilePage(page, current) && "max-sm:hidden";
+				// 마지막 블록의 빈 칸 — 폭을 유지하려고 자리만 둔다.
+				if (!exists) {
+					return (
+						<span key={page} className={cn(CELL_CLS, "invisible", hideSm)} aria-hidden="true" />
+					);
+				}
+				return (
+					<Link
+						key={page}
+						className={cn(numCls(page === current), hideSm)}
+						href={buildHref(page, category)}
+						aria-current={page === current ? "page" : undefined}
+					>
+						{page}
+					</Link>
+				);
+			})}
+			{block.reserveStep && <span className={GAP_CLS} aria-hidden="true" />}
+			{block.reserveStep &&
+				arrow(block.showNext, "chevron-right", "다음 페이지", current + 1, "next")}
+			{block.reserveEdge && arrow(block.showLast, "chevrons-right", "마지막 페이지", totalPages)}
 		</nav>
 	);
 };
