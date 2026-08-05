@@ -61,6 +61,15 @@ import { routePath } from "@/lib/site-data";
 - `cn()`(tailwind-merge)은 `text-*` 가 오면 앞의 `leading-*` 를 지운다. 줄높이를 지키려면 `[line-height:…]` 임의 속성으로 쓴다(`ds.tsx` 참고).
 - 바꾼 뒤 확인: `NEXT_DIST_DIR=.next-visual pnpm build` → `next start -p 3001` → `node scripts/visual/capture.mjs after` → `python scripts/visual/diff.py`.
 
+## 스크롤 위치 (이동/뒤로가기)
+- 정책: **링크 이동(push)=최상단 · 뒤로/앞으로(pop)=떠날 때 보던 위치**. 웹 표준이고 Next.js `<Link>` 문서의 기본 동작과 같다.
+- 구현은 `components/site/smooth-scroll.tsx` 한 곳. `history.scrollRestoration = "manual"` 로 두고 **위치를 URL 별로 직접 기록·복원**한다(React Router·TanStack의 `<ScrollRestoration>` 과 같은 방식).
+- **브라우저 복원에 맡기면 안 된다** — Lenis 가 자기 좌표계를 문서 scrollTop 으로 써 내려가므로 둘이 동시에 스크롤을 쓰면 위치가 엉키고, 내부값이 어긋난 채로 남아 첫 휠 입력에서 화면이 위로 튄다(실측: 650px 에서 뒤로 왔는데 첫 휠에 297px).
+- 기록은 `location` 을 스크롤 시점에 읽지 않는다. 링크를 누르면 **URL 이 바뀌기 전에**(실측 51ms, URL 변경 101ms) 새 페이지가 붙으며 문서가 짧아져 브라우저가 스크롤을 최대값으로 깎는데, 그 값이 이전 URL 의 위치로 저장돼 버린다. 그래서 클릭 순간 위치를 확정 저장하고 전환 동안 기록을 멈춘다.
+- `ScrollReveal` 도 pop 에서는 등장 애니메이션을 재생하지 않는다(`<html>.reveal-restore`) — 이미 본 화면이 다시 페이드인되면 "멈칫"으로 보인다.
+- 검증: 목록↔상세·페이지네이션·앞으로가기·해시 이동·TOP 버튼·모션 줄이기까지 19항목을 Playwright 로 확인했다.
+  **주의**: Playwright `locator.click()` 은 대상을 화면에 넣으려 먼저 스크롤한다. 스크롤 위치를 재는 테스트에서는 **지금 화면에 있는 요소**를 골라 클릭해야 한다(그러지 않으면 앱이 정상인데도 실패로 보인다).
+
 ## 페이지네이션
 - 규칙은 `lib/pagination.ts` 의 `buildPageBlock(current, total)` 하나로 통일한다 — **10개씩 묶는 블록 방식**. 11페이지면 11–20 이 통째로 보이고(가운데 정렬 아님), 10에서 `›` 를 누르면 블록이 넘어간다.
 - 표시 조건: `«` 이전 블록 있을 때 · `‹` 2페이지부터 · `›` 마지막 아닐 때 · `»` 다음 블록 있을 때. 안 쓰이는 버튼은 **비활성이 아니라 아예 감춘다**.

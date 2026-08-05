@@ -943,6 +943,16 @@
 			filter: none;
 		}
 
+		/* 뒤로/앞으로 복원 중(<html>.reveal-restore — ScrollReveal이 popstate 직후 부여하고
+		   재마운트가 끝나면 떼어낸다):
+		   앱 내부 이동은 DOM이 파괴돼 돌아오면 이미 본 카드가 처음부터 다시 등장했다.
+		   그 구간에서는 트랜지션을 끊어 즉시 제자리에 그린다(화면 밖 요소는 그대로 대기). */
+		.reveal-restore [data-reveal],
+		.reveal-restore [data-stagger] > * {
+			/* biome-ignore lint/complexity/noImportantStyles: nth-child stagger 지연 규칙(특정성 0,3,1)까지 눌러야 즉시 노출된다 */
+			transition: none !important;
+		}
+
 		/* 재진입 리셋: 화면을 벗어날 때 트랜지션 없이 즉시 초기 상태로(위로 스크롤 시 역재생 방지).
 	   transition 선언과 동일 specificity이지만 소스 순서상 뒤라 우선 적용된다. */ /* stagger 지연 — 느긋하게 130ms 간격 */
 		.reveal-ready [data-stagger].is-visible > *:nth-child(1) {
