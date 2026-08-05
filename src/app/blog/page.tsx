@@ -4,6 +4,7 @@ import { BlogCard } from "@/components/site/blog-card";
 import { Icon } from "@/components/site/icon";
 import { PageHero } from "@/components/site/sections";
 import { BLOG_PAGE_SIZE, getCategories, getPostPage } from "@/lib/blog";
+import { buildPageBlock, isMobilePage } from "@/lib/pagination";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -28,43 +29,23 @@ const buildHref = (page: number, category?: string) => {
 	return qs ? `/blog?${qs}` : "/blog";
 };
 
-// 현재 페이지 주변 window(±1) + 처음/끝만 노출, 사이가 벌어지면 … (한 칸만 생략될 땐 실제 숫자 노출)
-const buildPageList = (current: number, total: number): (number | "…")[] => {
-	const nums = new Set<number>([1, total]);
-	for (let i = current - 1; i <= current + 1; i++) {
-		if (i >= 1 && i <= total) nums.add(i);
-	}
-	const sorted = [...nums].sort((a, b) => a - b);
-	const out: (number | "…")[] = [];
-	let prev = 0;
-	for (const n of sorted) {
-		if (prev && n - prev > 1) out.push(n - prev === 2 ? prev + 1 : "…");
-		out.push(n);
-		prev = n;
-	}
-	return out;
-};
-
-// 페이지 버튼 공통 골격 — 40x40 정사각(숫자는 좌우 여백 12px), 라디우스/폰트는 토큰 사용
+// 페이지 버튼 공통 골격 — 30x30, 숫자는 테두리 없이 글자만 / 이동 버튼만 테두리 상자
 const CELL_CLS =
-	"inline-flex h-10 min-w-10 items-center justify-center rounded-[var(--radius)] text-[15px]";
+	"inline-flex h-[30px] min-w-[30px] items-center justify-center text-[13.5px] leading-none";
 const numCls = (active: boolean) =>
 	cn(
 		CELL_CLS,
-		"lk border border-[var(--border-default)] px-3",
+		"lk px-[7px]",
 		active
-			? "bg-[var(--color-primary)] font-bold text-[color:var(--color-primary-foreground,#fff)]"
-			: "bg-[var(--surface-card)] font-medium text-[color:var(--text-body)]",
+			? "font-bold text-[color:var(--color-primary)]"
+			: "font-medium text-[color:var(--text-body)]",
 	);
-const arrowCls = (disabled: boolean) =>
-	cn(
-		CELL_CLS,
-		"lk border border-[var(--border-default)] bg-[var(--surface-card)] px-0",
-		disabled
-			? "pointer-events-none text-[color:var(--text-muted)] opacity-40"
-			: "text-[color:var(--text-body)] opacity-100",
-	);
-const ELLIPSIS_CLS = cn(CELL_CLS, "min-w-6 text-[color:var(--text-muted)]");
+const ARROW_CLS = cn(
+	CELL_CLS,
+	"lk rounded-[var(--radius)] border border-[var(--border-default)] bg-[var(--surface-card)] text-[color:var(--text-body)]",
+);
+// 이동 버튼 묶음과 숫자 사이 간격
+const GAP_CLS = "w-1.5";
 
 const Pagination = ({
 	current,
@@ -76,57 +57,56 @@ const Pagination = ({
 	category?: string;
 }) => {
 	if (totalPages <= 1) return null;
-	const items = buildPageList(current, totalPages);
-	const prevDisabled = current <= 1;
-	const nextDisabled = current >= totalPages;
+	const { pages, showFirst, showPrev, showNext, showLast } = buildPageBlock(current, totalPages);
 	return (
 		<nav
 			aria-label="블로그 페이지"
-			className="mt-10 flex flex-wrap items-center justify-center gap-2"
+			className="mt-10 flex flex-wrap items-center justify-center gap-1"
 		>
-			{prevDisabled ? (
-				<span aria-disabled="true" className={arrowCls(true)}>
-					<Icon n="chevron-left" className="size-[18px]" />
-				</span>
-			) : (
+			{showFirst && (
+				<Link className={ARROW_CLS} href={buildHref(1, category)} aria-label="첫 페이지">
+					<Icon n="chevrons-left" className="size-[15px]" />
+				</Link>
+			)}
+			{showPrev && (
 				<Link
-					className={arrowCls(false)}
+					className={ARROW_CLS}
 					href={buildHref(current - 1, category)}
 					rel="prev"
 					aria-label="이전 페이지"
 				>
-					<Icon n="chevron-left" className="size-[18px]" />
+					<Icon n="chevron-left" className="size-[15px]" />
 				</Link>
 			)}
-			{items.map((item, i) =>
-				item === "…" ? (
-					// biome-ignore lint/suspicious/noArrayIndexKey: 정적 페이지 목록 — … 위치는 인덱스로 안정적
-					<span key={`gap-${i}`} className={ELLIPSIS_CLS} aria-hidden="true">
-						…
-					</span>
-				) : (
-					<Link
-						key={item}
-						className={numCls(item === current)}
-						href={buildHref(item, category)}
-						aria-current={item === current ? "page" : undefined}
-					>
-						{item}
-					</Link>
-				),
-			)}
-			{nextDisabled ? (
-				<span aria-disabled="true" className={arrowCls(true)}>
-					<Icon n="chevron-right" className="size-[18px]" />
-				</span>
-			) : (
+			{(showFirst || showPrev) && <span className={GAP_CLS} aria-hidden="true" />}
+			{pages.map((n) => (
 				<Link
-					className={arrowCls(false)}
+					key={n}
+					className={cn(numCls(n === current), !isMobilePage(n, current) && "max-sm:hidden")}
+					href={buildHref(n, category)}
+					aria-current={n === current ? "page" : undefined}
+				>
+					{n}
+				</Link>
+			))}
+			{(showNext || showLast) && <span className={GAP_CLS} aria-hidden="true" />}
+			{showNext && (
+				<Link
+					className={ARROW_CLS}
 					href={buildHref(current + 1, category)}
 					rel="next"
 					aria-label="다음 페이지"
 				>
-					<Icon n="chevron-right" className="size-[18px]" />
+					<Icon n="chevron-right" className="size-[15px]" />
+				</Link>
+			)}
+			{showLast && (
+				<Link
+					className={ARROW_CLS}
+					href={buildHref(totalPages, category)}
+					aria-label="마지막 페이지"
+				>
+					<Icon n="chevrons-right" className="size-[15px]" />
 				</Link>
 			)}
 		</nav>

@@ -61,6 +61,12 @@ import { routePath } from "@/lib/site-data";
 - `cn()`(tailwind-merge)은 `text-*` 가 오면 앞의 `leading-*` 를 지운다. 줄높이를 지키려면 `[line-height:…]` 임의 속성으로 쓴다(`ds.tsx` 참고).
 - 바꾼 뒤 확인: `NEXT_DIST_DIR=.next-visual pnpm build` → `next start -p 3001` → `node scripts/visual/capture.mjs after` → `python scripts/visual/diff.py`.
 
+## 페이지네이션
+- 규칙은 `lib/pagination.ts` 의 `buildPageBlock(current, total)` 하나로 통일한다 — **10개씩 묶는 블록 방식**. 11페이지면 11–20 이 통째로 보이고(가운데 정렬 아님), 10에서 `›` 를 누르면 블록이 넘어간다.
+- 표시 조건: `«` 이전 블록 있을 때 · `‹` 2페이지부터 · `›` 마지막 아닐 때 · `»` 다음 블록 있을 때. 안 쓰이는 버튼은 **비활성이 아니라 아예 감춘다**.
+- 좁은 화면(≤640px)은 10개가 안 들어가므로(측정 472px > 가용 350px) `isMobilePage()` 로 현재 페이지가 속한 **5개만** 남긴다. 블로그는 `max-sm:hidden`, 후기 갤러리는 `data-hide-sm` + globals.css 미디어쿼리.
+- 모양: 30px 셀, 숫자는 테두리 없이 글자만(현재 페이지만 primary·굵게), 이동 버튼만 테두리 상자. 관리자(choice-admin)의 `PaginationBar` 와 규칙·크기가 같다 — **한쪽만 바꾸지 말 것**.
+
 ## 폼 + Server Action
 - 액션: `app/actions/<name>.ts`, 첫 줄 `"use server"`, 반환 `{ success: boolean; error?: string }`, `useActionState` 호환 시그니처 `(prev, formData) => Promise<Result>`.
 - 환경변수 유무로 동작 분기(예: contact.ts는 `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` 있으면 저장, 없으면 placeholder 성공).

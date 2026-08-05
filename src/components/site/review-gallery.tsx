@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { type CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { buildPageBlock, isMobilePage } from "@/lib/pagination";
 import type { ReviewImage } from "@/lib/site-data";
 import { Icon } from "./icon";
 
@@ -34,6 +35,7 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 	const current = Math.min(page, totalPages);
 	const start = (current - 1) * REVIEWS_PER_PAGE;
 	const pageItems = items.slice(start, start + REVIEWS_PER_PAGE);
+	const block = buildPageBlock(current, totalPages);
 
 	const goTo = (p: number) => {
 		if (p < 1 || p > totalPages || p === current) return;
@@ -130,36 +132,65 @@ export const ReviewImageGallery = ({ variant = "grid", images = [] }: ReviewImag
 						{pageItems.map((r, i) => card(r, r.src, start + i))}
 					</div>
 					<nav className="pager" aria-label="후기 페이지 이동">
-						<button
-							type="button"
-							className="pager-arrow"
-							onClick={() => goTo(current - 1)}
-							disabled={current === 1}
-							aria-label="이전 페이지"
-						>
-							<Icon n="chevron-right" className="size-[18px] rotate-180" />
-						</button>
-						{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+						{block.showFirst && (
+							<button
+								type="button"
+								className="pager-arrow"
+								onClick={() => goTo(1)}
+								aria-label="첫 페이지"
+							>
+								<Icon n="chevrons-left" className="size-[15px]" />
+							</button>
+						)}
+						{block.showPrev && (
+							<button
+								type="button"
+								className="pager-arrow"
+								onClick={() => goTo(current - 1)}
+								aria-label="이전 페이지"
+							>
+								<Icon n="chevron-left" className="size-[15px]" />
+							</button>
+						)}
+						{(block.showFirst || block.showPrev) && (
+							<span className="pager-gap" aria-hidden="true" />
+						)}
+						{block.pages.map((p) => (
 							<button
 								type="button"
 								key={p}
 								className="pager-num"
 								data-active={p === current}
+								data-hide-sm={!isMobilePage(p, current)}
 								aria-current={p === current ? "page" : undefined}
 								onClick={() => goTo(p)}
 							>
 								{p}
 							</button>
 						))}
-						<button
-							type="button"
-							className="pager-arrow"
-							onClick={() => goTo(current + 1)}
-							disabled={current === totalPages}
-							aria-label="다음 페이지"
-						>
-							<Icon n="chevron-right" className="size-[18px]" />
-						</button>
+						{(block.showNext || block.showLast) && (
+							<span className="pager-gap" aria-hidden="true" />
+						)}
+						{block.showNext && (
+							<button
+								type="button"
+								className="pager-arrow"
+								onClick={() => goTo(current + 1)}
+								aria-label="다음 페이지"
+							>
+								<Icon n="chevron-right" className="size-[15px]" />
+							</button>
+						)}
+						{block.showLast && (
+							<button
+								type="button"
+								className="pager-arrow"
+								onClick={() => goTo(totalPages)}
+								aria-label="마지막 페이지"
+							>
+								<Icon n="chevrons-right" className="size-[15px]" />
+							</button>
+						)}
 					</nav>
 				</div>
 			)}
