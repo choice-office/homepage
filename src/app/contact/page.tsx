@@ -20,6 +20,9 @@ export default function ContactPage() {
 				}
 				crumbs={[{ label: "홈", route: "home" }, { label: "문의하기" }]}
 				image="/문의하기-hero.png"
+				/* 사진 아래쪽(책상·서류)이 더 보이도록 중앙(50%)에서 65%로 내린다.
+				   히어로 박스가 원본보다 훨씬 납작해 377px이 잘리므로 10%당 약 38px 이동. */
+				imagePosition="object-[center_65%]"
 			/>
 			<section className="section contact-section">
 				<div className="contact-shell wrap">

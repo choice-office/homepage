@@ -31,7 +31,7 @@ import {
 	STRENGTH_SLIDES,
 	YOUTUBE_CHANNEL,
 } from "@/lib/site-data";
-import { cn } from "@/lib/utils";
+import { bindMidDots, cn, splitSummaryTail } from "@/lib/utils";
 import { BlogCard } from "./blog-card";
 import { Badge, Button, Card, CardBody, CardTitle, Input, Label, Textarea } from "./ds";
 import { Icon } from "./icon";
@@ -50,7 +50,8 @@ export const SectionHead = ({
 	light = false,
 }: {
 	title: string;
-	sub?: string;
+	// ReactNode — 모바일 전용 줄바꿈(<br className="sm:hidden" />)을 넣을 수 있게 한다.
+	sub?: ReactNode;
 	align?: "center" | "left";
 	light?: boolean;
 }) => (
@@ -432,6 +433,23 @@ export const StrengthsRow = () => (
 	</section>
 );
 
+// 업무분야 카드 설명 — 공통 꼬리말("대상·서류·절차 안내")을 둘째 줄로 고정해 8장의 줄 수를 맞춘다.
+// 카드가 좁아 가운뎃점 뒤에서 줄이 끊기는 것도 함께 막는다(bindMidDots).
+export const SummaryLines = ({ text }: { text: string }) => {
+	const [head, tail] = splitSummaryTail(text);
+	return (
+		<>
+			{bindMidDots(head)}
+			{tail && (
+				<>
+					<br />
+					{bindMidDots(tail)}
+				</>
+			)}
+		</>
+	);
+};
+
 export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 	const go = useGo();
 	return (
@@ -463,7 +481,9 @@ export const ServicesGrid = ({ heading = true }: { heading?: boolean }) => {
 								<Badge>{s.code}</Badge>
 							</div>
 							<CardTitle className="text-[20px]">{s.title}</CardTitle>
-							<CardBody className="flex-1 text-[16px] [line-height:1.7]">{s.summary}</CardBody>
+							<CardBody className="flex-1 text-[16px] [line-height:1.7]">
+								<SummaryLines text={s.summary} />
+							</CardBody>
 							<span className="svc-more mt-[22px] inline-flex items-center gap-[6px] font-semibold text-[15px] text-[color:var(--color-primary)]">
 								자세히 보기 <Icon n="arrow-right" className="size-[16px]" />
 							</span>
@@ -573,7 +593,13 @@ export const VideoSection = () => (
 			<div className="flex flex-wrap items-end justify-between gap-[16px]">
 				<SectionHead
 					title="영상으로 보는 비자 정보"
-					sub="유튜브 ‘초이스 행정사’에서 최신 비자 정보와 실제 허가 사례까지 확인해 보세요."
+					sub={
+						// 모바일에서 "실제 허가 사례까지 확인해 보세요."가 한 줄로 떨어지게(PC 는 한 문장 유지)
+						<>
+							유튜브 ‘초이스 행정사’에서 최신 비자 정보와
+							<br className="sm:hidden" /> 실제 허가 사례까지 확인해 보세요.
+						</>
+					}
 					align="left"
 				/>
 				<a
@@ -602,7 +628,13 @@ export const BlogPreview = ({ posts }: { posts: BlogPostCard[] }) => (
 			<div className="flex flex-wrap items-end justify-between gap-[16px]">
 				<SectionHead
 					title="비자 정보 · 소식"
-					sub="절차·요건을 사례 중심으로 알기 쉽게 정리해 전해드립니다."
+					sub={
+						// 모바일에서 "알기 쉽게 정리해 전해드립니다."가 한 줄로 떨어지게(PC 는 한 문장 유지)
+						<>
+							절차·요건을 사례 중심으로
+							<br className="sm:hidden" /> 알기 쉽게 정리해 전해드립니다.
+						</>
+					}
 					align="left"
 				/>
 				<Link
@@ -1250,9 +1282,19 @@ export const FAQ_ = ({
 									/>
 								</button>
 								{isOpen && (
-									<p className="px-[24px] pt-[0px] pb-[22px] text-[16px] text-[color:var(--text-body)] [line-height:1.8]">
-										{f.a}
-									</p>
+									<div className="px-[24px] pt-[0px] pb-[22px] text-[16px] text-[color:var(--text-body)] [line-height:1.8]">
+										<p>
+											{/* 원고의 줄바꿈("\n")을 그대로 조판 */}
+											{f.a.split("\n").map((line, i) => (
+												<Fragment key={line}>
+													{i > 0 && <br />}
+													{line}
+												</Fragment>
+											))}
+											{/* 괄호 단서는 본문보다 한 단계 작게(문장 끝 인라인) */}
+											{f.note && <span className="faq-answer-note-inline"> {f.note}</span>}
+										</p>
+									</div>
 								)}
 							</div>
 						);

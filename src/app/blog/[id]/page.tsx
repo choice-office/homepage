@@ -118,6 +118,10 @@ export default async function BlogDetailPage({ params }: Params) {
 	const related = await getRelatedPosts(post, 3);
 	const service = serviceForCategory(post.categorySlug);
 	const safeContent = sanitizePostHtml(post.content);
+	// 커버는 목록 썸네일·공유(OG) 이미지가 본래 역할. 네이버에서 가져온 글은 98%가 커버를
+	// 본문 첫 이미지로도 갖고 있어, 상단에 히어로로 또 깔면 같은 그림이 두 번(위쪽은 잘린 채) 나온다.
+	// → 본문에 커버가 없는 글(관리자가 별도 커버만 지정한 경우)에서만 히어로를 노출한다.
+	const showCoverHero = !!post.cover && !post.content.includes(post.cover);
 
 	return (
 		<>
@@ -179,14 +183,16 @@ export default async function BlogDetailPage({ params }: Params) {
 
 			<article className={cn("section", "bg-[var(--surface-page)] pt-8 max-sm:pt-6")}>
 				<div className="blog-prose wrap">
-					{post.cover && (
-						<div className="relative mb-9 aspect-video w-full overflow-hidden rounded-[var(--radius)] bg-[var(--surface-sunken)]">
+					{showCoverHero && post.cover && (
+						/* 커버는 대부분 정사각(네이버 대표이미지 카드)이라 16:9로 깔면 위아래가 크게 잘린다.
+						   1:1 + 폭 제한으로 그림 전체가 보이게 한다. */
+						<div className="relative mx-auto mb-9 aspect-square w-full max-w-[460px] overflow-hidden rounded-[var(--radius)] bg-[var(--surface-sunken)]">
 							<Image
 								src={post.cover}
 								alt={post.coverAlt ?? ""}
 								fill
 								priority
-								sizes="(max-width: 820px) 100vw, 760px"
+								sizes="(max-width: 500px) 100vw, 460px"
 								className="object-cover"
 							/>
 						</div>

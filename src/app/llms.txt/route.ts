@@ -22,7 +22,7 @@ export const GET = async () => {
 - 홈페이지: ${base}
 - 전화: ${CONTACT.phone.display}
 - 이메일: ${CONTACT.email}
-- 성격: 출입국·비자·국적 전문 행정사 사무소(대한민국 서울). 상담부터 접수까지 시험 출신 행정사가 직접 진행.
+- 성격: 출입국·비자·국적 전문 행정사사무소(대한민국 서울). 상담부터 접수까지 시험 출신 행정사가 직접 진행.
 
 ## 업무분야(Services)
 ${services}

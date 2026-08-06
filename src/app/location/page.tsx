@@ -17,8 +17,9 @@ export default function LocationPage() {
 				title="오시는 길"
 				sub={
 					<>
-						외부 출장이 많아 내방 상담은 반드시
-						<br className="sm:hidden" /> 사전 연락 부탁드립니다.
+						외부 출장이 많아 내방 상담은
+						{/* 모바일에서 "반드시 사전 연락 부탁드립니다."가 한 줄로 떨어지게 */}
+						<br className="sm:hidden" /> 반드시 사전 연락 부탁드립니다.
 					</>
 				}
 				crumbs={[{ label: "홈", route: "home" }, ABOUT_CRUMB, { label: "오시는 길" }]}

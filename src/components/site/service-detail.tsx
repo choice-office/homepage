@@ -1,11 +1,11 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
-import { SERVICE_SEO, SERVICES } from "@/lib/site-data";
-import { cn } from "@/lib/utils";
+import { Fragment, type ReactNode, useState } from "react";
+import { SERVICE_SEO, SERVICES, type ServiceFaq } from "@/lib/site-data";
+import { bindMidDots, cn } from "@/lib/utils";
 import { Badge, Button, Card, CardBody, CardTitle } from "./ds";
 import { Icon } from "./icon";
-import { PageHero } from "./sections";
+import { PageHero, SummaryLines } from "./sections";
 import { useGo } from "./use-go";
 
 const Block = ({ icon, title, children }: { icon: string; title: string; children: ReactNode }) => (
@@ -74,8 +74,9 @@ const Eligibility = ({ title, items }: { title: string; items: string[] }) => {
 
 // 자주 묻는 질문 — 네이티브 <details>로 접혀도 답변이 DOM/HTML에 항상 존재(색인 O).
 // 연구근거: FAQ 리치결과는 폐지됐으나 "화면에 보이는 직접 답변형 본문"이 검색·AI 인용에 핵심.
-const FaqItem = ({ q, a }: { q: string; a: string }) => {
+const FaqItem = ({ q, a, bullets, note }: ServiceFaq) => {
 	const [open, setOpen] = useState(false);
+	const hasBullets = !!bullets && bullets.length > 0;
 	return (
 		<details onToggle={(e) => setOpen(e.currentTarget.open)}>
 			<summary className="flex cursor-pointer list-none items-center justify-between gap-[12px] px-[24px] py-[20px] font-semibold text-[16.5px] [line-height:1.5]">
@@ -92,7 +93,30 @@ const FaqItem = ({ q, a }: { q: string; a: string }) => {
 				/>
 			</summary>
 			<div className="pt-[0px] pr-[24px] pb-[22px] pl-[46px] text-[15px] text-[color:var(--text-body)] [line-height:1.8]">
-				{a}
+				{a && (
+					<p>
+						{/* 원고의 줄바꿈("\n")을 그대로 조판 — 문장 경계에서 줄을 나눈다. */}
+						{a.split("\n").map((line, i) => (
+							<Fragment key={line}>
+								{i > 0 && <br />}
+								{line}
+							</Fragment>
+						))}
+						{/* 목록이 없는 답변의 부기는 문장 끝에 인라인으로 붙인다(줄만 작게). */}
+						{note && !hasBullets && <span className="faq-answer-note-inline"> {note}</span>}
+					</p>
+				)}
+				{hasBullets && (
+					<ul className={cn("faq-answer-list", a && "mt-[12px]")}>
+						{bullets?.map((b) => (
+							<li key={b}>
+								<Icon n="check" className="faq-answer-check" />
+								<span>{b}</span>
+							</li>
+						))}
+					</ul>
+				)}
+				{note && hasBullets && <p className="faq-answer-note">{note}</p>}
 			</div>
 		</details>
 	);
@@ -106,9 +130,9 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 	return (
 		<>
 			<PageHero
-				eyebrow={`업무분야 · ${s.code}`}
+				eyebrow={s.code}
 				title={s.title}
-				sub={s.summary}
+				sub={bindMidDots(s.summary)}
 				crumbs={[
 					{ label: "홈", route: "home" },
 					{ label: "업무분야", route: "services" },
@@ -128,7 +152,8 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 						</Block>
 					</div>
 					{s.eligibility && s.eligibility.length > 0 && (
-						<Eligibility title="단기상용·단기취업 대상 자세히 보기" items={s.eligibility} />
+						// NBSP 로 "자세히 보기"를 묶는다 — 좁은 폭에서 "보기"만 다음 줄에 남던 문제
+						<Eligibility title={"단기상용·단기취업 대상 자세히\u00a0보기"} items={s.eligibility} />
 					)}
 					<div data-stagger className="grid-2 mt-[24px] gap-[24px]">
 						<Block icon="route" title="업무 절차">
@@ -179,7 +204,7 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 						<Card hover={false} className="p-[4px]">
 							{faqs.map((f, i) => (
 								<div key={f.q} className={cn(i > 0 && "border-t border-t-[var(--border-default)]")}>
-									<FaqItem q={f.q} a={f.a} />
+									<FaqItem q={f.q} a={f.a} bullets={f.bullets} note={f.note} />
 								</div>
 							))}
 						</Card>
@@ -219,7 +244,9 @@ export const ServiceDetail = ({ id }: { id: string }) => {
 									<Badge>{o.code}</Badge>
 								</div>
 								<CardTitle className="text-[18px]">{o.title}</CardTitle>
-								<CardBody className="svc-other-desc flex-1 text-[14.5px]">{o.summary}</CardBody>
+								<CardBody className="svc-other-desc flex-1 text-[14.5px]">
+									<SummaryLines text={o.summary} />
+								</CardBody>
 								<span className="mt-[18px] inline-flex items-center gap-[6px] font-semibold text-[14px] text-[color:var(--color-primary)]">
 									자세히 보기 <Icon n="arrow-right" className="size-[15px]" />
 								</span>

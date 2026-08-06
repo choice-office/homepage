@@ -37,9 +37,10 @@ const numCls = (active: boolean) =>
 	cn(
 		CELL_CLS,
 		"lk",
+		// 현재 페이지가 가장 진해야 한다 — primary(#6c5d4c)는 본문색(#3f3a34)보다 밝아 오히려 흐려 보였다.
 		active
-			? "font-bold text-[color:var(--color-primary)]"
-			: "font-medium text-[color:var(--text-body)]",
+			? "font-extrabold text-[color:var(--text-heading)]"
+			: "font-medium text-[color:var(--text-muted)]",
 	);
 const ARROW_CLS = cn(
 	CELL_CLS,

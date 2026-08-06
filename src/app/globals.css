@@ -2395,12 +2395,13 @@
 		.blog-list a:hover .ds-card {
 			background: var(--surface-subtle);
 		}
-		/* 썸네일 — 3:2 고정 폭. 세로 카드용 aspect-[4/3] 유틸리티를 눌러야 한다. */
+		/* 썸네일 — 1:1 고정 폭(네이버 목록과 동일). 커버가 정사각이라 3:2로 자르면 글자·장식이 잘린다.
+		   카드용 aspect-square 유틸리티를 눌러야 한다. */
 		.blog-list .ds-card > div:first-child {
 			/* biome-ignore lint/complexity/noImportantStyles: 문맥 오버라이드 — 컴포넌트 유틸리티를 이겨야 함 */
-			flex: 0 0 176px !important;
+			flex: 0 0 132px !important;
 			/* biome-ignore lint/complexity/noImportantStyles: 문맥 오버라이드 — 컴포넌트 유틸리티를 이겨야 함 */
-			aspect-ratio: 3 / 2 !important;
+			aspect-ratio: 1 / 1 !important;
 			border: 1px solid var(--border-default);
 		}
 		/* 텍스트 열 — 카드 내부 패딩 제거(행 패딩으로 대체) */
@@ -2860,6 +2861,8 @@
 		}
 		.tm-cert {
 			max-width: 320px;
+			/* 1열로 떨어지면 액자가 왼쪽에 붙으므로 가운데로 */
+			margin-inline: auto;
 		}
 	}
 
@@ -3540,7 +3543,7 @@
 	}
 	.profile-eyebrow {
 		display: block;
-		font-size: 12px;
+		font-size: 14.5px;
 		font-weight: 700;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
@@ -3548,11 +3551,19 @@
 	}
 	.profile-name {
 		margin-top: 12px;
-		font-size: clamp(23px, 2.6vw, 29px);
+		font-size: clamp(29px, 3.2vw, 36px);
 		font-weight: 800;
 		letter-spacing: -0.02em;
 		line-height: 1.12;
 		color: #fff;
+	}
+	/* 직함은 이름보다 한 단계 작게(em 기준이라 clamp 스케일을 그대로 따라간다) */
+	.profile-name-role {
+		margin-left: 0.1em;
+		font-size: 0.66em;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+		white-space: nowrap;
 	} /* 대표 인삿말(서명형) — 다크 플레이트 하단을 채우는 프리미엄 메시지 */
 	.profile-quote {
 		position: relative;
@@ -4258,14 +4269,15 @@
 			flex-direction: row !important;
 			min-height: 108px;
 		}
-		/* 썸네일:내용 비율 — 썸네일을 116px로 좁혀 내용(배지 1줄 포함)에 여유를 준다 */
+		/* 썸네일:내용 비율 — 썸네일을 116px로 좁혀 내용(배지 1줄 포함)에 여유를 준다.
+		   1:1 고정(네이버 목록과 동일) — 높이를 행에 맞춰 늘리면 정사각 커버의 좌우가 잘린다.
+		   flex-basis 가 폭을 고정하고 aspect-ratio 가 높이를 결정하므로 가로 넘침은 생기지 않는다. */
 		.blog-grid .ds-card > div:first-child {
 			flex: 0 0 116px;
-			/* 카드 썸네일의 aspect-[4/3] 유틸리티를 눌러야 한다. 안 그러면 자동 최소 크기가
-			   flex-basis(116px)를 밀어내 카드가 뷰포트를 넘고 가로 스크롤이 생긴다. */
 			/* biome-ignore lint/complexity/noImportantStyles: 문맥 오버라이드 — 컴포넌트 유틸리티를 이겨야 함(제거 시 모바일 레이아웃 회귀) */
-			aspect-ratio: auto !important;
-			align-self: stretch;
+			aspect-ratio: 1 / 1 !important;
+			/* 정사각 썸네일이 행보다 낮으므로 왼쪽 칸 안에서 세로 중앙에 둔다 */
+			align-self: center;
 		}
 		.blog-grid .ds-card > div:nth-child(2) {
 			/* biome-ignore lint/complexity/noImportantStyles: 문맥 오버라이드 — 컴포넌트 유틸리티를 이겨야 함(제거 시 모바일 레이아웃 회귀) */
@@ -4513,5 +4525,41 @@
 	.consult-qr-desc strong {
 		color: var(--color-primary);
 		font-weight: 700;
+	}
+	/* FAQ 답변 — 본문 문단 + 나열형 항목(요건·면제 사유) + ※ 부기.
+   원고에서 줄바꿈으로 구분된 항목은 문장으로 흘리지 않고 목록으로 세운다(스캔 가능성). */
+	.faq-answer-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+	.faq-answer-list li {
+		display: flex;
+		gap: 10px;
+		line-height: 1.7;
+		word-break: keep-all;
+	}
+	.faq-answer-check {
+		flex: none;
+		width: 17px;
+		height: 17px;
+		margin-top: 5px;
+		color: var(--color-primary);
+	}
+	/* 부기는 본문보다 한 단계 작게 — 문장이 아니라 조건 표시임을 크기로 알린다.
+   목록 뒤에 오면 블록(※ 주석), 문장 끝에 붙으면 인라인(괄호 단서). */
+	.faq-answer-note {
+		margin-top: 10px;
+		font-size: 0.88em;
+		line-height: 1.7;
+		color: var(--text-muted);
+		word-break: keep-all;
+	}
+	.faq-answer-note-inline {
+		font-size: 0.8em;
+		word-break: keep-all;
 	}
 }

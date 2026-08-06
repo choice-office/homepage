@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { CTABand, FAQ_, PageHero } from "@/components/site/sections";
 import { toJsonLd } from "@/lib/json-ld";
-import { FAQ } from "@/lib/site-data";
+import { FAQ, faqAnswerText } from "@/lib/site-data";
 
 export const metadata: Metadata = {
 	title: "자주 묻는 질문",
@@ -16,7 +16,7 @@ const faqJsonLd = {
 	mainEntity: FAQ.map((f) => ({
 		"@type": "Question",
 		name: f.q,
-		acceptedAnswer: { "@type": "Answer", text: f.a },
+		acceptedAnswer: { "@type": "Answer", text: faqAnswerText(f) },
 	})),
 };
 
@@ -32,8 +32,8 @@ export default function FaqPage() {
 				title="자주 묻는 질문"
 				sub={
 					<>
-						상담 전 자주 묻는 질문을 모았습니다.
-						<br className="sm:hidden" /> 더 궁금한 점은 편하게 문의해 주세요.
+						상담 전 자주 물어보시는 질문들을 모았습니다.
+						<br className="sm:hidden" /> 더 궁금하신 점은 편하게 문의해 주세요.
 					</>
 				}
 				crumbs={[{ label: "홈", route: "home" }, { label: "자주 묻는 질문" }]}

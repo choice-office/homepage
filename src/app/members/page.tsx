@@ -34,7 +34,10 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 				/>
 				<div className="profile-identity">
 					<span className="profile-eyebrow">초이스 행정사사무소</span>
-					<h2 className="profile-name">{m.name}</h2>
+					{/* 이름을 직함보다 크게 — 누구인지가 먼저 읽히도록 한 줄 안에서 위계를 준다 */}
+					<h2 className="profile-name">
+						{m.name} <span className="profile-name-role">{m.title}</span>
+					</h2>
 				</div>
 				{m.lead && (
 					<blockquote className="profile-quote">
@@ -128,7 +131,7 @@ export default function MembersPage() {
 						))}
 					</div>
 					<p className="mt-11 text-center text-(--text-muted) text-[15px]">
-						초이스 행정사사무소는 사무장이 없는 행정사 사무소로, 상담부터 접수까지 모든 과정을
+						초이스 행정사사무소는 사무장이 없는 행정사사무소로, 상담부터 접수까지 모든 과정을
 						행정사가 직접 진행합니다.
 					</p>
 				</div>

@@ -7,7 +7,7 @@ import { ServiceDetail } from "@/components/site/service-detail";
 import { siteConfig } from "@/config/site";
 import { getPostsForService } from "@/lib/blog";
 import { toJsonLd } from "@/lib/json-ld";
-import { SERVICE_SEO, SERVICES, type Service } from "@/lib/site-data";
+import { faqAnswerText, SERVICE_SEO, SERVICES, type Service } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 
 // 서비스 상세 하단 ISR — 관련 글이 발행되면 반영
@@ -72,7 +72,7 @@ const buildJsonLd = (s: Service) => {
 			mainEntity: faqs.map((f) => ({
 				"@type": "Question",
 				name: f.q,
-				acceptedAnswer: { "@type": "Answer", text: f.a },
+				acceptedAnswer: { "@type": "Answer", text: faqAnswerText(f) },
 			})),
 		});
 	}

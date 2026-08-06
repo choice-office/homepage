@@ -12,7 +12,9 @@ export const BlogCard = ({ post, compact = false }: BlogCardProps) => {
 	return (
 		<Link className="lk block h-full" href={`/blog/${post.slug}`}>
 			<Card className="flex h-full flex-col overflow-hidden p-0">
-				<div className="relative aspect-[4/3] [background:linear-gradient(150deg,_var(--color-surface-alt),_var(--color-accent-soft))]">
+				{/* 썸네일 1:1 — 커버 237건 중 94%가 정사각(네이버 대표이미지 카드)이고 그 안에 제목 글자가
+				    들어있다. 4:3으로 자르면 상·하단 장식과 글자가 잘려 원문과 달라 보인다. 네이버 목록도 1:1. */}
+				<div className="relative aspect-square [background:linear-gradient(150deg,_var(--color-surface-alt),_var(--color-accent-soft))]">
 					{cover ? (
 						<Image
 							src={cover}
