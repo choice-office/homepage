@@ -27,17 +27,32 @@ const client = () => {
 // 홈 카드가 쓰는 썸네일. 쇼츠에만 있어서(일반 영상은 404) "살아 있는 쇼츠"인지 한 번에 판별된다.
 const thumbnailUrl = (id: string) => `https://i.ytimg.com/vi/${id}/oardefault.jpg`;
 
+// oEmbed — "이 영상을 여기에 임베드해서 재생할 수 있는가"를 유튜브가 직접 답해 준다.
+//   200 = 가능 · 401/403 = 퍼가기 차단·비공개 · 400/404 = 없는 영상
+// 썸네일만으로는 알 수 없다: 퍼가기를 막은 영상도 썸네일은 그대로 있어서 카드는 정상으로
+// 보이고, 눌렀을 때만 "동영상을 재생할 수 없음" 이 뜬다.
+const oembedUrl = (id: string) =>
+	`https://www.youtube.com/oembed?url=${encodeURIComponent(
+		`https://www.youtube.com/watch?v=${id}`,
+	)}&format=json`;
+
 // 네트워크가 흔들릴 때 멀쩡한 영상을 지우면 더 나쁘므로, 확인 실패는 통과시킨다(fail-open).
-const isPlayable = async (id: string): Promise<boolean> => {
+const ok = async (url: string, method: "GET" | "HEAD"): Promise<boolean> => {
 	try {
-		const res = await fetch(thumbnailUrl(id), {
-			method: "HEAD",
-			next: { revalidate: 60 },
-		});
+		const res = await fetch(url, { method, next: { revalidate: 60 } });
 		return res.ok;
 	} catch {
 		return true;
 	}
+};
+
+// ① 세로 썸네일이 있어야 쇼츠다(일반 영상은 404) ② 임베드로 재생까지 돼야 한다.
+const isPlayable = async (id: string): Promise<boolean> => {
+	const [isShort, embeddable] = await Promise.all([
+		ok(thumbnailUrl(id), "HEAD"),
+		ok(oembedUrl(id), "GET"),
+	]);
+	return isShort && embeddable;
 };
 
 const fetchShorts = async (): Promise<string[]> => {
