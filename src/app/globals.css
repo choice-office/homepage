@@ -1,11 +1,15 @@
-@import "tailwindcss";
+/* ★ Tailwind 자동 소스 탐색을 끄고(`source(none)`) 스캔 대상을 `src/` 로만 못 박는다.
+   자동 탐색은 저장소 안의 거의 모든 파일을 후보로 훑는다. 그래서 페이지 HTML(RSC 페이로드)이
+   섞인 파일이 생기면 그 안의 문자열이 클래스 후보로 잡혀 깨진 CSS 가 생성되고 빌드가 죽는다
+   (실제로 3번 겪었다: `.text-[color:var(--colo"])</script>…` — Playwright 콘솔 로그가 원인).
+   `@source not` 로 그 폴더만 빼봤지만, dev 중 **새로 생긴** 파일은 감시자가 다시 집어왔다.
+   클래스는 전부 `src/` 안에서만 쓰므로 허용목록 방식이 확실하고, 스캔 범위도 줄어 빌드가 빠르다.
+   → src 밖에 클래스를 쓰는 파일을 새로 만들면 여기에 `@source` 를 한 줄 추가해야 한다. */
+@import "tailwindcss" source(none);
 @import "tw-animate-css";
 
-/* Tailwind 자동 소스 스캔 제외 — Playwright MCP 산출물(콘솔 로그·스냅샷·스크린샷).
-   로그에 페이지 HTML(RSC 페이로드)이 섞여 들어오면 그 안의 문자열이 클래스 후보로 잡혀
-   깨진 CSS 규칙이 생성되고 빌드가 실패한다(실제로 발생: `.text-[color:var(--colo"])</script>…`).
-   .gitignore 에 있어도 스캔되므로 명시적으로 뺀다. */
-@source not "../../.playwright-mcp";
+/* 스캔 대상(@import 뒤에 와야 한다 — @import 는 다른 at-rule 보다 앞이어야 유효하다) */
+@source "../";
 
 /* ─── shadcn base-nova preset (inlined from shadcn/dist/tailwind.css) ────────
  * 패키지 경로 의존 없이 동작하도록 인라인화.

@@ -51,6 +51,9 @@ src/
 - `lib/blog-data.ts`: `BlogPost` 타입, `BLOG_POSTS`, `BLOG_PAGE_SIZE`, `getBlogPost(slug)`, `formatBlogDate()`.
 - `config/site.ts`: `siteConfig`(name/description/url/ogImage/locale).
 - **전화·주소·이메일을 새로 쓸 일이 있으면 반드시 `CONTACT`를 참조**한다(하드코딩 금지). docs/PATTERNS.md 참고.
+- **홈 후기(마퀴)는 항상 8~12개다**: `lib/review-images.ts` `getFeaturedReviewImages()` — 관리자가 고른 것(`review_images.is_featured`)을 먼저 쓰고, **8개보다 적으면 남은 노출 후기로 채우고 12개를 넘으면 자른다**. 고른 것이 0건이면 노출본 전체(최대 12개). 노출본이 8개 미만이면 있는 만큼만.
+  - 왜 8~12인가: 마퀴가 짧으면 반복이 눈에 보이고, 길면 홈이 무거워진다. 관리자 화면(choice-admin `/home`)이 같은 상·하한을 강제한다(8개에서 빼기 차단 · 12개에서 추가 차단).
+  - 스키마 변경 없음 — `is_featured`/`sort_order` 그대로. 순서는 후기 관리의 `sort_order`를 따른다.
 - **홈 쇼츠 4칸은 DB에서 온다**: `lib/home-shorts.ts`(`home_shorts` 슬롯 1~4, 60초 `unstable_cache`) → `VideoSection shorts={...}`. 관리자(choice-admin `/home`)에서 링크를 넣어 바꾼다. DB 미설정·조회 실패·전 칸 비어 있으면 `SHORTS`(site-data) 폴백. 스키마 `supabase/migrations/0004_home_shorts.sql`.
   - **홈은 항상 4칸을 채운다.** 지정하지 않은 칸이나 영상이 죽은 칸은 **보관함(`youtube_shorts`) 최신순으로 자동 채운다** → 3개만 나오거나 빈 카드가 생기지 않는다(블로그 대표글과 같은 방식). 채우는 순서: ① 지정 칸(살아 있으면 그 자리) ② 보관함 최신순 ③ `SHORTS` 하드코딩. 그래서 공개 렌더가 보관함을 읽어야 하고, `0007_youtube_shorts_public_read.sql` 로 anon SELECT(숨김 제외)를 열었다(공개된 영상 ID·제목·발행일뿐 · 쓰기는 여전히 차단).
   - **죽은 영상은 서버에서 걸러낸다**(`isPlayable`): 카드가 쓰는 `i.ytimg.com/vi/{id}/oardefault.jpg` 를 HEAD 로 확인해 404 인 칸을 빼고 렌더한다. 관리자가 저장할 때 확인하더라도 **그 뒤에 영상이 삭제·비공개로 바뀔 수 있고**, 그대로 두면 홈에 검은 빈 카드 + 깨진 이미지 alt 텍스트가 노출된다(재생을 눌러도 유튜브 오류). 전부 죽으면 `SHORTS` 폴백. 확인 실패(네트워크)는 통과시킨다 — 멀쩡한 영상을 지우는 쪽이 더 나쁘다.
@@ -68,6 +71,11 @@ src/
 
 ## 스타일 모델 (중요)
 - **인라인 `style` 금지.** 마크업의 스타일은 전부 Tailwind 유틸리티다(`text-[15px]`, `mt-[24px]`, `text-[color:var(--text-heading)]` …). 값은 여전히 CSS 변수를 참조한다.
+- **★ Tailwind 자동 소스 탐색을 끈다**: `@import "tailwindcss" source(none);` + `@source "../";` (= `src/` 만 스캔).
+  - 자동 탐색은 저장소 안 거의 모든 파일을 클래스 후보로 훑는다. 그래서 **페이지 HTML(RSC 페이로드)이 섞인 파일이 생기면 깨진 CSS 가 생성되고 빌드가 죽는다** — 실제로 3번 겪었다(`.text-[color:var(--colo"])</script>…`, Playwright 콘솔 로그가 원인).
+  - `@source not "…"` 로 그 폴더만 빼는 방식은 **dev 중 새로 생긴 파일에는 안 통했다**(감시자가 다시 집어온다). 허용목록이 확실하다.
+  - 전환 시 손실 없음을 확인했다: 사라진 클래스 49개 전부 `src` 밖에서 잘못 잡힌 것(문서의 "backdrop-filter 금지" 문구, `.filter(` 같은 JS 등). CSS 441KB→437KB.
+  - **`src/` 밖에 클래스를 쓰는 파일을 새로 만들면 `@source` 를 한 줄 추가**해야 한다.
 - **`globals.css` 전체가 `@layer components` 안에 있다.** 레이어 밖 CSS 는 특정성과 무관하게 Tailwind 유틸리티(`@layer utilities`)를 이기기 때문이다. 한 레이어에 모아두면 globals 규칙끼리의 우열은 그대로 두면서(특정성·순서) 호출부 유틸리티가 이긴다 = 예전 인라인 style 이 하던 역할.
   - **새 CSS 는 반드시 그 블록 안에** 넣는다. 밖에 두면 유틸리티가 조용히 죽는다.
   - 레이어 밖에 남는 것: `@theme`/`:root`/`.dark`(변수), `@layer base`, `@keyframes`, 전역 스크롤바, **`.prose` 계열**(본문 조판은 호출부 유틸리티를 이겨야 함).

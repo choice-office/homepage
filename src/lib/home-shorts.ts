@@ -21,7 +21,7 @@ import { SHORTS } from "./site-data";
 //   텍스트가 그대로 노출된다(재생을 눌러도 유튜브 오류). 캐시(60초) 안에서 도니 요청마다
 //   확인하지는 않는다.
 
-export const HOME_SHORTS_COUNT = 4;
+const HOME_SHORTS_COUNT = 4;
 
 type Row = { slot: number; youtube_id: string | null };
 
