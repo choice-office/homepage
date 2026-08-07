@@ -81,7 +81,8 @@ const fetchShorts = async (): Promise<string[]> => {
 
 	const pinned = new Map<number, string>();
 	for (const r of slotRes.data as Row[]) {
-		if (r.youtube_id && r.slot >= 1 && r.slot <= HOME_SHORTS_COUNT) pinned.set(r.slot, r.youtube_id);
+		if (r.youtube_id && r.slot >= 1 && r.slot <= HOME_SHORTS_COUNT)
+			pinned.set(r.slot, r.youtube_id);
 	}
 	const library = ((libRes.data ?? []) as { youtube_id: string }[]).map((r) => r.youtube_id);
 
