@@ -341,24 +341,45 @@ export const getRelatedPosts = async (
 	return [...same, ...latest].slice(0, limit);
 };
 
-// 홈 대표글 — 관리자 지정(is_featured, featured_order 순) 우선, 부족하면 최신 글로 채움.
+// 홈 대표글 — 칸(슬롯) 단위 모델.
+// `featured_order` 는 노출 순서가 아니라 **몇 번 칸인지**(1~limit, 빈틈 허용)를 뜻한다.
+//   [null, 2, null, null] → [최신1, 고정글, 최신2, 최신3]
+// 고정 칸은 그 자리에 머물고, 빈 칸만 최신 발행글이 순서대로 채운다(글을 새로 쓰면 자동 갱신).
+// 지정이 0개면 전부 자동 = 최신 발행글 limit 개. 스키마: supabase/migrations/0005_blog_featured_slot.sql
 const fetchFeatured = async (limit: number): Promise<BlogPostCard[]> => {
 	const supabase = client();
 	if (!supabase) return [];
 	const { data } = await supabase
 		.from("blog_posts")
-		.select(CARD_SELECT)
+		// 카드 컬럼 + 칸 번호(featured_order) — 어느 칸에 앉힐지 알아야 한다.
+		.select(`${CARD_SELECT},featured_order`)
 		.eq("status", "published")
 		.eq("is_featured", true)
 		.order("featured_order", { ascending: true, nullsFirst: false })
 		.limit(limit);
-	const featured = ((data ?? []) as unknown as CardRow[]).map(toCard);
-	if (featured.length >= limit) return featured.slice(0, limit);
-	const seen = new Set(featured.map((p) => p.slug));
-	const latest = (await getPostPage(undefined, 1, limit + featured.length)).items.filter(
-		(p) => !seen.has(p.slug),
+	// 칸 번호가 범위를 벗어나거나 비어 있는 행은 무시한다(제약이 막지만 방어적으로).
+	const pinned = new Map<number, BlogPostCard>();
+	for (const row of (data ?? []) as unknown as (CardRow & { featured_order: number | null })[]) {
+		const slot = row.featured_order;
+		if (!slot || slot < 1 || slot > limit || pinned.has(slot)) continue;
+		pinned.set(slot, toCard(row));
+	}
+	const gaps = Array.from({ length: limit }, (_, i) => i + 1).filter((s) => !pinned.has(s));
+	if (gaps.length === 0)
+		return Array.from({ length: limit }, (_, i) => pinned.get(i + 1) as BlogPostCard);
+	// 빈 칸을 채울 최신글 — 고정된 글이 중복되지 않게 넉넉히 받아 걸러낸다.
+	const usedSlugs = new Set([...pinned.values()].map((p) => p.slug));
+	const fill = (await getPostPage(undefined, 1, limit + pinned.size)).items.filter(
+		(p) => !usedSlugs.has(p.slug),
 	);
-	return [...featured, ...latest].slice(0, limit);
+	for (const [i, slot] of gaps.entries()) {
+		const post = fill[i];
+		if (post) pinned.set(slot, post);
+	}
+	// 채울 글이 모자라면 그 칸은 빠진다(홈은 남은 카드만 렌더).
+	return Array.from({ length: limit }, (_, i) => pinned.get(i + 1)).filter(
+		(p): p is BlogPostCard => !!p,
+	);
 };
 
 export const getFeaturedPosts = unstable_cache(fetchFeatured, ["blog:featured"], {

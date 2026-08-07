@@ -19,8 +19,11 @@ type BlogPost = { slug; category; title; excerpt; author; date; content;
 - 목록 `app/blog/page.tsx` — `getPublishedPosts()` → 9개/페이지, **페이지네이션 `searchParams.page`**.
 - 상세 `app/blog/[id]/page.tsx` — `getPostBySlug` (param명 `id`=slug). `generateStaticParams`=published slugs(빌드 시 fetch) + on-demand(신규글). 본문 `.prose dangerouslySetInnerHTML`. JSON-LD/구조 블록은 `docs/BLOG-SEO.md`.
 - 홈 `app/page.tsx`(async) — `getFeaturedPosts(4)` → `<BlogPreview posts={...} />`(prop).
-  - **대표글 규칙**: `is_featured` 글을 `featured_order` 순으로 최대 4개 → **모자라면 최신 발행글(`published_at` 내림차순)로 채워 항상 4칸**.
-  - 지정이 0개면 자연히 "최신 4개"가 된다 = 관리자의 **자동 모드**. 관리자(choice-admin)가 이 규칙을 그대로 화면에 보여주므로, 규칙을 바꾸면 `choice-admin/docs/ARCHITECTURE.md`(홈 대표글)도 함께 고친다.
+  - **대표글 규칙(칸 단위)**: `featured_order` 는 노출 순서가 아니라 **몇 번 칸(1~4)** 이다(빈틈 허용). 고정한 글은 그 칸에 그대로 앉고, **빈 칸만** 최신 발행글(`published_at` 내림차순)이 순서대로 채운다.
+    - 예) `[null, 2, null, null]` → 홈 `[최신1, 고정글, 최신2, 최신3]`. 자동 칸은 글을 새로 발행하면 굴러가고 고정 칸은 그대로.
+    - 지정이 0개면 4칸 전부 자동 = "최신 4개". 불변식(칸당 1개·1~4)은 DB 제약으로 강제 → `supabase/migrations/0005_blog_featured_slot.sql`.
+  - 관리자는 **choice-admin `/home`("홈 노출")** 에서 칸별로 고정/자동을 정한다(글 선택 모달: 발행글 검색·카테고리·페이지네이션). 블로그 관리 화면에는 "홈 n" 읽기 전용 배지만 있다.
+  - 이 규칙을 바꾸면 `choice-admin` 의 `lib/blog.ts setFeaturedSlot` · `components/admin/home-featured-posts.tsx` · `choice-admin/docs/ARCHITECTURE.md` 도 함께 고친다.
 - `app/sitemap.ts`(async) — published 글 URL 포함.
 - 카드 `components/site/blog-card.tsx` — 내부 `<Link>`, 홈/관련글 재사용.
 
