@@ -111,20 +111,23 @@ export const PageHero = ({
 				fill
 				priority
 				sizes="100vw"
-				className={cn("object-cover", imagePosition ?? "object-center", "opacity-[0.72]")}
+				// 사진은 원본 밝기 그대로(opacity 없음) — 가독성은 아래 그라디언트 + 글자 그림자로 지킨다.
+				className={cn("object-cover", imagePosition ?? "object-center")}
 			/>
-			{/* 좌측(텍스트 영역)만 충분히 어둡게, 우측으로 갈수록 이미지가 밝게 드러나도록 그라디언트 완화 */}
-			<div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(28,22,16,0.72)_0%,rgba(45,37,28,0.42)_46%,rgba(70,58,44,0.12)_100%)]" />
+			{/* 좌측 텍스트 영역에만 옅게 깔고 우측은 사진을 그대로 드러낸다(70% 지점부터 투명).
+			    예전에는 사진 opacity 0.72 + 이 그라디언트 0.72 로 화면 전체가 어두워져, 교체한 밝은
+			    사진이 살지 않았다. 글자 가독성은 순백 + 그림자(globals.css .page-hero-section)로 확보. */}
+			<div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(24,18,12,0.34)_0%,rgba(32,25,18,0.16)_42%,rgba(70,58,44,0.02)_70%,rgba(70,58,44,0)_100%)]" />
 			<div className="wrap relative z-[2]">
 				{crumbs && (
-					<nav className="mb-[18px] flex flex-wrap items-center gap-2 text-[14px] text-white/75">
+					<nav className="mb-[18px] flex flex-wrap items-center gap-2 text-[14px] text-white/90">
 						{crumbs.map((c, i) => (
 							<Fragment key={c.label}>
 								{i > 0 && <Icon n="chevron-right" className="size-[14px] opacity-60" />}
 								{c.route ? (
 									<button
 										type="button"
-										className="lk inline-flex items-center gap-[5px] border-none bg-none p-0 font-[inherit] text-white/80"
+										className="lk inline-flex items-center gap-[5px] border-none bg-none p-0 font-[inherit] text-white/90"
 										onClick={() => go(c.route as string, c.param)}
 									>
 										{i === 0 && <Icon n="home" className="size-[14px]" />}
@@ -146,8 +149,9 @@ export const PageHero = ({
 					{title}
 				</h1>
 				<span className="mt-[22px] block h-[3px] w-[56px] rounded-none bg-[var(--color-accent-soft)]" />
+				{/* 순백 — 82% 로 두면 밝은 사진 위에서 대비를 더 잃는다(밝은 구간에서 특히). */}
 				{sub && (
-					<p className="page-hero-sub mt-[22px] max-w-[640px] break-keep text-[clamp(14px,1.7vw,17px)] text-white/[.82] [line-height:1.75]">
+					<p className="page-hero-sub mt-[22px] max-w-[640px] break-keep text-[clamp(14px,1.7vw,17px)] text-white [line-height:1.75]">
 						{sub}
 					</p>
 				)}
