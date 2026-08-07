@@ -14,8 +14,12 @@ const REVALIDATE = 600;
 const UA =
 	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
 
-// 어드민 오리진만 허용. 배포마다 URL 이 바뀌므로(choice-admin-<hash>-choice5.vercel.app) 패턴으로 본다.
-const ALLOWED_ORIGIN = /^https:\/\/choice-admin[a-z0-9-]*\.vercel\.app$|^http:\/\/localhost:\d+$/;
+// 어드민 오리진만 허용.
+//   ① admin.kvisa1345.com — 관리자가 실제로 쓰는 도메인(★ 이게 빠지면 프로덕션에서 CORS 로 막힌다)
+//   ② *.vercel.app — 미리보기 배포는 URL 이 매번 바뀌므로(choice-admin-<hash>-choice5) 패턴으로 본다
+//   ③ localhost — 로컬 개발
+const ALLOWED_ORIGIN =
+	/^https:\/\/admin\.kvisa1345\.com$|^https:\/\/[a-z0-9-]*admin[a-z0-9-]*\.vercel\.app$|^http:\/\/localhost:\d+$/;
 
 const corsHeaders = (origin: string | null): HeadersInit => ({
 	"Access-Control-Allow-Origin": origin && ALLOWED_ORIGIN.test(origin) ? origin : "null",
