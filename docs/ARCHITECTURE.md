@@ -55,7 +55,8 @@ src/
   - **죽은 영상은 서버에서 걸러낸다**(`isPlayable`): 카드가 쓰는 `i.ytimg.com/vi/{id}/oardefault.jpg` 를 HEAD 로 확인해 404 인 칸을 빼고 렌더한다. 관리자가 저장할 때 확인하더라도 **그 뒤에 영상이 삭제·비공개로 바뀔 수 있고**, 그대로 두면 홈에 검은 빈 카드 + 깨진 이미지 alt 텍스트가 노출된다(재생을 눌러도 유튜브 오류). 전부 죽으면 `SHORTS` 폴백. 확인 실패(네트워크)는 통과시킨다 — 멀쩡한 영상을 지우는 쪽이 더 나쁘다.
   - `oardefault.jpg` 는 **쇼츠에만 있다**(일반 영상은 404). 그래서 이 한 번의 확인으로 "존재 + 쇼츠"가 함께 검증된다. 관리자 저장 검사도 같은 URL 을 쓴다.
   - **썸네일만으로는 "재생 가능"을 알 수 없다** — 소유자가 퍼가기를 막거나 비공개로 바꾼 영상도 썸네일은 그대로 있어서 카드는 정상으로 보이고 눌렀을 때만 "동영상을 재생할 수 없음" 이 뜬다. 그래서 **oEmbed**(`youtube.com/oembed?url=…`)로 임베드 가능 여부를 함께 본다(200=가능 · 401/403=퍼가기 차단·비공개 · 400/404=없음). API 키 불필요.
-  - 관리자 "채널 최신 쇼츠 가져오기"는 `app/api/youtube/shorts`(공개 RSS + `/shorts/{id}` 리다이렉트로 쇼츠 판별, API 키 없음, 10분 캐시, 어드민 오리진만 CORS 허용)를 호출한다. 채널 교체 시 `YOUTUBE_CHANNEL_ID`도 갱신.
+  - 관리자는 이 4칸을 **보관함(`youtube_shorts`, `supabase/migrations/0006_youtube_shorts.sql`)에서 골라** 배정한다. 보관함은 관리자 전용 RLS 라 공개 렌더는 읽지 않는다 — 홈은 `home_shorts` 만 본다.
+  - 관리자 "보관함 갱신"은 `app/api/youtube/shorts`(공개 RSS + `/shorts/{id}` 리다이렉트로 쇼츠 판별, API 키 없음, 10분 캐시, 어드민 오리진만 CORS 허용)를 호출한다. 채널 교체 시 `YOUTUBE_CHANNEL_ID`도 갱신.
 
 ## 내비게이션 모델
 - 내부 이동은 대부분 `useGo()` → `router.push(routePath(route, param))` (버튼 `onClick`).
