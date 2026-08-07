@@ -20,7 +20,8 @@ src/
     actions/contact.ts      # 문의폼 Server Action(Supabase 저장)
     blog/page.tsx           # 블로그 목록(9/page, searchParams 페이지네이션)
     blog/[id]/page.tsx      # 블로그 상세(SSG, slug=id, .prose 본문)
-    {greeting,members,credentials,location,services,reviews,faq,contact,privacy,terms}/page.tsx
+    {greeting,members,location,services,reviews,faq,contact,privacy,terms}/page.tsx
+    [...slug]/page.tsx      # 없는 URL은 홈으로 리다이렉트(307) — 옛 링크·오타 유입 흡수
     services/[id]/{page,template}.tsx
     sitemap.ts robots.ts opengraph-image.tsx not-found.tsx error.tsx loading.tsx
   components/
