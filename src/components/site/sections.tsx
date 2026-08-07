@@ -111,8 +111,8 @@ export const PageHero = ({
 				fill
 				priority
 				sizes="100vw"
-				// 사진은 원본 밝기 그대로(opacity 없음) — 가독성은 아래 그라디언트 + 글자 그림자로 지킨다.
-				className={cn("object-cover", imagePosition ?? "object-center")}
+				// 사진은 거의 원본 밝기(95%) — 가독성은 아래 그라디언트 + 글자 그림자로 지킨다.
+				className={cn("object-cover", imagePosition ?? "object-center", "opacity-[0.95]")}
 			/>
 			{/* 좌측 텍스트 영역에만 옅게 깔고 우측은 사진을 그대로 드러낸다(70% 지점부터 투명).
 			    예전에는 사진 opacity 0.72 + 이 그라디언트 0.72 로 화면 전체가 어두워져, 교체한 밝은
@@ -175,7 +175,9 @@ export const Hero = () => {
 				sizes="100vw"
 				className="object-cover"
 			/>
-			<div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(20,16,13,0.78)_0%,rgba(20,16,13,0.5616)_42%,rgba(20,16,13,0.18)_78%,rgba(20,16,13,0.05)_100%)]" />
+			{/* 좌측 텍스트 영역만 어둡게. 사진을 조금 더 드러내려고 전 구간을 완화했다(0.78→0.66).
+			    글자는 순백 + 그림자(globals.css .home-hero-full)로 따로 지킨다. */}
+			<div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(20,16,13,0.66)_0%,rgba(20,16,13,0.46)_42%,rgba(20,16,13,0.14)_78%,rgba(20,16,13,0.03)_100%)]" />
 			<div className="home-hero-inner wrap relative z-[2] w-full pt-[80px]">
 				<div className="max-w-[640px] text-white">
 					<span className="inline-flex items-center gap-3 font-medium text-[15px] text-[color:var(--color-accent-soft)] tracking-[.02em]">
@@ -187,7 +189,8 @@ export const Hero = () => {
 						<br />
 						<span className="text-[color:var(--color-accent-soft)]">경험이 결과를 만듭니다.</span>
 					</h1>
-					<p className="mt-6 text-[clamp(15px,2vw,18px)] text-white/[.86] [line-height:1.7]">
+					{/* 순백 — 86% 로 두면 오버레이를 줄인 만큼 대비를 더 잃는다(사진 밝은 구간에서 특히). */}
+					<p className="mt-6 text-[clamp(15px,2vw,18px)] text-white [line-height:1.7]">
 						<strong className="font-bold text-white">
 							좋은 결과는 실력 있는 전문가 선택에서 시작됩니다.
 						</strong>

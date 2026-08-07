@@ -72,11 +72,12 @@ src/
   - 컨테이너 문맥 오버라이드(`.blog-grid .ds-card` 처럼 "특정 컨테이너 안에서만 다르게")는 컴포넌트 유틸리티를 이겨야 하므로 `!important` + `biome-ignore` 주석을 쓴다. 파일 안 사례 참고.
 - **레이아웃 유틸 클래스는 손수 정의**: `.wrap`(max 1600 + 좌우 여백), `.section`, `.grid-2/3/4`, `.contact-grid` 등 — `globals.css`에 있음. 반복되는 레이아웃은 Tailwind 유틸리티 대신 이걸 쓴다.
 - 회귀 검증 도구: `scripts/visual/` — `capture.mjs`(17라우트×3뷰포트 전체 스크린샷) · `diff.py`(픽셀 비교) · `geom.mjs`(요소 rect 비교) · `styles.mjs`(계산 스타일 속성별 비교) · `audit.mjs`(죽은 선언·폰트 폴백 점검) · `layerize.py`(레이어 재구성). CSS 를 손대면 **기준 빌드와 픽셀 비교**로 확인한다.
-- **서브 히어로(`PageHero`) 명암 구조 — 되돌리지 말 것**: 사진은 `opacity` 없이 원본 밝기로 두고, 덮개 그라디언트는 좌측만 옅게(`0.34` → 70% 지점에서 투명) 깐다. 글자 가독성은 **순백 + `text-shadow`**(`.page-hero-section h1`/`nav`/`.page-hero-sub`, 전 해상도)로 따로 확보한다.
+- **히어로 명암 구조 — 되돌리지 말 것**: 사진은 거의 원본 밝기로 두고(`PageHero` 는 `opacity-[0.95]`, 홈 `Hero` 는 opacity 없음), 덮개 그라디언트는 좌측 텍스트 영역만 옅게 깐다(`PageHero` `0.34`→70%에서 투명 · 홈 `Hero` `0.66`→우측 `0.03`). 글자 가독성은 **순백 + `text-shadow`**(`.page-hero-section h1`/`nav`/`.page-hero-sub` + `.home-hero-inner h1`/`p`, 전 해상도)로 따로 확보한다.
   - 예전 구조는 사진 `opacity 0.72` + 그라디언트 `0.72` 로 화면 전체를 어둡게 눌러 가독성을 얻었다. 그래서 **밝은 hero 이미지를 넣어도 어둡게 나왔다**(원본 좌측 110 → 렌더 82).
   - 그림자가 `@media (max-width:960px)` 안에만 있어 **데스크탑에는 적용되지 않았고**, 그 결과 데스크탑만 어두운 오버레이로 버티는 구조였다. 지금은 전 해상도에 적용된다.
   - 서브 문구가 사진 속 흰 서류 위를 지나가는 구간이 최악 지점이다. **오버레이만 걷어내면 그 구간 대비가 무너진다**(3.9:1 → 1.6:1) → 밝기와 가독성은 반드시 분리해서 다룬다.
   - `object-position` 의 x 값은 효과가 없다. hero 는 이미지 **가로 전체**를 쓰고 세로만 크롭하기 때문(밝은 부분을 좌우로 피할 수 없다).
+  - **홈 `Hero` 도 같은 문제였다**: 그림자 규칙이 `.page-hero-section` 전용이라 홈에는 안 걸려 있었고, 오버레이 `0.78` 로 버티면서도 본문 최악 대비가 이미 `3.52:1`(기준 4.5:1 미달)이었다. 그래서 오버레이만 줄이면 안 되고 순백+그림자를 함께 넣어야 한다.
 - **재사용 컴포넌트의 hover/focus/상태는 CSS 클래스로**: `.ds-btn(-primary/outline/secondary/ghost)`, `.ds-field`, `.ds-card`, `.nav-*`, `.mega-*`, `.prose`, `.page-enter`. (JS 상태로 hover 흉내내지 말 것 — 리렌더 유발)
 - 다크모드: `.dark` 변수는 정의돼 있으나 인라인에 하드코딩 색(`#fff`, `rgba(...)`)이 많아 **현재 완전 동작 안 함**. `providers.tsx`에서 light 고정. (docs/DECISIONS.md)
 
