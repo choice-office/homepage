@@ -587,7 +587,8 @@ const ShortEmbed = ({ id }: { id: string }) => {
 	);
 };
 
-export const VideoSection = () => (
+// shorts: 관리자에서 지정한 쇼츠 ID 목록(lib/home-shorts.ts). 미지정 시 호출부가 SHORTS 폴백을 넘긴다.
+export const VideoSection = ({ shorts = SHORTS }: { shorts?: string[] }) => (
 	<section className="section bg-[var(--surface-page)]">
 		<div className="wrap">
 			<div className="flex flex-wrap items-end justify-between gap-[16px]">
@@ -612,7 +613,7 @@ export const VideoSection = () => (
 				</a>
 			</div>
 			<div data-stagger="blur" className="shorts-grid mt-[48px]">
-				{SHORTS.map((id) => (
+				{shorts.map((id) => (
 					<div className="short-embed" key={id}>
 						<ShortEmbed id={id} />
 					</div>

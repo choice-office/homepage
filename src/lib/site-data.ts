@@ -243,6 +243,9 @@ export const CHANNELS = [
 /* 유튜브 쇼츠(세로 9:16) — 'Korea Visa Master' 채널. 값은 쇼츠 URL 뒤 영상 ID. */
 export const SHORTS = ["bDbzEqjUZ8c", "R0b8ByqZybI", "RsoaBz7t1DM", "GoUMPDmAML0"];
 export const YOUTUBE_CHANNEL = "https://www.youtube.com/@kvisa1345";
+// 채널 ID — 공개 RSS(feeds/videos.xml)는 핸들(@kvisa1345)이 아니라 채널 ID 만 받는다.
+// 관리자 "최신 가져오기"(app/api/youtube/shorts)에서 사용. 채널을 바꾸면 이 값도 교체.
+export const YOUTUBE_CHANNEL_ID = "UCExe-4zfkdkhmLsDmzz3Jmg";
 export const NAVER_BLOG = "https://blog.naver.com/k-visa1345";
 export const INSTAGRAM = "https://www.instagram.com/hikoreavisa1345/";
 

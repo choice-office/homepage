@@ -50,6 +50,8 @@ src/
 - `lib/blog-data.ts`: `BlogPost` 타입, `BLOG_POSTS`, `BLOG_PAGE_SIZE`, `getBlogPost(slug)`, `formatBlogDate()`.
 - `config/site.ts`: `siteConfig`(name/description/url/ogImage/locale).
 - **전화·주소·이메일을 새로 쓸 일이 있으면 반드시 `CONTACT`를 참조**한다(하드코딩 금지). docs/PATTERNS.md 참고.
+- **홈 쇼츠 4칸은 DB에서 온다**: `lib/home-shorts.ts`(`home_shorts` 슬롯 1~4, 60초 `unstable_cache`) → `VideoSection shorts={...}`. 관리자(choice-admin `/home`)에서 링크를 넣어 바꾼다. DB 미설정·조회 실패·전 칸 비어 있으면 `SHORTS`(site-data) 폴백. 스키마 `supabase/migrations/0004_home_shorts.sql`.
+  - 관리자 "채널 최신 쇼츠 가져오기"는 `app/api/youtube/shorts`(공개 RSS + `/shorts/{id}` 리다이렉트로 쇼츠 판별, API 키 없음, 10분 캐시, 어드민 오리진만 CORS 허용)를 호출한다. 채널 교체 시 `YOUTUBE_CHANNEL_ID`도 갱신.
 
 ## 내비게이션 모델
 - 내부 이동은 대부분 `useGo()` → `router.push(routePath(route, param))` (버튼 `onClick`).

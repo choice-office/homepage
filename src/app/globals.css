@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Tailwind 자동 소스 스캔 제외 — Playwright MCP 산출물(콘솔 로그·스냅샷·스크린샷).
+   로그에 페이지 HTML(RSC 페이로드)이 섞여 들어오면 그 안의 문자열이 클래스 후보로 잡혀
+   깨진 CSS 규칙이 생성되고 빌드가 실패한다(실제로 발생: `.text-[color:var(--colo"])</script>…`).
+   .gitignore 에 있어도 스캔되므로 명시적으로 뺀다. */
+@source not "../../.playwright-mcp";
+
 /* ─── shadcn base-nova preset (inlined from shadcn/dist/tailwind.css) ────────
  * 패키지 경로 의존 없이 동작하도록 인라인화.
  * shadcn CLI 업그레이드 시 이 블록도 함께 갱신할 것.

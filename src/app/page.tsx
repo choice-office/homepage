@@ -13,6 +13,7 @@ import {
 	VideoSection,
 } from "@/components/site/sections";
 import { getFeaturedPosts } from "@/lib/blog";
+import { getHomeShorts } from "@/lib/home-shorts";
 import { getFeaturedReviewImages } from "@/lib/review-images";
 
 // 홈 전용 메타: 브랜드만이 아닌 핵심 키워드를 title에 반영, canonical은 자기(홈) URL.
@@ -25,9 +26,10 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Home() {
-	const [latestPosts, reviewImages] = await Promise.all([
+	const [latestPosts, reviewImages, shorts] = await Promise.all([
 		getFeaturedPosts(4),
 		getFeaturedReviewImages(),
+		getHomeShorts(),
 	]);
 	return (
 		<>
@@ -38,7 +40,7 @@ export default async function Home() {
 			<StrengthsRow />
 			<ReviewsPreview images={reviewImages} />
 			<Affiliations />
-			<VideoSection />
+			<VideoSection shorts={shorts} />
 			<BlogPreview posts={latestPosts} />
 			<LocationSection />
 			<CTABand />
