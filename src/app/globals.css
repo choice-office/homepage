@@ -452,8 +452,12 @@
 .prose > :first-child {
 	margin-top: 0;
 }
+/* 본문 문단 — 네이버 이식본(.se-t)과 같은 리듬.
+   어드민 에디터가 쓰는 순수 <p> 와 이식본 <p class="se-t"> 가 같은 간격·줄간격이어야
+   새로 쓴 글이 기존 글과 나란히 놓여도 어색하지 않다(정렬만 왼쪽으로 둔다). */
 .prose p {
-	margin: 1.1em 0;
+	margin: 1.5em 0;
+	line-height: 1.9;
 }
 .prose h2 {
 	font-size: 1.5em;
@@ -668,6 +672,12 @@
 /* 네이버 이식 본문 이미지: 살짝 축소 + 가운데 */
 .prose figure img {
 	max-width: 86%;
+}
+/* 어드민 에디터가 넣은 이미지 — 이식본은 <figure> 가 여백을 주지만 에디터는 <img> 만 넣는다.
+   figure 안 이미지에 걸면 여백이 겹치므로 본문 직계 <img> 에만 같은 값을 준다. */
+.prose > img {
+	max-width: 86%;
+	margin-block: 2em;
 }
 .prose figcaption {
 	margin-top: 10px;
