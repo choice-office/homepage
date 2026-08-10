@@ -610,6 +610,16 @@
 	font-weight: 700;
 	color: var(--text-heading);
 }
+/* 글자색을 지정한 구간 안의 굵게·링크는 그 색을 지킨다.
+   strong·a 는 자체 color 가 있어 안쪽에 있으면 지정한 색을 덮어썼다
+   (색을 칠하고 굵게 하면 검정으로 풀리던 원인). 블록 요소(h2·h3 등)는
+   span 이 안쪽이라 원래 문제가 없다. */
+.prose [style^="color:"] strong,
+.prose [style^="color:"] a,
+.prose [style*=" color:"] strong,
+.prose [style*=" color:"] a {
+	color: inherit;
+}
 /* 인용구 기본형 — 네이버 원문 밑줄형(.se-q-u)과 동일한 디자인으로 통일.
    admin 툴바의 "인용" 버튼이 만드는 무클래스 blockquote 가 이 스타일을 받는다. */
 .prose blockquote {
