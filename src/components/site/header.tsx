@@ -147,7 +147,7 @@ export const SiteHeader = () => {
 						{/* 투명 히어로(어두운 배경)용 — 금색 나비 유지 + 글자만 밝게 */}
 						<Image
 							src="/brand/logo-dark.png"
-							alt=""
+							alt="초이스 행정사사무소"
 							aria-hidden="true"
 							width={531}
 							height={127}

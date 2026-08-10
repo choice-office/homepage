@@ -27,7 +27,7 @@ const MemberProfile = ({ m, index }: { m: Member; index: number }) => (
 				<Image
 					className="profile-monogram"
 					src="/brand/logo-mark.png"
-					alt=""
+					alt="초이스 행정사사무소 심볼"
 					width={246}
 					height={203}
 					aria-hidden="true"

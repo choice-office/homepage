@@ -1518,7 +1518,14 @@ export const ConsultBar = () => {
 					const inner = (
 						<>
 							{it.img ? (
-								<Image src={it.img} alt="" width={21} height={21} unoptimized />
+								<Image
+									src={it.img}
+									alt={it.label}
+									aria-hidden="true"
+									width={21}
+									height={21}
+									unoptimized
+								/>
 							) : (
 								// 전화상담만 벨 울리듯 흔들린다(PC 레일·상담바와 동일 모션)
 								<span
@@ -1614,7 +1621,14 @@ export const FloatRail = () => {
 					onClick={() => setPop((v) => (v === "kakao" ? null : "kakao"))}
 					aria-expanded={isKakao}
 				>
-					<Image src="/icons/kakao.svg" alt="" width={26} height={26} unoptimized />
+					<Image
+						src="/icons/kakao.svg"
+						alt="카카오톡 상담"
+						aria-hidden="true"
+						width={26}
+						height={26}
+						unoptimized
+					/>
 					<span>카톡</span>
 				</button>
 				<button
@@ -1623,11 +1637,25 @@ export const FloatRail = () => {
 					onClick={() => setPop((v) => (v === "wechat" ? null : "wechat"))}
 					aria-expanded={pop === "wechat"}
 				>
-					<Image src="/icons/wechat.svg" alt="" width={26} height={26} unoptimized />
+					<Image
+						src="/icons/wechat.svg"
+						alt="위챗 상담"
+						aria-hidden="true"
+						width={26}
+						height={26}
+						unoptimized
+					/>
 					<span>위챗</span>
 				</button>
 				<a className="float-rail-cell" href={NAVER_BLOG} target="_blank" rel="noopener noreferrer">
-					<Image src="/icons/blog.svg" alt="" width={26} height={26} unoptimized />
+					<Image
+						src="/icons/blog.svg"
+						alt="네이버 블로그"
+						aria-hidden="true"
+						width={26}
+						height={26}
+						unoptimized
+					/>
 					<span>블로그</span>
 				</a>
 				<a
@@ -1636,11 +1664,25 @@ export const FloatRail = () => {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					<Image src="/icons/youtube.svg" alt="" width={26} height={26} unoptimized />
+					<Image
+						src="/icons/youtube.svg"
+						alt="유튜브 채널"
+						aria-hidden="true"
+						width={26}
+						height={26}
+						unoptimized
+					/>
 					<span>유튜브</span>
 				</a>
 				<a className="float-rail-cell" href={INSTAGRAM} target="_blank" rel="noopener noreferrer">
-					<Image src="/icons/instagram.svg" alt="" width={26} height={26} unoptimized />
+					<Image
+						src="/icons/instagram.svg"
+						alt="인스타그램"
+						aria-hidden="true"
+						width={26}
+						height={26}
+						unoptimized
+					/>
 					<span>인스타</span>
 				</a>
 				<button type="button" className="float-rail-cell" onClick={() => smoothScrollTo(0)}>
@@ -1697,7 +1739,7 @@ export const Affiliations = () => (
 									<span className="affiliation-emblem" aria-hidden="true">
 										<Image
 											src={a.emblem}
-											alt=""
+											alt={a.name}
 											width={56}
 											height={56}
 											className="size-[56px] object-contain"
