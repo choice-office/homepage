@@ -695,12 +695,9 @@
 	height: auto;
 	margin-inline: auto; /* 작은 이미지는 가운데 정렬(네이버 기본 동작) */
 	border-radius: var(--radius);
-	/* 로딩 플레이스홀더 — 본문 이미지는 width/height가 없어 로드 전 박스가 0이 된다.
-	   min-height로 박스를 확보하고 나비 마크 배경으로 "이미지 준비 중"을 표시. 로드되면
-	   불투명 사진이 배경을 덮는다(placeholder는 로드 전에만 보임). */
-	min-height: 160px;
-	background:
-		var(--surface-subtle, #f4efe7) url("/brand/mark-square.png") center / 52px auto no-repeat;
+	/* 로딩 플레이스홀더(min-height + 나비 마크)는 제거했다 — 이미지에 width/height 가 없어
+	   로드 전 폭이 0 이라 "폭 0 × 높이 160px" 세로 막대만 보였다. 자리를 잡지도 못하면서
+	   깜빡임만 만들었다. 지금은 로드되면 그 자리에 바로 나타난다. */
 }
 /* 네이버 이식 본문 이미지: 살짝 축소 + 가운데 */
 .prose figure img {
