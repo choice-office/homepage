@@ -635,6 +635,8 @@
 }
 .prose blockquote p {
 	margin: 0;
+	/* .prose p 의 본문 줄간격(1.9)이 인용 안까지 새면 기존 글(.se-q-u/.se-q-c)보다 커진다. */
+	line-height: inherit;
 }
 .prose blockquote p + p {
 	margin-top: 0.4em;
@@ -688,29 +690,37 @@
 
 /* ── 하이브리드 보존용 본문 옵션(choice-admin 툴바가 클래스로 부여, 기존 글엔 무영향) ──
    중앙 인용: 좌측 세로줄 박스 대신 가운데 큰따옴표 스타일(후기·감사글용). */
+/* 중앙 인용 — 기존 글의 네이버 가운데 인용(.se-q-c)과 같은 값. 값을 바꾸면 둘 다 바꾼다. */
 .prose blockquote.quote-center {
-	margin: 1.8em 0;
-	padding: 8px 0;
+	margin: 2.8em 0;
+	padding: 0;
 	border: none;
 	background: transparent;
 	border-radius: 0;
 	text-align: center;
-	color: var(--text-body);
-	font-size: 1em;
-	font-weight: 400;
-	line-height: inherit;
+	color: var(--text-heading);
+	font-size: 1.3em;
+	font-weight: 500;
+	line-height: 1.75;
 }
-.prose blockquote.quote-center::before {
+.prose blockquote.quote-center::before,
+.prose blockquote.quote-center::after {
 	content: "\201C";
 	display: block;
-	font-family: inherit;
-	font-size: 40px;
-	line-height: 1;
-	color: var(--color-primary-light);
-	margin-bottom: 6px;
+	font-family: Georgia, "Times New Roman", serif;
+	font-size: 1.9em;
+	line-height: 0.4;
+	color: #c4c4c4;
+}
+.prose blockquote.quote-center::before {
+	margin-bottom: 0.35em;
+}
+.prose blockquote.quote-center::after {
+	content: "\201D";
+	margin-top: 0.4em;
 }
 .prose blockquote.quote-center p {
-	margin: 0.4em 0;
+	margin: 0;
 }
 /* 짧은 가운데 구분선(네이버식). 기본 hr 은 전체폭 유지. */
 .prose hr.soft {
