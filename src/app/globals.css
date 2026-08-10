@@ -595,6 +595,27 @@
 .prose li {
 	margin: 0.4em 0;
 }
+/* 목록 항목 안의 문단은 여백을 갖지 않는다. 에디터가 <li><p>…</p></li> 로 저장하는데
+   본문 문단 여백(1.5em)이 그대로 먹으면 항목마다 22.5px 씩 벌어진다(항목 간격은 li 가 준다). */
+.prose li > p {
+	margin: 0;
+}
+.prose li > p + p {
+	margin-top: 0.4em;
+}
+/* 목록 안 목록(에디터에서 Tab 으로 중첩) — 바깥 목록의 위아래 여백(1.1em)이 또 붙으면
+   부모 항목과 뚝 떨어져 보인다. 항목 간격은 li 가 준다. */
+.prose li > ul,
+.prose li > ol {
+	margin: 0;
+}
+/* 표 셀 안 문단 — 본문 문단 여백·줄간격이 새면 셀이 불필요하게 높아진다.
+   (붙여넣은 표에서 생길 수 있다) */
+.prose td > p,
+.prose th > p {
+	margin: 0;
+	line-height: inherit;
+}
 .prose ul li {
 	list-style: disc;
 }
